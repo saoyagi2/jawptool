@@ -817,30 +817,6 @@ sub TitleList {
 
 	$Data::Dumper::Varname = 'titlelist';
 	$report->OutputDirect( Data::Dumper::Dumper( $titlelist ) );
-#	foreach $namespace ( '標準', '標準_曖昧', '標準_リダイレクト', '利用者', 'Wikipedia', 'ファイル', 'MediaWiki', 'Template', 'Help', 'Category', 'Portal', 'プロジェクト', 'ノート', '利用者‐会話', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki‐ノート', 'Template‐ノート', 'Help‐ノート', 'Category‐ノート', 'Portal‐ノート', 'プロジェクト‐ノート' ) {
-#		TitleListReportSub( $namespace, $titlelist->{$namespace}, $report );
-#	}
-}
-
-
-# タイトル一覧レポート出力サブモジュール
-# param $name 変数名
-# param $data_ref データハッシュへのリファレンス
-# param $report JAWP::Reportオブジェクト
-sub TitleListReportSub {
-	my( $name, $data_ref, $report ) = @_;
-	my( $title, $str );
-
-	delete $data_ref->{''};
-
-	$str = "$name:\n";
-	foreach $title ( keys %{ $data_ref } ) {
-		$title =~ s/\\/\\\\/g;
-		$title =~ s/"/\\"/g;
-		$str .= "  \"$title\": 1\n";
-	}
-
-	$report->OutputDirect( $str );
 }
 
 
