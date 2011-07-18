@@ -223,6 +223,7 @@ sub TestJAWPArticle {
 		my $article = new JAWP::Article;
 		my $result_ref;
 
+		$article->{'title'} = '利用者:TEST';
 		$article->{'text'} = '';
 		$result_ref = $article->LintText( $article );
 		is( ref $result_ref, 'ARRAY', 'result is ARRAY reference' );
