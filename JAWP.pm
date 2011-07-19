@@ -313,7 +313,7 @@ sub GetArticle {
 			$article->{'timestamp'} = $1;
 		}
 		if( /<text xml:space="preserve">(.*)<\/text>/ ) {
-			$article->{'text'} = JAWP::Util::DecodeURL( JAWP::Util::UnescapeHTML( $1 ) );
+			$article->{'text'} = $1;
 			$article->{'text'} =~ s/<!\-\-.*?\-\->//sg;
 
 			return $article;;
@@ -329,7 +329,6 @@ sub GetArticle {
 					$article->{'text'} .= $_;
 				}
 			}
-			$article->{'text'} = JAWP::Util::DecodeURL( JAWP::Util::UnescapeHTML( $article->{'text'} ) );
 			while( $article->{'text'} =~ /<!--(.*?)-->/s ) {
 				my $tmp = $1;
 				$tmp =~ s/[^\n]//g;
@@ -547,7 +546,7 @@ sub GetLinkwordList {
 		$word =~ s/^( +|)(.*?)( +|)$/$2/;
 		$word = ucfirst $word;
 
-		push @wordlist, $word;
+		push @wordlist, JAWP::Util::DecodeURL( JAWP::Util::UnescapeHTML( $word ) );
 	}
 
 	return( @wordlist );
