@@ -297,7 +297,7 @@ sub GetArticle {
 			$article->{'title'} = JAWP::Util::UnescapeHTML( $1 );
 		}
 		if( /<timestamp>(.*)<\/timestamp>/ ) {
-			$article->{'timestamp'} = JAWP::Util::UnescapeHTML( $1 );
+			$article->{'timestamp'} = $1;
 		}
 		if( /<text xml:space="preserve">(.*)<\/text>/ ) {
 			$article->{'text'} = JAWP::Util::DecodeURL( JAWP::Util::UnescapeHTML( $1 ) );
@@ -794,7 +794,7 @@ sub StatisticReportSub {
 	$data2_ref = JAWP::Util::SortHash( $data_ref );
 	if( @$data2_ref > 0 ) {
 		$text .= "{{columns-list|2|\n";
-		for my $i( 0..99 ) {
+		for my $i( 0..999 ) {
 			last if( !defined( $data2_ref->[$i] ) );
 			$text .= sprintf( "#[[$prefix%s]](%d)\n", $data2_ref->[$i], $data_ref->{$data2_ref->[$i]} );
 		}
@@ -815,8 +815,8 @@ sub TitleList {
 	my $report = new JAWP::ReportFile( $reportfile );
 	my( $namespace, $str );
 
-	$Data::Dumper::Varname = 'titlelist';
-	$report->OutputDirect( Data::Dumper::Dumper( $titlelist ) );
+#	$Data::Dumper::Varname = 'titlelist';
+#	$report->OutputDirect( Data::Dumper::Dumper( $titlelist ) );
 }
 
 
