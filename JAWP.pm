@@ -157,10 +157,10 @@ sub LintText {
 	}
 
 	$text = $self->{'text'};
-	while( $text =~ /<(!--|math|code|pre)(.*?)(--|\/math|\/code|\/pre)>/is ) {
+	while( $text =~ /<(math|code|pre)(.*?)(\/math|\/code|\/pre)>/is ) {
 		my $tmp = $2;
 		$tmp =~ s/[^\n]//g;
-		$text =~ s/<(!--|math|code|pre)(.*?)(--|\/math|\/code|\/pre)>/$tmp/is;
+		$text =~ s/<(math|code|pre)(.*?)(\/math|\/code|\/pre)>/$tmp/is;
 	}
 
 	@lines = split( /\n/, $text );
@@ -314,6 +314,7 @@ sub GetArticle {
 		}
 		if( /<text xml:space="preserve">(.*)<\/text>/ ) {
 			$article->{'text'} = JAWP::Util::DecodeURL( JAWP::Util::UnescapeHTML( $1 ) );
+			$article->{'text'} =~ s/<!\-\-.*?\-\->//sg;
 
 			return $article;;
 		}
@@ -329,6 +330,11 @@ sub GetArticle {
 				}
 			}
 			$article->{'text'} = JAWP::Util::DecodeURL( JAWP::Util::UnescapeHTML( $article->{'text'} ) );
+			while( $article->{'text'} =~ /<!--(.*?)-->/s ) {
+				my $tmp = $1;
+				$tmp =~ s/[^\n]//g;
+				$article->{'text'} =~ s/<!--(.*?)-->/$tmp/s;
+			}
 
 			return $article;
 		}
@@ -723,7 +729,6 @@ TEXT
 	while( $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
-		$article->{'text'} =~ s/<!\-\-.*?\-\->//sg;
 		$article->{'text'} =~ s/<math.*?<\/math>//sg;
 		$article->{'text'} =~ s/<pre.*?<\/pre>//sg;
 		$article->{'text'} =~ s/<code.*?<\/code>//sg;
