@@ -308,6 +308,7 @@ sub GetArticle {
 	while( <$fh> ) {
 		if( /<title>(.*)<\/title>/ ) {
 			$article->{'title'} = JAWP::Util::UnescapeHTML( $1 );
+			$article->{'title'} =~ s/_/ /g;
 		}
 		if( /<timestamp>(.*)<\/timestamp>/ ) {
 			$article->{'timestamp'} = $1;
@@ -359,7 +360,6 @@ sub GetTitleList {
 
 		$titlelist->{'allcount'}++;
 
-		$article->{'title'} =~ s/_/ /g;
 		if( $article->Namespace eq '標準' ) {
 			if( $article->IsRedirect ) {
 				$titlelist->{'標準_リダイレクト'}->{$article->{'title'}} = 1;
