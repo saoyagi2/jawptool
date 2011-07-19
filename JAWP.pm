@@ -89,7 +89,7 @@ sub LintTitle {
 	my $self = shift;
 	my( @result, $n, $c, $code, $str );
 
-	if( $self->{'title'} =~ /^(利用者|Wikipedia|ファイル|MediaWiki|Template|Help|Category|Portal|プロジェクト|ノート|利用者‐会話|Wikipedia‐ノート|ファイル‐ノート|MediaWiki‐ノート|Template‐ノート|Help‐ノート|Category‐ノート|Portal‐ノート|プロジェクト‐ノート):/ ) {
+	if( $self->Namespace ne '標準' ) {
 		return \@result;
 	}
 
@@ -152,8 +152,7 @@ sub LintText {
 	my $self = shift;
 	my( $text, $checktimestamp, @time, @result, $text2, $n, @lines, @lines2, $headlevel, $code );
 
-	if( $self->{'title'} =~ /^(利用者|Wikipedia|ファイル|MediaWiki|Template|Help|Category|Portal|プロジェクト):/
-		|| $self->{'title'} =~ /^(ノート|利用者‐会話|Wikipedia‐ノート|ファイル‐ノート|MediaWiki‐ノート|Template‐ノート|Help‐ノート|Category‐ノート|Portal‐ノート|プロジェクト‐ノート)/ ) {
+	if( $self->Namespace ne '標準' ) {
 		return \@result;
 	}
 
@@ -356,20 +355,21 @@ sub GetTitleList {
 		$titlelist->{'allcount'}++;
 
 		$article->{'title'} =~ s/_/ /g;
-		if( $article->{'title'} =~ /^(利用者|Wikipedia|ファイル|MediaWiki|Template|Help|Category|Portal|プロジェクト|ノート|利用者‐会話|Wikipedia‐ノート|ファイル‐ノート|MediaWiki‐ノート|Template‐ノート|Help‐ノート|Category‐ノート|Portal‐ノート|プロジェクト‐ノート):(.*)$/ ) {
-			$titlelist->{$1}->{$2} = 1;
-		}
-		else {
-			if( $article->{'text'} =~ /^(#|＃)(REDIRECT|転送)/i ) {
+		if( $article->Namespace eq '標準' ) {
+			if( $article->IsRedirect ) {
 				$titlelist->{'標準_リダイレクト'}->{$article->{'title'}} = 1;
 			}
 			else {
 				$titlelist->{'標準'}->{$article->{'title'}} = 1;
 
-				if( $article->{'text'} =~ /\{\{aimai|人名の曖昧さ回避|地名の曖昧さ回避/ ) {
+				if( $article->IsAimai ) {
 					$titlelist->{'標準_曖昧'}->{$article->{'title'}} = 1;
 				}
 			}
+		}
+		else {
+			$article->{'title'} =~ /:(.*)$/;
+			$titlelist->{$article->Namespace}->{$1} = 1;
 		}
 	}
 	print "\n";
