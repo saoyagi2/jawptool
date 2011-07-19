@@ -43,7 +43,7 @@ sub IsRedirect {
 sub IsAimai {
 	my $self = shift;
 
-	return $self->{'text'} =~ /\{\{aimai|人名の曖昧さ回避|地名の曖昧さ回避/;
+	return $self->{'text'} =~ /\{\{(aimai|人名の曖昧さ回避|地名の曖昧さ回避|山の曖昧さ回避)/i;
 }
 
 
