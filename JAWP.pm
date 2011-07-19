@@ -758,13 +758,7 @@ TEXT
 
 		%count = ();
 
-		while( $article->{'text'} =~ /\[\[(.*?)(\||\]\])/g ) {
-			next if( $1 =~ /[\[\{\}]/ );
-			$word = $1;
-			$word =~ s/#.*?$//;
-			$word =~ s/[_　‎]/ /g;
-			$word =~ s/^( +|)(.*?)( +|)$/$2/;
-			$word = ucfirst $word;
+		foreach $word ( JAWP::Util::GetLinkwordList( $article->{'text'} ) ) {
 			next if( ++$count{$word} > 1 );
 
 			if( defined( $titlelist->{'標準'}->{$word} ) ) {
