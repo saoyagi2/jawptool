@@ -67,6 +67,20 @@ sub IsNoref {
 }
 
 
+# 名前空間取得
+# return 名前空間
+sub Namespace {
+	my $self = shift;
+
+	if( $self->{'title'} =~ /^(利用者|Wikipedia|ファイル|MediaWiki|Template|Help|Category|Portal|プロジェクト|ノート|利用者‐会話|Wikipedia‐ノート|ファイル‐ノート|MediaWiki‐ノート|Template‐ノート|Help‐ノート|Category‐ノート|Portal‐ノート|プロジェクト‐ノート):/ ) {
+		return $1;
+	}
+	else {
+		return( '標準' );
+	}
+}
+
+
 # タイトル文法チェック
 # param $article 記事データ
 # param $titlelist タイトルリスト
