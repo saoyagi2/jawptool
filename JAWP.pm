@@ -815,8 +815,8 @@ sub TitleList {
 	my $report = new JAWP::ReportFile( $reportfile );
 	my( $namespace, $str );
 
-#	$Data::Dumper::Varname = 'titlelist';
-#	$report->OutputDirect( Data::Dumper::Dumper( $titlelist ) );
+	$Data::Dumper::Varname = 'titlelist';
+	$report->OutputDirect( Data::Dumper::Dumper( $titlelist ) );
 }
 
 
