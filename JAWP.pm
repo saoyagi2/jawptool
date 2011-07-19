@@ -532,6 +532,28 @@ sub SortHash {
 }
 
 
+# リンク語リストの取得
+# param $text 元テキスト
+# return リンク語リスト
+sub GetLinkwordList {
+	my $text = shift;
+	my( $word, @wordlist );
+
+	while( $text =~ /\[\[(.*?)(\||\]\])/g ) {
+		next if( $1 =~ /[\[\{\}]/ );
+		$word = $1;
+		$word =~ s/#.*?$//;
+		$word =~ s/[_　‎]/ /g;
+		$word =~ s/^( +|)(.*?)( +|)$/$2/;
+		$word = ucfirst $word;
+
+		push @wordlist, $word;
+	}
+
+	return( @wordlist );
+}
+
+
 ################################################################################
 # JAWP::Appクラス
 ################################################################################
