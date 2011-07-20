@@ -474,7 +474,7 @@ sub TestJAWPUtil {
 
 	# メソッド呼び出しテスト
 	{
-		foreach my $method ( 'UnescapeHTML', 'SortHash' ) {
+		foreach my $method ( 'UnescapeHTML', 'DecodeURL', 'SortHash', 'GetLinkwordList' ) {
 			ok( JAWP::Util->can($method), "call method $method" );
 		}
 	}
@@ -514,6 +514,48 @@ sub TestJAWPUtil {
 		is( $sorted->[1], 'a', 'sorted array[1]' );
 		is( $sorted->[2], 'b', 'sorted array[2]' );
 	}
+
+	# GetLinkwordListテスト
+	{
+		diag( '# Test JAWP::Util::GetLinkwordList' );
+
+		my @result;
+
+		@result = JAWP::Util::GetLinkwordList( '' );
+		is( @result + 0 , 0, '空文字列' );
+
+		@result = JAWP::Util::GetLinkwordList( 'あああ' );
+		is( @result + 0 , 0, '通常文字列' );
+
+		@result = JAWP::Util::GetLinkwordList( '[あああ]' );
+		is( @result + 0 , 0, '外部リンク' );
+
+		@result = JAWP::Util::GetLinkwordList( '[[あああ' );
+		is( @result + 0 , 0, '不完全リンク' );
+
+		@result = JAWP::Util::GetLinkwordList( '[[あああ]]' );
+		is( @result + 0 , 1, 'リンク' );
+		is( $result[0] , 'あああ', 'リンク(リンクワード)' );
+
+		@result = JAWP::Util::GetLinkwordList( 'あああ[[いいい]]ううう' );
+		is( @result + 0 , 1, '文字列中リンク' );
+		is( $result[0] , 'いいい', '文字列中リンク(リンクワード)' );
+
+		@result = JAWP::Util::GetLinkwordList( '[[あああ|いいい]]' );
+		is( @result + 0 , 1, 'パイプリンク' );
+		is( $result[0] , 'あああ', 'パイプリンク(リンクワード)' );
+
+		@result = JAWP::Util::GetLinkwordList( '[[あああ]]いいい[[ううう]]' );
+		is( @result + 0 , 2, '複数リンク' );
+		is( $result[0] , 'あああ', '複数リンク(リンクワード1)' );
+		is( $result[1] , 'ううう', '複数リンク(リンクワード2)' );
+
+		@result = JAWP::Util::GetLinkwordList( "[[あああ]]\nいいい\n[[ううう]]\n" );
+		is( @result + 0 , 2, '複数行テキストリンク' );
+		is( $result[0] , 'あああ', '複数行テキストリンク(リンクワード1)' );
+		is( $result[1] , 'ううう', '複数行テキストリンク(リンクワード2)' );
+	}
+
 }
 
 
