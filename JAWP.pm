@@ -352,7 +352,7 @@ sub GetArticle {
 sub GetTitleList {
 	my $self = shift;
 	my $titlelist = new JAWP::TitleList;
-	my( $n, $article );
+	my( $n, $article, $namespace );
 
 	$n = 1;
 	while( $article = $self->GetArticle ) {
@@ -360,7 +360,8 @@ sub GetTitleList {
 
 		$titlelist->{'allcount'}++;
 
-		if( $article->Namespace eq '標準' ) {
+		$namespace = $article->Namespace;
+		if( $namespace eq '標準' ) {
 			if( $article->IsRedirect ) {
 				$titlelist->{'標準_リダイレクト'}->{$article->{'title'}} = 1;
 			}
@@ -374,7 +375,7 @@ sub GetTitleList {
 		}
 		else {
 			$article->{'title'} =~ /:(.*)$/;
-			$titlelist->{$article->Namespace}->{$1} = 1;
+			$titlelist->{$namespace}->{$1} = 1;
 		}
 	}
 	print "\n";
