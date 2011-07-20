@@ -121,7 +121,7 @@ sub TestJAWPArticle {
 		ok( $article->IsNoref, 'empty' );
 
 		foreach my $text ( '== 参考 ==', '== 文献 ==', '== 資料 ==', '== 書籍 ==', '== 図書 ==', '== 注 ==', '== 註 ==', '== 出典 ==', '== 典拠 ==', '== 出所 ==', '== 原典 ==', '== ソース ==', '== 情報源 ==', '== 引用元 ==', '== 論拠 ==', '== 参照 ==', '<ref>' ) {
-			$article->{'text'} = $text;
+			$article->{'text'} = "あああ\n$text\nいいい\n";
 			ok( !$article->IsNoref, $text );
 		}
 	}
