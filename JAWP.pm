@@ -53,7 +53,7 @@ sub IsAimai {
 sub IsLiving {
 	my $self = shift;
 
-	return( $self->{'text'} =~ /\[\[Category:存命人物/i );
+	return $self->{'text'} =~ /\[\[Category:存命人物/i;
 }
 
 
@@ -63,7 +63,7 @@ sub IsLiving {
 sub IsNoref {
 	my $self = shift;
 
-	return( !( $self->{'text'} =~ /^==+.*(参考|文献|資料|書籍|図書|注|註|出典|典拠|出所|原典|ソース|情報源|引用元|論拠|参照).*==+$/m || $self->{'text'} =~ /<ref/ ) );
+	return !( $self->{'text'} =~ /^==+.*(参考|文献|資料|書籍|図書|注|註|出典|典拠|出所|原典|ソース|情報源|引用元|論拠|参照).*==+$/m || $self->{'text'} =~ /<ref/ );
 }
 
 
@@ -76,7 +76,7 @@ sub Namespace {
 		return $1;
 	}
 	else {
-		return( '標準' );
+		return '標準';
 	}
 }
 
@@ -528,7 +528,7 @@ sub SortHash {
 
 	@result = sort { ( $hash_ref->{$b} <=> $hash_ref->{$a} ) } keys %$hash_ref;
 
-	return( \@result );
+	return \@result;
 }
 
 
@@ -550,7 +550,7 @@ sub GetLinkwordList {
 		push @wordlist, JAWP::Util::DecodeURL( JAWP::Util::UnescapeHTML( $word ) );
 	}
 
-	return( @wordlist );
+	return @wordlist;
 }
 
 
