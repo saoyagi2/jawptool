@@ -126,6 +126,22 @@ sub TestJAWPArticle {
 		}
 	}
 
+	# Namespaceテスト
+	{
+		diag( '# Test Namespace' );
+		my $article = new JAWP::Article;
+		my $namespace;
+
+		is( $article->Namespace, '標準', 'empty' );
+
+		foreach my $title ( '利用者:dummy', 'Wikipedia:dummy', 'ファイル:dummy', 'MediaWiki:dummy', 'Template:dummy', 'Help:dummy', 'Category:dummy', 'Portal:dummy', 'プロジェクト:dummy', 'ノート:dummy', '利用者‐会話:dummy', 'Wikipedia‐ノート:dummy', 'ファイル‐ノート:dummy', 'MediaWiki‐ノート:dummy', 'Template‐ノート:dummy', 'Help‐ノート:dummy', 'Category‐ノート:dummy', 'Portal‐ノート:dummy', 'プロジェクト‐ノート:dummy' ) {
+			$article->{'title'} = $title;
+			$namespace = $title;
+			$namespace =~ s/:.*//;
+			is( $article->Namespace, $namespace, $title );
+		}
+	}
+
 	# LintTitleテスト
 	{
 		diag( '# Test LintTitle' );
