@@ -182,7 +182,7 @@ sub TestJAWPArticle {
 			is( $result_ref->[0], '曖昧さ回避の記事であればカッコの前のスペースはひとつでないといけません', "$title(非リダイレクト)" );
 		}
 		$article->{'text'} = '';
-		foreach my $title ( '株式会社あいうえお', 'あいうえお株式会社' ) {
+		foreach my $title ( '株式会社あいうえお', 'あいうえお株式会社', '有限会社あいうえお', 'あいうえお有限会社', '合名会社あいうえお', 'あいうえお合名会社', '合資会社あいうえお', 'あいうえお合資会社', '合同会社あいうえお', 'あいうえお合同会社' ) {
 			$article->{'title'} = $title;
 			$result_ref = $article->LintTitle;
 			is( @$result_ref + 0, 1, "$title(非リダイレクト)" );
