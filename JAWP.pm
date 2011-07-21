@@ -235,12 +235,13 @@ sub LintText {
 		push @result, '<ref>要素があるのに<references>要素がありません';
 	}
 
-	if( !( $text =~ /\[\[Category:.*\]\]/i ) && !$self->IsAimai ) {
-		push @result, 'カテゴリが一つもありません';
-	}
-
-	if( $self->IsNoref ) {
-		push @result, '出典に関する節がありません';
+	if( !$self->IsAimai ) {
+		if( !( $text =~ /\[\[Category:.*\]\]/i ) ) {
+			push @result, 'カテゴリが一つもありません';
+		}
+		if( $self->IsNoref ) {
+			push @result, '出典に関する節がありません';
+		}
 	}
 
 	return \@result;
