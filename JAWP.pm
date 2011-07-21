@@ -651,7 +651,7 @@ sub LintText {
 	my( $xmlfile, $reportfile ) = @_;
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
 	my $report = new JAWP::ReportFile( $reportfile );
-	my( $n, $article, $result_ref );
+	my( $n, $article, $result_ref, $lintcount );
 
 	$report->OutputDirect( <<"STR"
 = 記事本文lint =
@@ -664,13 +664,18 @@ sub LintText {
 STR
 	);
 
-	$n = 0;
+	$n = $lintcount = 0;
 	while( $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
 		$result_ref = $article->LintText;
 		if( @$result_ref != 0 ) {
 			$report->OutputWikiList( "[[$article->{'title'}]]", $result_ref );
+			$lintcount++;
+			if( $lintcount > 10000 ) {
+				$report->OutputDirect( "\n以下省略\n" );
+				last;
+			}
 		}
 	}
 	print "\n";
