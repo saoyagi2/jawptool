@@ -849,10 +849,21 @@ sub TitleList {
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
 	my $titlelist = $jawpdata->GetTitleList;
 	my $report = new JAWP::ReportFile( $reportfile );
-	my( $namespace, $str );
+	my $namespace;
+	my %varname = (
+		'標準'=>'article', '標準_曖昧'=>'aimai', '標準_リダイレクト'=>'redirect',
+		'利用者'=>'user', 'Wikipedia'=>'wikipedia', 'ファイル'=>'file', 'MediaWiki'=>'mediawiki',
+		'Template'=>'template', 'Help'=>'help', 'Category'=>'category', 'Portal'=>'portal', 'プロジェクト'=>'project',
 
-	$Data::Dumper::Varname = 'titlelist';
-	$report->OutputDirect( Data::Dumper::Dumper( $titlelist ) );
+		'ノート'=>'note', '利用者‐会話'=>'user_talk', 'Wikipedia‐ノート'=>'wikipedia_note', 'ファイル‐ノート'=>'file_note',
+		'MediaWiki‐ノート'=>'mediawiki_note', 'Template‐ノート'=>'template_note', 'Help‐ノート'=>'help_note',
+		'Category‐ノート'=>'category_note', 'Portal‐ノート'=>'portal_note', 'プロジェクト‐ノート'=>'project_note' );
+
+	foreach $namespace ( keys %varname ) {
+		$Data::Dumper::Varname = $varname{$namespace};
+		$report->OutputDirect( Data::Dumper::Dumper( $titlelist->{$namespace} ) );
+		undef $titlelist->{$namespace};
+	}
 }
 
 
