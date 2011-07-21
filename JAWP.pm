@@ -548,7 +548,7 @@ sub GetLinkwordList {
 		$word =~ s/^( +|)(.*?)( +|)$/$2/;
 		$word = ucfirst $word;
 
-		push @wordlist, JAWP::Util::DecodeURL( JAWP::Util::UnescapeHTML( $word ) );
+		push @wordlist, JAWP::Util::DecodeURL( $word );
 	}
 
 	return @wordlist;
