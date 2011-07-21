@@ -152,7 +152,7 @@ sub LintText {
 	my $self = shift;
 	my( $text, $checktimestamp, @time, @result, $text2, $n, @lines, @lines2, $headlevel, $code );
 
-	if( $self->Namespace ne '標準' ) {
+	if( $self->Namespace ne '標準' || $self->IsRedirect ) {
 		return \@result;
 	}
 
@@ -235,7 +235,7 @@ sub LintText {
 		push @result, '<ref>要素があるのに<references>要素がありません';
 	}
 
-	if( !( $text =~ /\[\[Category:.*\]\]/i ) && !$self->IsAimai && !$self->IsRedirect ) {
+	if( !( $text =~ /\[\[Category:.*\]\]/i ) && !$self->IsAimai ) {
 		push @result, 'カテゴリが一つもありません';
 	}
 
