@@ -747,6 +747,24 @@ TEXT
 
 	$report->OutputWiki( '名前空間別ファイル数', \$text );
 
+
+	undef $titlelist->{'利用者'};
+	undef $titlelist->{'利用者‐会話'};
+	undef $titlelist->{'Wikipedia'};
+	undef $titlelist->{'Wikipedia‐ノート'};
+	undef $titlelist->{'ファイル‐ノート'};
+	undef $titlelist->{'MediaWiki'};
+	undef $titlelist->{'MediaWiki‐ノート'};
+	undef $titlelist->{'Template‐ノート'};
+	undef $titlelist->{'Help'};
+	undef $titlelist->{'Help‐ノート'};
+	undef $titlelist->{'Category‐ノート'};
+	undef $titlelist->{'Portal'};
+	undef $titlelist->{'Portal‐ノート'};
+	undef $titlelist->{'プロジェクト'};
+	undef $titlelist->{'プロジェクト‐ノート'};
+
+
 	$n = 1;
 	%linked = %redlink = %redirect = %aimai = %category = %template = %file = ();
 	while( $article = $jawpdata->GetArticle ) {
