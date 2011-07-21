@@ -674,7 +674,7 @@ STR
 			$report->OutputWikiList( "[[$article->{'title'}]]", $result_ref );
 			$lintcount++;
 			if( $lintcount > 10000 ) {
-				$report->OutputDirect( "\n以下省略\n" );
+				$report->OutputDirect( "以下省略\n" );
 				last;
 			}
 		}
@@ -929,10 +929,9 @@ STR
 
 	$report->OutputWikiList( "一覧", \@livingnoreflist );
 	if( $livingnorefcount > 10000 ) {
-		$report->OutputDirect( "以下省略\n" );
+		$report->OutputDirect( "以下省略\n\n" );
 	}
-	$report->OutputDirect( "\n" );
-	$report->OutputDirect( "存命人物記事数 $livingcount\n" );
+	$report->OutputDirect( "存命人物記事数 $livingcount<br>\n" );
 	$report->OutputDirect( "存命人物出典無し記事数 $livingnorefcount\n" );
 }
 
