@@ -320,7 +320,7 @@ sub GetArticle {
 			return $article;;
 		}
 		elsif( /<text xml:space="preserve">(.*)/ ) {
-			$article->{'text'} = "$1\n";
+			$article->{'text'} = JAWP::Util::UnescapeHTML( "$1\n" );
 			while( <$fh> ) {
 				if( /(.*)<\/text>/ ) {
 					$article->{'text'} .= $1;
@@ -330,6 +330,7 @@ sub GetArticle {
 					$article->{'text'} .= $_;
 				}
 			}
+			$article->{'text'} = JAWP::Util::UnescapeHTML( $article->{'text'} );
 			while( $article->{'text'} =~ /<!--(.*?)-->/s ) {
 				my $tmp = $1;
 				$tmp =~ s/[^\n]//g;
