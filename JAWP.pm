@@ -157,10 +157,10 @@ sub LintText {
 	}
 
 	$text = $self->{'text'};
-	while( $text =~ /<(math|code|pre)(.*?)(\/math|\/code|\/pre)>/is ) {
+	while( $text =~ /<(math|code|pre|nowiki)(.*?)(\/math|\/code|\/pre|\/nowiki)>/is ) {
 		my $tmp = $2;
 		$tmp =~ s/[^\n]//g;
-		$text =~ s/<(math|code|pre)(.*?)(\/math|\/code|\/pre)>/$tmp/is;
+		$text =~ s/<(math|code|pre|nowiki)(.*?)(\/math|\/code|\/pre|\/nowiki)>/$tmp/is;
 	}
 
 	@lines = split( /\n/, $text );
