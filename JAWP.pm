@@ -209,7 +209,7 @@ sub LintText {
 				push @result, "ISBNは10桁もしくは13桁でないといけません($n)";
 			}
 		}
-		if( index( $lines[$n - 1], '<!--/' ) >= 0 ) {
+		if( index( $lines[$n - 1], '<!--' ) >= 0 ) {
 			push @result, "閉じられていないコメントタグがあります($n)";
 		}
 		if( $lines[$n - 1] =~ /\{\{(DEFAULTSORT|デフォルトソート):(.*?)\}\}/ || $lines[$n - 1] =~ /\[\[Category:(.*?)\|(.*?)\]\]/i ) {
