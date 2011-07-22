@@ -239,11 +239,258 @@ sub TestJAWPArticle {
 		my $article = new JAWP::Article;
 		my $result_ref;
 
-		$article->{'title'} = '利用者:TEST';
-		$article->{'text'} = '';
+		foreach my $namespace ( '利用者', 'Wikipedia', 'ファイル', 'MediaWiki', 'Template', 'Help', 'Category', 'Portal', 'プロジェクト', 'ノート', '利用者‐会話', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki‐ノート', 'Template‐ノート', 'Help‐ノート', 'Category‐ノート', 'Portal‐ノート', 'プロジェクト‐ノート' ) {
+			$article->{'title'} = "$namespace:TEST";
+			$article->{'text'} = '標準';
+			$result_ref = $article->LintText( $article );
+			is( ref $result_ref, 'ARRAY', 'result is ARRAY reference' );
+			is( @$result_ref + 0, 0, 'result array size 0' );
+		}
+		$article->{'title'} = '標準';
+		$article->{'text'} = '#redirect[[転送先]]';
 		$result_ref = $article->LintText( $article );
 		is( ref $result_ref, 'ARRAY', 'result is ARRAY reference' );
 		is( @$result_ref + 0, 0, 'result array size 0' );
+
+
+		foreach my $tag ( 'math', 'code', 'pre', 'nowiki' ) {
+			$article->{'title'} = '標準';
+			$article->{'text'} = "<$tag>\n= あああ =\n</$tag>\n{{aimai}}";
+			$result_ref = $article->LintText;
+			is( @$result_ref + 0, 0, "$tag タグ内無視(警告数)" );
+
+			$article->{'title'} = '標準';
+			$article->{'text'} = "<$tag>\nあああ\n</$tag>\n= いいい =\n{{aimai}}";
+			$result_ref = $article->LintText;
+			is( @$result_ref + 0, 1, "$tag タグ内無視(行数の不動)-2(警告数)" );
+			is( $result_ref->[0], "レベル1の見出しがあります(4)", "$tag タグ内無視(行数の不動)-2(警告文)" );
+
+		}
+
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "あああ\n= いいい =\nううう\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "見出しレベル1(警告数)" );
+		is( $result_ref->[0], "レベル1の見出しがあります(2)", "見出しレベル1(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "あああ\n== いいい ==\nううう\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "見出しレベル2(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "あああ\n== いいい ==\n=== ううう ===\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "見出しレベル3-1(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "あああ\n=== いいい ===\nううう\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "見出しレベル3-2(警告数)" );
+		is( $result_ref->[0], "レベル3の見出しの前にレベル2の見出しが必要です(2)", "見出しレベル3-2(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "あああ\n== いいい ==\n=== ううう ===\n==== えええ ====\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "見出しレベル4-1(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "あああ\n== いいい ==\n==== えええ ====\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "見出しレベル4-2(警告数)" );
+		is( $result_ref->[0], "レベル4の見出しの前にレベル3の見出しが必要です(3)", "見出しレベル4-2(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "あああ\n==== いいい ====\nううう\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "見出しレベル4-3(警告数)" );
+		is( $result_ref->[0], "レベル4の見出しの前にレベル3の見出しが必要です(2)", "見出しレベル4-3(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "あああ\n== いいい ==\n=== ううう ===\n==== えええ ====\n===== おおお =====\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "見出しレベル5-1(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "あああ\n== いいい ==\n=== ううう ===\n===== おおお =====\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "見出しレベル5-2(警告数)" );
+		is( $result_ref->[0], "レベル5の見出しの前にレベル4の見出しが必要です(4)", "見出しレベル5-2(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "あああ\n===== いいい =====\nううう\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "見出しレベル5-3(警告数)" );
+		is( $result_ref->[0], "レベル5の見出しの前にレベル4の見出しが必要です(2)", "見出しレベル5-3(警告文)" );
+
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "ISBN 0123456789\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "ISBN-1(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "ISBN 012345678901X\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "ISBN-2(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "ISBN=012345678901X\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "ISBN-3(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "ISBN0123456789\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "ISBN-4(警告数)" );
+		is( $result_ref->[0], "ISBN記法では、ISBNと数字の間に半角スペースが必要です(1)", "ISBN-4(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "ISBN 012345678\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "ISBN-5(警告数)" );
+		is( $result_ref->[0], "ISBNは10桁もしくは13桁でないといけません(1)", "ISBN-5(警告文)" );
+
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "<!--\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "不正コメント(警告数)" );
+		is( $result_ref->[0], "閉じられていないコメントタグがあります(1)", "不正コメント(警告文)" );
+
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "{{DEFAULTSORT:あああ}}\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "ソートキー-1(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "{{デフォルトソート:あああ}}\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "ソートキー-2(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[[Category:カテゴリ|あああ]]\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "ソートキー-3(警告数)" );
+
+		foreach my $char ( 'ぁ', 'ぃ', 'ぅ', 'ぇ', 'ぉ', 'っ', 'ゃ', 'ゅ', 'ょ', 'ゎ', 'が', 'ぎ', 'ぐ', 'げ', 'ご', 'ざ', 'じ', 'ず', 'ぜ', 'ぞ', 'だ', 'ぢ', 'づ', 'で', 'ど', 'ば', 'び', 'ぶ', 'べ', 'ぼ', 'ぱ', 'ぴ', 'ぷ', 'ぺ', 'ぽ', 'ー' ) {
+			$article->{'title'} = '標準';
+			$article->{'text'} = "{{DEFAULTSORT:あああ$char}}\n{{aimai}}";
+			$result_ref = $article->LintText;
+			is( @$result_ref + 0, 1, "ソートキー-4 $char(警告数)" );
+			is( $result_ref->[0], "ソートキーには濁音、半濁音、吃音、長音は使用しないことが推奨されます(1)", "ソートキー-4 $char(警告文)" );
+
+			$article->{'title'} = '標準';
+			$article->{'text'} = "{{デフォルトソート:あああ$char}}\n{{aimai}}";
+			$result_ref = $article->LintText;
+			is( @$result_ref + 0, 1, "ソートキー-4 $char(警告数)" );
+			is( $result_ref->[0], "ソートキーには濁音、半濁音、吃音、長音は使用しないことが推奨されます(1)", "ソートキー-4 $char(警告文)" );
+
+			$article->{'title'} = '標準';
+			$article->{'text'} = "[[Category:カテゴリ|あああ$char]]\n{{aimai}}";
+			$result_ref = $article->LintText;
+			is( @$result_ref + 0, 1, "ソートキー-6 $char(警告数)" );
+			is( $result_ref->[0], "ソートキーには濁音、半濁音、吃音、長音は使用しないことが推奨されます(1)", "ソートキー-6 $char(警告文)" );
+		}
+
+
+		$article->{'title'} = '標準';
+		foreach my $char ( '，', '．', '！', '？', '＆', '＠' ) {
+			$article->{'text'} = "$char\n{{aimai}}\n";
+			$result_ref = $article->LintText;
+			is( @$result_ref + 0, 1, "$char(警告数)" );
+			is( $result_ref->[0], "全角記号の使用は推奨されません(1)", "$char(警告文)" );
+		}
+		$article->{'title'} = '標準';
+		foreach my $char ( 'Ａ', 'Ｚ', 'ａ', 'ｚ', '０', '９' ) {
+			$article->{'text'} = "$char\n{{aimai}}\n";
+			$result_ref = $article->LintText;
+			is( @$result_ref + 0, 1, "$char(警告数)" );
+			is( $result_ref->[0], "全角英数字の使用は推奨されません(1)", "$char(警告文)" );
+		}
+		$article->{'title'} = '標準';
+		foreach my $char ( 'ｱ', 'ﾝ', 'ﾞ', 'ﾟ', 'ｧ', 'ｫ', 'ｬ', 'ｮ', '｡', '｢', '｣', '､' ) {
+			$article->{'text'} = "$char\n{{aimai}}\n";
+			$result_ref = $article->LintText;
+			is( @$result_ref + 0, 1, "$char(警告数)" );
+			is( $result_ref->[0], "半角カタカナの使用は推奨されません(1)", "$char(警告文)" );
+		}
+		$article->{'title'} = '標準';
+		foreach my $char ( 'Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ', 'Ⅵ', 'Ⅶ', 'Ⅷ', 'Ⅸ', 'Ⅹ' ) {
+			$article->{'text'} = "$char\n{{aimai}}\n";
+			$result_ref = $article->LintText;
+			is( @$result_ref + 0, 1, "$char(警告数)" );
+			is( $result_ref->[0], "ローマ数字はアルファベットを組み合わせましょう(1)", "$char(警告文)" );
+		}
+		$article->{'title'} = '標準';
+		foreach my $char ( '①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩', '⑪', '⑫', '⑬', '⑭', '⑮', '⑯', '⑰', '⑱', '⑲', '⑳' ) {
+			$article->{'text'} = "$char\n{{aimai}}\n";
+			$result_ref = $article->LintText;
+			is( @$result_ref + 0, 1, "$char(警告数)" );
+			is( $result_ref->[0], "丸付き数字の使用は推奨されません(1)", "$char(警告文)" );
+		}
+
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[ ]\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "カッコ対応-1(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "{ }\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "カッコ対応-2(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "カッコ対応-3(警告数)" );
+		is( $result_ref->[0], "空のリンクまたは閉じられていないカッコがあります(1)", "カッコ対応-3(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "]\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "カッコ対応-4(警告数)" );
+		is( $result_ref->[0], "空のリンクまたは閉じられていないカッコがあります(1)", "カッコ対応-4(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "{\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "カッコ対応-5(警告数)" );
+		is( $result_ref->[0], "空のリンクまたは閉じられていないカッコがあります(1)", "カッコ対応-5(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "}\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "カッコ対応-6(警告数)" );
+		is( $result_ref->[0], "空のリンクまたは閉じられていないカッコがあります(1)", "カッコ対応-6(警告文)" );
+
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "<ref>あああ</ref>\n<references/>\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "ref要素-1(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "<ref>あああ</ref>\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "ref要素-2(警告数)" );
+		is( $result_ref->[0], "<ref>要素があるのに<references>要素がありません", "ref要素-2(警告文)" );
+
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "== 出典 ==";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "カテゴリ無し(警告数)" );
+		is( $result_ref->[0], "カテゴリが一つもありません", "カテゴリ無し(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[[Category:カテゴリ]]";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "出典無し(警告数)" );
+		is( $result_ref->[0], "出典に関する節がありません", "出典無し(警告文)" );
 	}
 }
 
