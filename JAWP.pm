@@ -193,7 +193,7 @@ sub LintText {
 			}
 			$headlevel = 4;
 		}
-		if( $lines[$n - 1] =~ /^====[^=]+?====/ ) {
+		if( $lines[$n - 1] =~ /^=====[^=]+?=====/ ) {
 			if( $headlevel < 4 ) {
 				push @result, "レベル5の見出しの前にレベル4の見出しが必要です($n)";
 			}
