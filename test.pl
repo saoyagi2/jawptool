@@ -214,7 +214,7 @@ sub TestJAWPArticle {
 			$article->{'title'} = $title;
 			$result_ref = $article->LintTitle;
 			is( @$result_ref + 0, 1, "$title(非リダイレクト)" );
-			is( $result_ref->[0], 'ローマ数字はアルファベットを組み合わせましょう。', "$title(非リダイレクト)" );
+			is( $result_ref->[0], 'ローマ数字はアルファベットを組み合わせましょう', "$title(非リダイレクト)" );
 		}
 		$article->{'text'} = '';
 		foreach my $title ( '①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩', '⑪', '⑫', '⑬', '⑭', '⑮', '⑯', '⑰', '⑱', '⑲', '⑳' ) {
