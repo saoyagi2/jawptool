@@ -208,6 +208,11 @@ sub LintText {
 			}
 			$headlevel = 5;
 		}
+		if( $lines[$n - 1] =~ /^(=+)[^=]+(=+)$/ ) {
+			if( length( $1 ) != length( $2 ) ) {
+				push @result, "見出し記法の左右の=の数が一致しません($n)";
+			}
+		}
 		if( $lines[$n - 1] =~ /ISBN[0-9]/i ) {
 			push @result, "ISBN記法では、ISBNと数字の間に半角スペースが必要です($n)";
 		}
@@ -217,6 +222,9 @@ sub LintText {
 			if( length( $code ) != 10 && length( $code ) != 13 ) {
 				push @result, "ISBNは10桁もしくは13桁でないといけません($n)";
 			}
+		}
+		if( $lines[$n - 1] =~ /['’]\d\d年/ ) {
+			push @result, "西暦は全桁表示が推奨されます($n)";
 		}
 		if( index( $lines[$n - 1], '<!--' ) >= 0 ) {
 			push @result, "閉じられていないコメントタグがあります($n)";
@@ -315,6 +323,22 @@ sub LintText {
 			push @result, '出典に関する節がありません';
 		}
 	}
+
+	my( $cat存命, $cat生年, $cat没年 );
+
+	$cat存命 = defined( $category{'存命人物'} );
+	$cat生年 = defined( $category{'生年不明'} ) || grep { /^\d+年生$/ } keys %category;
+	$cat没年 = defined( $category{'没年不明'} ) || grep { /^\d+年没$/ } keys %category;
+	if( $cat存命 && $cat没年 ) {
+		push @result, "存命人物ではありません";
+	}
+	if( ( $cat存命 || $cat没年 ) && !$cat生年 ) {
+		push @result, "生年のカテゴリがありません";
+	}
+	if( $cat生年 && !$cat存命 && !$cat没年 ) {
+		push @result, "存命人物または没年のカテゴリがありません";
+	}
+
 
 	return \@result;
 }

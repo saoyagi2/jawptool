@@ -324,6 +324,11 @@ sub TestJAWPArticle {
 		is( @$result_ref + 0, 1, "見出しレベル5-3(警告数)" );
 		is( $result_ref->[0], "レベル5の見出しの前にレベル4の見出しが必要です(2)", "見出しレベル5-3(警告文)" );
 
+		$article->{'title'} = '標準';
+		$article->{'text'} = "あああ\n== いいい =\nううう\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "見出し(警告数)" );
+		is( $result_ref->[0], "見出し記法の左右の=の数が一致しません(2)", "見出し(警告文)" );
 
 		$article->{'title'} = '標準';
 		$article->{'text'} = "ISBN 0123456789\n{{aimai}}";
@@ -351,6 +356,24 @@ sub TestJAWPArticle {
 		$result_ref = $article->LintText;
 		is( @$result_ref + 0, 1, "ISBN-5(警告数)" );
 		is( $result_ref->[0], "ISBNは10桁もしくは13桁でないといけません(1)", "ISBN-5(警告文)" );
+
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "2011年\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "西暦-1(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "'11年\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "西暦-2(警告数)" );
+		is( $result_ref->[0], "西暦は全桁表示が推奨されます(1)", "西暦-2(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "’11年\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "西暦-3(警告数)" );
+		is( $result_ref->[0], "西暦は全桁表示が推奨されます(1)", "西暦-3(警告文)" );
 
 
 		$article->{'title'} = '標準';
@@ -585,6 +608,79 @@ sub TestJAWPArticle {
 		$result_ref = $article->LintText;
 		is( @$result_ref + 0, 1, "ブロック順序-4(警告数)" );
 		is( $result_ref->[0], "本文、カテゴリ、言語間リンクの順に記述することが推奨されます(5)", "ブロック順序-4(警告文)" );
+
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[[Category:2001年生]]\n[[Category:存命人物]]\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "生没年カテゴリ-1(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[[Category:生年不明]]\n[[Category:存命人物]]\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "生没年カテゴリ-2(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[[Category:2001年生]]\n[[Category:2011年没]]\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "生没年カテゴリ-3(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[[Category:生年不明]]\n[[Category:2011年没]]\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "生没年カテゴリ-4(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[[Category:2001年生]]\n[[Category:没年不明]]\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "生没年カテゴリ-5(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[[Category:生年不明]]\n[[Category:没年不明]]\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "生没年カテゴリ-6(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[[Category:2001年生]]\n[[Category:2011年没]]\n[[Category:存命人物]]\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "生没年カテゴリ-7(警告数)" );
+		is( $result_ref->[0], "存命人物ではありません", "生没年カテゴリ-7(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[[Category:2001年生]]\n[[Category:没年不明]]\n[[Category:存命人物]]\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "生没年カテゴリ-8(警告数)" );
+		is( $result_ref->[0], "存命人物ではありません", "生没年カテゴリ-8(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[[Category:存命人物]]\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "生没年カテゴリ-9(警告数)" );
+		is( $result_ref->[0], "生年のカテゴリがありません", "生没年カテゴリ-9(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[[Category:2011年没]]\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "生没年カテゴリ-10(警告数)" );
+		is( $result_ref->[0], "生年のカテゴリがありません", "生没年カテゴリ-10(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[[Category:没年不明]]\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "生没年カテゴリ-11(警告数)" );
+		is( $result_ref->[0], "生年のカテゴリがありません", "生没年カテゴリ-11(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[[Category:2001年生]]\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "生没年カテゴリ-12(警告数)" );
+		is( $result_ref->[0], "存命人物または没年のカテゴリがありません", "生没年カテゴリ-12(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[[Category:生年不明]]\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "生没年カテゴリ-13(警告数)" );
+		is( $result_ref->[0], "存命人物または没年のカテゴリがありません", "生没年カテゴリ-13(警告文)" );
 	}
 }
 
