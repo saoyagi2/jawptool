@@ -177,7 +177,12 @@ sub LintText {
 	$defaultsort = '';
 	$prevmode = 'text';
 	for( $n = 1; $n < @lines + 1; $n++ ) {
-		$mode = ( $lines[$n - 1] eq '' ? '' : 'text' );
+		if( $lines[$n - 1] eq '' || $lines[$n - 1] =~ /^\s*\{\{.*\}\}\s*$/ ) {
+			$mode = '';
+		}
+		else {
+			$mode = 'text';
+		}
 
 		if( $lines[$n - 1] =~ /^=[^=]+?=/ ) {
 			push @result, "レベル1の見出しがあります($n)";

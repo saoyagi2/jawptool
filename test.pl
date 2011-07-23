@@ -575,10 +575,10 @@ sub TestJAWPArticle {
 		is( $result_ref->[0], "本文、カテゴリ、言語間リンクの順に記述することが推奨されます(3)", "ブロック順序-2(警告文)" );
 
 		$article->{'title'} = '標準';
-		$article->{'text'} = "== 出典 ==\n[[Category:カテゴリ]]\n{{DEFAULTSORT:あああ}}\n[[en:interlink]]'''標準'''\n\n";
+		$article->{'text'} = "== 出典 ==\n[[Category:カテゴリ]]\n{{DEFAULTSORT:あああ}}\n[[en:interlink]]\n'''標準'''\n";
 		$result_ref = $article->LintText;
 		is( @$result_ref + 0, 1, "ブロック順序-3(警告数)" );
-		is( $result_ref->[0], "本文、カテゴリ、言語間リンクの順に記述することが推奨されます(3)", "ブロック順序-3(警告文)" );
+		is( $result_ref->[0], "本文、カテゴリ、言語間リンクの順に記述することが推奨されます(5)", "ブロック順序-3(警告文)" );
 
 		$article->{'title'} = '標準';
 		$article->{'text'} = "'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[en:interlink]]\n[[Category:カテゴリ]]\n";
