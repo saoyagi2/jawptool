@@ -371,7 +371,7 @@ sub TestJAWPArticle {
 		is( @$result_ref + 0, 0, "ソートキー-2(警告数)" );
 
 		$article->{'title'} = '標準';
-		$article->{'text'} = "[[Category:カテゴリ|あああ]]\n{{aimai}}";
+		$article->{'text'} = "{{aimai}}\n[[Category:カテゴリ|あああ]]\n";
 		$result_ref = $article->LintText;
 		is( @$result_ref + 0, 0, "ソートキー-3(警告数)" );
 
@@ -385,14 +385,14 @@ sub TestJAWPArticle {
 			$article->{'title'} = '標準';
 			$article->{'text'} = "{{デフォルトソート:あああ$char}}\n{{aimai}}";
 			$result_ref = $article->LintText;
-			is( @$result_ref + 0, 1, "ソートキー-4 $char(警告数)" );
-			is( $result_ref->[0], "ソートキーには濁音、半濁音、吃音、長音は使用しないことが推奨されます(1)", "ソートキー-4 $char(警告文)" );
+			is( @$result_ref + 0, 1, "ソートキー-5 $char(警告数)" );
+			is( $result_ref->[0], "ソートキーには濁音、半濁音、吃音、長音は使用しないことが推奨されます(1)", "ソートキー-5 $char(警告文)" );
 
 			$article->{'title'} = '標準';
-			$article->{'text'} = "[[Category:カテゴリ|あああ$char]]\n{{aimai}}";
+			$article->{'text'} = "{{aimai}}\n[[Category:カテゴリ|あああ$char]]\n";
 			$result_ref = $article->LintText;
 			is( @$result_ref + 0, 1, "ソートキー-6 $char(警告数)" );
-			is( $result_ref->[0], "ソートキーには濁音、半濁音、吃音、長音は使用しないことが推奨されます(1)", "ソートキー-6 $char(警告文)" );
+			is( $result_ref->[0], "ソートキーには濁音、半濁音、吃音、長音は使用しないことが推奨されます(2)", "ソートキー-6 $char(警告文)" );
 		}
 
 		$article->{'title'} = '標準';
@@ -408,15 +408,15 @@ sub TestJAWPArticle {
 		is( $result_ref->[0], "デフォルトソートではソートキーが必須です(1)", "デフォルトソート-2(警告文)" );
 
 		$article->{'title'} = '標準';
-		$article->{'text'} = "[[Category:カテゴリ1]]\n[[Category:カテゴリ2]]\n{{aimai}}";
+		$article->{'text'} = "{{aimai}}\n[[Category:カテゴリ1]]\n[[Category:カテゴリ2]]\n";
 		$result_ref = $article->LintText;
 		is( @$result_ref + 0, 0, "カテゴリ-1(警告数)" );
 
 		$article->{'title'} = '標準';
-		$article->{'text'} = "[[Category:カテゴリ]]\n[[Category:カテゴリ]]\n{{aimai}}";
+		$article->{'text'} = "{{aimai}}\n[[Category:カテゴリ]]\n[[Category:カテゴリ]]\n";
 		$result_ref = $article->LintText;
 		is( @$result_ref + 0, 1, "カテゴリ-2(警告数)" );
-		is( $result_ref->[0], "既に使用されているカテゴリです(2)", "カテゴリ-2(警告文)" );
+		is( $result_ref->[0], "既に使用されているカテゴリです(3)", "カテゴリ-2(警告文)" );
 
 
 		$article->{'title'} = '標準';
@@ -457,26 +457,38 @@ sub TestJAWPArticle {
 
 
 		$article->{'title'} = '標準';
-		$article->{'text'} = "[[en:dummy]]\n{{aimai}}";
+		$article->{'text'} = "{{aimai}}\n[[en:dummy]]";
 		$result_ref = $article->LintText;
 		is( @$result_ref + 0, 0, "言語間リンク-1(警告数)" );
 
 		$article->{'title'} = '標準';
-		$article->{'text'} = "[[en:dummy]]\n[[fr:dummy]]\n{{aimai}}";
+		$article->{'text'} = "{{aimai}}\n[[en:dummy]]\n[[fr:dummy]]\n";
 		$result_ref = $article->LintText;
 		is( @$result_ref + 0, 0, "言語間リンク-2(警告数)" );
 
 		$article->{'title'} = '標準';
-		$article->{'text'} = "[[en:dummy]]\n[[en:dummy]]\n{{aimai}}";
+		$article->{'text'} = "{{aimai}}\n[[en:dummy]]\n[[en:dummy]]\n";
 		$result_ref = $article->LintText;
 		is( @$result_ref + 0, 1, "言語間リンク-3(警告数)" );
-		is( $result_ref->[0], "言語間リンクが重複しています(2)", "言語間リンク-3(警告文)" );
+		is( $result_ref->[0], "言語間リンクが重複しています(3)", "言語間リンク-3(警告文)" );
 
 		$article->{'title'} = '標準';
-		$article->{'text'} = "[[fr:dummy]]\n[[en:dummy]]\n{{aimai}}";
+		$article->{'text'} = "{{aimai}}\n[[fr:dummy]]\n[[en:dummy]]\n";
 		$result_ref = $article->LintText;
 		is( @$result_ref + 0, 1, "言語間リンク-4(警告数)" );
-		is( $result_ref->[0], "言語間リンクはアルファベット順に並べることが推奨されます(2)", "言語間リンク-4(警告文)" );
+		is( $result_ref->[0], "言語間リンクはアルファベット順に並べることが推奨されます(3)", "言語間リンク-4(警告文)" );
+
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[[2011年]][[1月1日]]\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "年月日リンク-1(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[[2011年1月1日]]\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "年月日リンク-2(警告数)" );
+		is( $result_ref->[0], "年月日へのリンクは年と月日を分けることが推奨されます(1)", "年月日リンク-2(警告文)" );
 
 
 		$article->{'title'} = '標準';
@@ -527,22 +539,52 @@ sub TestJAWPArticle {
 
 
 		$article->{'title'} = '標準';
-		$article->{'text'} = "== 出典 ==\n{{DEFAULTSORT:あああ}}\n";
+		$article->{'text'} = "== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "定義文無し(警告数)" );
+		is( $result_ref->[0], "定義文が見当たりません", "定義文無し(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n";
 		$result_ref = $article->LintText;
 		is( @$result_ref + 0, 1, "カテゴリ無し(警告数)" );
 		is( $result_ref->[0], "カテゴリが一つもありません", "カテゴリ無し(警告文)" );
 
 		$article->{'title'} = '標準';
-		$article->{'text'} = "== 出典 ==\n[[Category:カテゴリ]]";
+		$article->{'text'} = "'''標準'''\n== 出典 ==\n[[Category:カテゴリ]]";
 		$result_ref = $article->LintText;
 		is( @$result_ref + 0, 1, "デフォルトソート無し(警告数)" );
 		is( $result_ref->[0], "デフォルトソートがありません", "デフォルトソート無し(警告文)" );
 
 		$article->{'title'} = '標準';
-		$article->{'text'} = "[[Category:カテゴリ]]\n{{DEFAULTSORT:あああ}}\n";
+		$article->{'text'} = "'''標準'''\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n";
 		$result_ref = $article->LintText;
 		is( @$result_ref + 0, 1, "出典無し(警告数)" );
 		is( $result_ref->[0], "出典に関する節がありません", "出典無し(警告文)" );
+
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n[[en:interlink]]\n";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "ブロック順序-1(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "== 出典 ==\n[[Category:カテゴリ]]\n'''標準'''\n{{DEFAULTSORT:あああ}}\n[[en:interlink]]\n";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "ブロック順序-2(警告数)" );
+		is( $result_ref->[0], "本文、カテゴリ、言語間リンクの順に記述することが推奨されます(3)", "ブロック順序-2(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "== 出典 ==\n[[Category:カテゴリ]]\n{{DEFAULTSORT:あああ}}\n[[en:interlink]]'''標準'''\n\n";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "ブロック順序-3(警告数)" );
+		is( $result_ref->[0], "本文、カテゴリ、言語間リンクの順に記述することが推奨されます(3)", "ブロック順序-3(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[en:interlink]]\n[[Category:カテゴリ]]\n";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "ブロック順序-4(警告数)" );
+		is( $result_ref->[0], "本文、カテゴリ、言語間リンクの順に記述することが推奨されます(5)", "ブロック順序-4(警告文)" );
 	}
 }
 

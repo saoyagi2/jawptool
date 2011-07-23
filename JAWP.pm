@@ -150,7 +150,7 @@ sub LintTitle {
 # return $datalist_ref 結果配列へのリファレンス
 sub LintText {
 	my $self = shift;
-	my( $text, $checktimestamp, @time, @result, $text2, $n, @lines, @lines2, $headlevel, $code, $defaultsort, %category, %interlink, $previnterlink );
+	my( $text, $checktimestamp, @time, @result, $text2, $n, @lines, @lines2, $headlevel, $code, $defaultsort, %category, %interlink, $previnterlink, $mode, $prevmode );
 
 	if( $self->Namespace ne '標準' || $self->IsRedirect ) {
 		return \@result;
@@ -175,7 +175,10 @@ sub LintText {
 
 	$headlevel = 1;
 	$defaultsort = '';
+	$prevmode = 'text';
 	for( $n = 1; $n < @lines + 1; $n++ ) {
+		$mode = 'text' if( $lines[$n - 1] ne '' );
+
 		if( $lines[$n - 1] =~ /^=[^=]+?=/ ) {
 			push @result, "レベル1の見出しがあります($n)";
 		}
@@ -233,6 +236,7 @@ sub LintText {
 			if( $2 =~ /[ぁぃぅぇぉっゃゅょゎがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽー]/ ) {
 				push @result, "ソートキーには濁音、半濁音、吃音、長音は使用しないことが推奨されます($n)";
 			}
+			$mode = 'category';
 		}
 		if( $lines[$n - 1] =~ /[，．！？＆＠]/ ) {
 			push @result, "全角記号の使用は推奨されません($n)";
@@ -258,11 +262,26 @@ sub LintText {
 			}
 			$previnterlink = uc( $1 );
 			$interlink{uc($1)} = 1;
+			$mode = 'interlink';
+		}
+
+		foreach my $word ( JAWP::Util::GetLinkwordList( $lines[$n - 1] ) ) {
+			if( $word =~ /\d+年\d+月\d+日/ ) {
+				push @result, "年月日へのリンクは年と月日を分けることが推奨されます($n)";
+			}
 		}
 
 		if( $lines2[$n - 1] =~ /[\[\]\{\}]/ ) {
 			push @result, "空のリンクまたは閉じられていないカッコがあります($n)";
 		}
+
+		if( $mode eq 'text' && ( $prevmode eq 'category' || $prevmode eq 'interlink' ) ) {
+			push @result, "本文、カテゴリ、言語間リンクの順に記述することが推奨されます($n)";
+		}
+		if( $mode eq 'category' && $prevmode eq 'interlink' ) {
+			push @result, "本文、カテゴリ、言語間リンクの順に記述することが推奨されます($n)";
+		}
+		$prevmode = $mode;
 	}
 
 	@time = gmtime( time() );
@@ -278,6 +297,9 @@ sub LintText {
 	}
 
 	if( !$self->IsAimai ) {
+		if( !( $text =~ /'''.*$self->{'title'}.*'''/ ) ) {
+			push @result, '定義文が見当たりません';
+		}
 		if( keys( %category ) + 0 == 0 ) {
 			push @result, 'カテゴリが一つもありません';
 		}
