@@ -395,6 +395,29 @@ sub TestJAWPArticle {
 			is( $result_ref->[0], "ソートキーには濁音、半濁音、吃音、長音は使用しないことが推奨されます(1)", "ソートキー-6 $char(警告文)" );
 		}
 
+		$article->{'title'} = '標準';
+		$article->{'text'} = "{{DEFAULTSORT:あああ}}\n{{DEFAULTSORT:あああ}}\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "デフォルトソート-1(警告数)" );
+		is( $result_ref->[0], "デフォルトソートが複数存在します(2)", "デフォルトソート-1(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "{{DEFAULTSORT:}}\n\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "デフォルトソート-2(警告数)" );
+		is( $result_ref->[0], "デフォルトソートではソートキーが必須です(1)", "デフォルトソート-2(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[[Category:カテゴリ1]]\n[[Category:カテゴリ2]]\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "カテゴリ-1(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[[Category:カテゴリ]]\n[[Category:カテゴリ]]\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "カテゴリ-2(警告数)" );
+		is( $result_ref->[0], "既に使用されているカテゴリです(2)", "カテゴリ-2(警告文)" );
+
 
 		$article->{'title'} = '標準';
 		foreach my $char ( '，', '．', '！', '？', '＆', '＠' ) {
@@ -431,6 +454,29 @@ sub TestJAWPArticle {
 			is( @$result_ref + 0, 1, "$char(警告数)" );
 			is( $result_ref->[0], "丸付き数字の使用は推奨されません(1)", "$char(警告文)" );
 		}
+
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[[en:dummy]]\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "言語間リンク-1(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[[en:dummy]]\n[[fr:dummy]]\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "言語間リンク-2(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[[en:dummy]]\n[[en:dummy]]\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "言語間リンク-3(警告数)" );
+		is( $result_ref->[0], "言語間リンクが重複しています(2)", "言語間リンク-3(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[[fr:dummy]]\n[[en:dummy]]\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "言語間リンク-4(警告数)" );
+		is( $result_ref->[0], "言語間リンクはアルファベット順に並べることが推奨されます(2)", "言語間リンク-4(警告文)" );
 
 
 		$article->{'title'} = '標準';
@@ -481,13 +527,19 @@ sub TestJAWPArticle {
 
 
 		$article->{'title'} = '標準';
-		$article->{'text'} = "== 出典 ==";
+		$article->{'text'} = "== 出典 ==\n{{DEFAULTSORT:あああ}}\n";
 		$result_ref = $article->LintText;
 		is( @$result_ref + 0, 1, "カテゴリ無し(警告数)" );
 		is( $result_ref->[0], "カテゴリが一つもありません", "カテゴリ無し(警告文)" );
 
 		$article->{'title'} = '標準';
-		$article->{'text'} = "[[Category:カテゴリ]]";
+		$article->{'text'} = "== 出典 ==\n[[Category:カテゴリ]]";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "デフォルトソート無し(警告数)" );
+		is( $result_ref->[0], "デフォルトソートがありません", "デフォルトソート無し(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "[[Category:カテゴリ]]\n{{DEFAULTSORT:あああ}}\n";
 		$result_ref = $article->LintText;
 		is( @$result_ref + 0, 1, "出典無し(警告数)" );
 		is( $result_ref->[0], "出典に関する節がありません", "出典無し(警告文)" );

@@ -150,7 +150,7 @@ sub LintTitle {
 # return $datalist_ref 結果配列へのリファレンス
 sub LintText {
 	my $self = shift;
-	my( $text, $checktimestamp, @time, @result, $text2, $n, @lines, @lines2, $headlevel, $code );
+	my( $text, $checktimestamp, @time, @result, $text2, $n, @lines, @lines2, $headlevel, $code, $defaultsort, %category, %interlink, $previnterlink );
 
 	if( $self->Namespace ne '標準' || $self->IsRedirect ) {
 		return \@result;
@@ -174,6 +174,7 @@ sub LintText {
 	}
 
 	$headlevel = 1;
+	$defaultsort = '';
 	for( $n = 1; $n < @lines + 1; $n++ ) {
 		if( $lines[$n - 1] =~ /^=[^=]+?=/ ) {
 			push @result, "レベル1の見出しがあります($n)";
@@ -212,7 +213,23 @@ sub LintText {
 		if( index( $lines[$n - 1], '<!--' ) >= 0 ) {
 			push @result, "閉じられていないコメントタグがあります($n)";
 		}
-		if( $lines[$n - 1] =~ /\{\{(DEFAULTSORT|デフォルトソート):(.*?)\}\}/ || $lines[$n - 1] =~ /\[\[Category:(.*?)\|(.*?)\]\]/i ) {
+		if( $lines[$n - 1] =~ /\{\{(DEFAULTSORT|デフォルトソート):(.*?)\}\}/ ) {
+			if( $2 eq '' ) {
+				push @result, "デフォルトソートではソートキーが必須です($n)";
+			}
+			if( $2 =~ /[ぁぃぅぇぉっゃゅょゎがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽー]/ ) {
+				push @result, "ソートキーには濁音、半濁音、吃音、長音は使用しないことが推奨されます($n)";
+			}
+			if( $defaultsort ne '' ) {
+				push @result, "デフォルトソートが複数存在します($n)";
+			}
+			$defaultsort = $2;
+		}
+		if( $lines[$n - 1] =~ /\[\[Category:(.*?)(|\|.*?)\]\]/i ) {
+			if( defined( $category{$1} ) ) {
+				push @result, "既に使用されているカテゴリです($n)";
+			}
+			$category{$1} = 1;
 			if( $2 =~ /[ぁぃぅぇぉっゃゅょゎがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽー]/ ) {
 				push @result, "ソートキーには濁音、半濁音、吃音、長音は使用しないことが推奨されます($n)";
 			}
@@ -231,6 +248,16 @@ sub LintText {
 		}
 		if( $lines[$n - 1] =~ /[①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳]/ ) {
 			push @result, "丸付き数字の使用は推奨されません($n)";
+		}
+		if( $lines[$n - 1] =~ /\[\[(aa|aar|ab|abk|ace|ach|ada|ady|ae|af|afa|afh|afr|ain|ak|aka|akk|alb|ale|alg|als|alt|am|amh|an|ang|apa|ar|ara|arc|arg|arm|arn|arp|art|arw|arz|as|asm|ast|ath|aus|av|ava|ave|awa|ay|aym|az|aze|ba|bad|bai|bak|bal|bam|ban|baq|bar|bas|bat|bat\-smg|bcl|be|be\-x\-old|bej|bel|bem|ben|ber|bg|bh|bho|bi|bih|bik|bin|bis|bjn|bla|bm|bn|bnt|bo|bod|bos|bpy|br|bra|bre|bs|bua|bug|bul|bur|bxr|byn|ca|cad|cai|car|cat|cau|cbk\-zam|cdo|ce|ceb|cel|ces|ch|cha|chb|che|chg|chi|chm|chn|cho|chr|chu|chv|chy|ckb|co|cop|cor|cos|cpe|cpf|cpp|cr|cre|crh|crp|cs|csb|cu|cus|cv|cy|cym|cze|da|dak|dan|dar|day|de|del|deu|dgr|din|diq|div|doi|dra|dsb|dua|dum|dut|dv|dyu|dz|dzo|ee|efi|egy|eka|el|ell|elx|eml|en|eng|enm|eo|epo|es|esk|est|et|eu|eus|ewe|ewo|ext|fa|fan|fao|fas|fat|ff|fi|fij|fin|fiu|fiu\-vro|fj|fo|fon|fr|fra|fre|frm|fro|frp|frr|frs|fry|ful|fur|fy|ga|gaa|gag|gan|gay|gd|gem|geo|ger|gez|gil|gl|gla|gle|glg|glk|glv|gmh|gn|goh|gon|gor|got|grb|grc|gre|grn|gu|guj|gv|ha|hai|hak|hat|hau|haw|he|heb|her|hi|hif|hil|him|hin|hit|hmn|hmo|ho|hr|hrv|hsb|ht|hu|hun|hup|hy|hye|hz|ia|iba|ibo|ice|id|ido|ie|ig|ii|iii|ijo|ik|iku|ile|ilo|ina|inc|ind|ine|inh|io|ipk|ira|iro|is|isl|it|ita|iu|ja|jav|jbo|jpn|jpr|jrb|jv|ka|kaa|kab|kac|kal|kam|kan|kar|kas|kat|kau|kaw|kaz|kbd|kg|kha|khi|khm|kho|ki|kik|kin|kir|kj|kk|kl|km|kmb|kn|ko|koi|kok|kom|kon|kor|kos|kpe|kr|krc|kro|kru|ks|ksh|ku|kua|kum|kur|kut|kv|kw|ky|la|lad|lah|lam|lao|lat|lav|lb|lbe|lez|lg|li|lij|lim|lin|lit|lmo|ln|lo|lol|loz|lt|ltg|ltz|lu|lub|lug|lui|lun|luo|lv|mac|mad|mag|mah|mai|mak|mal|man|mao|map|map\-bms|mar|mas|may|mdf|men|mg|mga|mh|mhr|mi|mic|min|mis|mk|mkd|mkh|ml|mlg|mlt|mn|mnc|mni|mno|mo|moh|mol|mon|mos|mr|mri|mrj|ms|msa|mt|mul|mun|mus|mwl|mwr|my|mya|myn|myv|mzn|na|nah|nai|nap|nau|nav|nb|nbl|nd|nde|ndo|nds|nds\-nl|ne|nep|new|ng|nic|niu|nl|nld|nn|nno|no|nob|nog|non|nor|nov|nr|nrm|nso|nub|nv|nwc|ny|nya|nym|nyn|nyo|nzi|oc|oci|oj|oji|ojp|om|or|ori|orm|os|osa|oss|ota|oto|pa|paa|pag|pal|pam|pan|pap|pau|pcd|pdc|peo|per|pfl|phn|pi|pih|pl|pli|pms|pnb|pnt|pol|pon|por|pra|pro|ps|pt|pus|qu|que|raj|rap|rar|rm|rmy|rn|ro|roa|roa\-rup|roa\-tara|roh|rom|ron|ru|rue|rum|run|rus|rw|sa|sad|sag|sah|sai|sal|sam|san|sc|scc|scn|sco|scr|sd|se|sel|sem|sg|sga|sgn|sh|shn|si|sid|simple|sin|sio|sit|sk|sl|sla|slk|slo|slv|sm|sma|sme|smi|smj|smn|smo|sms|sn|sna|snd|so|sog|som|son|sot|spa|sq|sqi|sr|srd|srn|srp|srr|ss|ssa|ssw|st|stq|su|suk|sun|sus|sux|sv|sw|swa|swe|syr|szl|ta|tah|tai|tam|tat|te|tel|tem|ter|tet|tg|tgk|tgl|th|tha|ti|tib|tig|tir|tiv|tju|tk|tkl|tl|tlh|tli|tmh|tn|to|tog|ton|tpi|tr|tru|ts|tsi|tsn|tso|tt|tuk|tum|tup|tur|tut|tw|twi|ty|tyv|udm|ug|uga|uig|uk|ukr|umb|und|ur|urd|uz|uzb|vai|ve|vec|ven|vi|vie|vls|vo|vol|vot|wa|wak|wal|war|was|wel|wen|wln|wo|wol|wuu|xal|xh|xho|yao|yap|yi|yid|yo|yor|za|zap|zea|zen|zh|zh\-classical|zh\-cn|zh\-min\-nan|nan|zh\-tw|zh\-yue|zha|zho|zu|zul|zun):.*\]\]/i ) {
+			if( defined( $previnterlink ) && uc( $previnterlink ) gt uc( $1 ) ) {
+				push @result, "言語間リンクはアルファベット順に並べることが推奨されます($n)";
+			}
+			if( defined( $interlink{uc($1)} ) ) {
+				push @result, "言語間リンクが重複しています($n)";
+			}
+			$previnterlink = uc( $1 );
+			$interlink{uc($1)} = 1;
 		}
 
 		if( $lines2[$n - 1] =~ /[\[\]\{\}]/ ) {
@@ -251,8 +278,11 @@ sub LintText {
 	}
 
 	if( !$self->IsAimai ) {
-		if( !( $text =~ /\[\[Category:.*\]\]/i ) ) {
+		if( keys( %category ) + 0 == 0 ) {
 			push @result, 'カテゴリが一つもありません';
+		}
+		if( $defaultsort eq '' ) {
+			push @result, 'デフォルトソートがありません';
 		}
 		if( $self->IsNoref ) {
 			push @result, '出典に関する節がありません';
