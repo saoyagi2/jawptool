@@ -177,7 +177,7 @@ sub LintText {
 	$defaultsort = '';
 	$prevmode = 'text';
 	for( $n = 1; $n < @lines + 1; $n++ ) {
-		$mode = 'text' if( $lines[$n - 1] ne '' );
+		$mode = ( $lines[$n - 1] eq '' ? '' : 'text' );
 
 		if( $lines[$n - 1] =~ /^=[^=]+?=/ ) {
 			push @result, "レベル1の見出しがあります($n)";
@@ -226,7 +226,7 @@ sub LintText {
 			if( $defaultsort ne '' ) {
 				push @result, "デフォルトソートが複数存在します($n)";
 			}
-			$defaultsort = $2;
+			$defaultsort = 'set';
 		}
 		if( $lines[$n - 1] =~ /\[\[Category:(.*?)(|\|.*?)\]\]/i ) {
 			if( defined( $category{$1} ) ) {
