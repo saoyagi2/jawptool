@@ -594,8 +594,24 @@ sub TestJAWPArticle {
 		$article->{'title'} = '標準';
 		$article->{'text'} = "== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n";
 		$result_ref = $article->LintText;
-		is( @$result_ref + 0, 1, "定義文無し(警告数)" );
-		is( $result_ref->[0], "定義文が見当たりません", "定義文無し(警告文)" );
+		is( @$result_ref + 0, 1, "定義文無し-1(警告数)" );
+		is( $result_ref->[0], "定義文が見当たりません", "定義文無し-1(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "'''あああ'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 1, "定義文無し-2(警告数)" );
+		is( $result_ref->[0], "定義文が見当たりません", "定義文無し-2(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "'''標 準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "定義文無しあり-1(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "''' 標準 '''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "定義文無しあり-2(警告数)" );
 
 		$article->{'title'} = '標準';
 		$article->{'text'} = "'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n";

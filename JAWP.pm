@@ -310,7 +310,14 @@ sub LintText {
 	}
 
 	if( !$self->IsAimai ) {
-		if( !( $text =~ /'''.*$self->{'title'}.*'''/ ) ) {
+		if( $text =~ /'''(.*)'''/ ) {
+			my $tmp = $1;
+			$tmp =~ s/[ 　]//g;
+			if( !( $tmp =~ $self->{'title'} ) ) {
+				push @result, '定義文が見当たりません';
+			}
+		}
+		else {
 			push @result, '定義文が見当たりません';
 		}
 		if( keys( %category ) + 0 == 0 ) {
