@@ -265,6 +265,11 @@ sub TestJAWPArticle {
 			is( @$result_ref + 0, 1, "$tag タグ内無視(行数の不動)-2(警告数)" );
 			is( $result_ref->[0], "レベル1の見出しがあります(4)", "$tag タグ内無視(行数の不動)-2(警告文)" );
 
+			$article->{'title'} = '標準';
+			$article->{'text'} = "<$tag>\nあああ\n</$tag>\n= いいい =\n<$tag>\nううう\n</$tag>{{aimai}}";
+			$result_ref = $article->LintText;
+			is( @$result_ref + 0, 1, "$tag タグ内無視(タグが複数ある場合)-3(警告数)" );
+			is( $result_ref->[0], "レベル1の見出しがあります(4)", "$tag タグ内無視(タグが複数ある場合)-3(警告文)" );
 		}
 
 
