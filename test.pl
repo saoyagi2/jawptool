@@ -611,32 +611,32 @@ sub TestJAWPArticle {
 		$article->{'title'} = '標準';
 		$article->{'text'} = "'''標 準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n";
 		$result_ref = $article->LintText;
-		is( @$result_ref + 0, 0, "定義文無しあり-1(警告数)" );
+		is( @$result_ref + 0, 0, "定義文あり-1(警告数)" );
 
 		$article->{'title'} = '標準';
 		$article->{'text'} = "''' 標準 '''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n";
 		$result_ref = $article->LintText;
-		is( @$result_ref + 0, 0, "定義文無しあり-2(警告数)" );
+		is( @$result_ref + 0, 0, "定義文あり-2(警告数)" );
 
 		$article->{'title'} = '標 準';
 		$article->{'text'} = "''' 標 準 '''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n";
 		$result_ref = $article->LintText;
-		is( @$result_ref + 0, 0, "定義文無しあり-3(警告数)" );
+		is( @$result_ref + 0, 0, "定義文あり-3(警告数)" );
 
 		$article->{'title'} = '標準';
 		$article->{'text'} = "'''あああ'''\n''' 標準 '''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n";
 		$result_ref = $article->LintText;
-		is( @$result_ref + 0, 0, "定義文無しあり-4(警告数)" );
+		is( @$result_ref + 0, 0, "定義文あり-4(警告数)" );
 
 		$article->{'title'} = '標準 (曖昧さ回避)';
 		$article->{'text'} = "'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n";
 		$result_ref = $article->LintText;
-		is( @$result_ref + 0, 0, "定義文無しあり-4(警告数)" );
+		is( @$result_ref + 0, 0, "定義文あり-5(警告数)" );
 
 		$article->{'title'} = 'Abc';
 		$article->{'text'} = "'''abc'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n";
 		$result_ref = $article->LintText;
-		is( @$result_ref + 0, 0, "定義文無しあり-4(警告数)" );
+		is( @$result_ref + 0, 0, "定義文あり-6(警告数)" );
 
 		$article->{'title'} = '標準';
 		$article->{'text'} = "'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n";
