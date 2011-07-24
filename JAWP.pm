@@ -279,7 +279,7 @@ sub LintText {
 		}
 
 		foreach my $word ( JAWP::Util::GetLinkwordList( $lines[$n - 1] ) ) {
-			if( $word =~ /\d+年\d+月\d+日/ ) {
+			if( $word =~ /^\d+年\d+月\d+日$/ ) {
 				push @result, "年月日へのリンクは年と月日を分けることが推奨されます($n)";
 			}
 		}
