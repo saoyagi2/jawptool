@@ -311,14 +311,16 @@ sub LintText {
 
 	if( !$self->IsAimai ) {
 		my $teigi = 0;
-		while( $text =~ /'''(.*)'''/g ) {
-			if( $1 =~ $self->{'title'} ) {
+		my $title = $self->{'title'};
+		$title =~ s/ \(.*?\)//;
+		while( $text =~ /'''(.*)'''/g || $1 =~ lcfirst $title ) {
+			if( $1 =~ $title ) {
 				$teigi = 1;
 				last;
 			}
 			my $tmp = $1;
 			$tmp =~ s/[ 　]//g;
-			if( $tmp =~ $self->{'title'} ) {
+			if( $tmp =~ $title || $tmp =~ lcfirst $title ) {
 				$teigi = 1;
 				last;
 			}

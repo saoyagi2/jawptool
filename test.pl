@@ -628,6 +628,16 @@ sub TestJAWPArticle {
 		$result_ref = $article->LintText;
 		is( @$result_ref + 0, 0, "定義文無しあり-4(警告数)" );
 
+		$article->{'title'} = '標準 (曖昧さ回避)';
+		$article->{'text'} = "'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "定義文無しあり-4(警告数)" );
+
+		$article->{'title'} = 'Abc';
+		$article->{'text'} = "'''abc'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "定義文無しあり-4(警告数)" );
+
 		$article->{'title'} = '標準';
 		$article->{'text'} = "'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n";
 		$result_ref = $article->LintText;
