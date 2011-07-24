@@ -184,25 +184,25 @@ sub LintText {
 			$mode = 'text';
 		}
 
-		if( $lines[$n - 1] =~ /^=[^=]+?=/ ) {
+		if( $lines[$n - 1] =~ /^=[^=]+?=$/ ) {
 			push @result, "レベル1の見出しがあります($n)";
 		}
-		if( $lines[$n - 1] =~ /^==[^=]+?==/ ) {
+		if( $lines[$n - 1] =~ /^==[^=]+?==$/ ) {
 			$headlevel = 2;
 		}
-		if( $lines[$n - 1] =~ /^===[^=]+?===/ ) {
+		if( $lines[$n - 1] =~ /^===[^=]+?===$/ ) {
 			if( $headlevel < 2 ) {
 				push @result, "レベル3の見出しの前にレベル2の見出しが必要です($n)";
 			}
 			$headlevel = 3;
 		}
-		if( $lines[$n - 1] =~ /^====[^=]+?====/ ) {
+		if( $lines[$n - 1] =~ /^====[^=]+?====$/ ) {
 			if( $headlevel < 3 ) {
 				push @result, "レベル4の見出しの前にレベル3の見出しが必要です($n)";
 			}
 			$headlevel = 4;
 		}
-		if( $lines[$n - 1] =~ /^=====[^=]+?=====/ ) {
+		if( $lines[$n - 1] =~ /^=====[^=]+?=====$/ ) {
 			if( $headlevel < 4 ) {
 				push @result, "レベル5の見出しの前にレベル4の見出しが必要です($n)";
 			}

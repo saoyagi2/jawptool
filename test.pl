@@ -280,9 +280,19 @@ sub TestJAWPArticle {
 		is( $result_ref->[0], "レベル1の見出しがあります(2)", "見出しレベル1(警告文)" );
 
 		$article->{'title'} = '標準';
+		$article->{'text'} = "あああ\n = いいい = \nううう\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "無効な見出しレベル1(警告数)" );
+
+		$article->{'title'} = '標準';
 		$article->{'text'} = "あああ\n== いいい ==\nううう\n{{aimai}}";
 		$result_ref = $article->LintText;
 		is( @$result_ref + 0, 0, "見出しレベル2(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "あああ\n == いいい == \nううう\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "無効な見出しレベル2(警告数)" );
 
 		$article->{'title'} = '標準';
 		$article->{'text'} = "あああ\n== いいい ==\n=== ううう ===\n{{aimai}}";
@@ -294,6 +304,11 @@ sub TestJAWPArticle {
 		$result_ref = $article->LintText;
 		is( @$result_ref + 0, 1, "見出しレベル3-2(警告数)" );
 		is( $result_ref->[0], "レベル3の見出しの前にレベル2の見出しが必要です(2)", "見出しレベル3-2(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "あああ\n === いいい === \nううう\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "無効な見出しレベル3(警告数)" );
 
 		$article->{'title'} = '標準';
 		$article->{'text'} = "あああ\n== いいい ==\n=== ううう ===\n==== えええ ====\n{{aimai}}";
@@ -313,6 +328,11 @@ sub TestJAWPArticle {
 		is( $result_ref->[0], "レベル4の見出しの前にレベル3の見出しが必要です(2)", "見出しレベル4-3(警告文)" );
 
 		$article->{'title'} = '標準';
+		$article->{'text'} = "あああ\n ==== いいい ==== \nううう\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "無効な見出しレベル4(警告数)" );
+
+		$article->{'title'} = '標準';
 		$article->{'text'} = "あああ\n== いいい ==\n=== ううう ===\n==== えええ ====\n===== おおお =====\n{{aimai}}";
 		$result_ref = $article->LintText;
 		is( @$result_ref + 0, 0, "見出しレベル5-1(警告数)" );
@@ -328,6 +348,11 @@ sub TestJAWPArticle {
 		$result_ref = $article->LintText;
 		is( @$result_ref + 0, 1, "見出しレベル5-3(警告数)" );
 		is( $result_ref->[0], "レベル5の見出しの前にレベル4の見出しが必要です(2)", "見出しレベル5-3(警告文)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "あああ\n ===== いいい ===== \nううう\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "無効な見出しレベル5(警告数)" );
 
 		$article->{'title'} = '標準';
 		$article->{'text'} = "あああ\n== いいい =\nううう\n{{aimai}}";
