@@ -538,10 +538,15 @@ sub TestJAWPArticle {
 		is( @$result_ref + 0, 0, "年月日リンク-1(警告数)" );
 
 		$article->{'title'} = '標準';
+		$article->{'text'} = "[[2011年1月1日は元旦]]\n{{aimai}}";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "年月日リンク-2(警告数)" );
+
+		$article->{'title'} = '標準';
 		$article->{'text'} = "[[2011年1月1日]]\n{{aimai}}";
 		$result_ref = $article->LintText;
-		is( @$result_ref + 0, 1, "年月日リンク-2(警告数)" );
-		is( $result_ref->[0], "年月日へのリンクは年と月日を分けることが推奨されます(1)", "年月日リンク-2(警告文)" );
+		is( @$result_ref + 0, 1, "年月日リンク-3(警告数)" );
+		is( $result_ref->[0], "年月日へのリンクは年と月日を分けることが推奨されます(1)", "年月日リンク-3(警告文)" );
 
 
 		$article->{'title'} = '標準';
@@ -612,6 +617,16 @@ sub TestJAWPArticle {
 		$article->{'text'} = "''' 標準 '''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n";
 		$result_ref = $article->LintText;
 		is( @$result_ref + 0, 0, "定義文無しあり-2(警告数)" );
+
+		$article->{'title'} = '標 準';
+		$article->{'text'} = "''' 標 準 '''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "定義文無しあり-3(警告数)" );
+
+		$article->{'title'} = '標準';
+		$article->{'text'} = "'''あああ'''\n''' 標準 '''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n";
+		$result_ref = $article->LintText;
+		is( @$result_ref + 0, 0, "定義文無しあり-4(警告数)" );
 
 		$article->{'title'} = '標準';
 		$article->{'text'} = "'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n";
