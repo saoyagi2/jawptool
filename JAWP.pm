@@ -313,8 +313,8 @@ sub LintText {
 		my $teigi = 0;
 		my $title = $self->{'title'};
 		$title =~ s/ \(.*?\)//;
-		while( $text =~ /'''(.*)'''/g || $1 =~ lcfirst $title ) {
-			if( $1 =~ $title ) {
+		while( $text =~ /'''(.*)'''/g ) {
+			if( $1 =~ $title || $1 =~ lcfirst $title ) {
 				$teigi = 1;
 				last;
 			}
