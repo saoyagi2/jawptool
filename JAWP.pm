@@ -310,14 +310,16 @@ sub LintText {
 	}
 
 	if( !$self->IsAimai ) {
-		if( $text =~ /'''(.*)'''/ ) {
+		my $teigi = 0;
+		while( $text =~ /'''(.*)'''/g ) {
 			my $tmp = $1;
 			$tmp =~ s/[ 　]//g;
-			if( !( $tmp =~ $self->{'title'} ) ) {
-				push @result, '定義文が見当たりません';
+			if( $tmp =~ $self->{'title'} ) {
+				$teigi = 1;
+				last;
 			}
 		}
-		else {
+		if( !$teigi ) {
 			push @result, '定義文が見当たりません';
 		}
 		if( keys( %category ) + 0 == 0 ) {
