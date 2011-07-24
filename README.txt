@@ -39,7 +39,7 @@
 
 usageは次の通りです。
 <pre>
-jawptool 0.10
+jawptool 0.11
 
 Usage: jawptool.pl command xmlfile reportfile
 
@@ -58,8 +58,16 @@ command:
 *2011年5月29日 - lint機能一通り完成。
 *2011年6月3日 - jawptoolに名称変更。
 *2011年7月13日 - 0.10公開。
+*2011年7月24日 - 0.11公開。修正内容は以下の通り。
+**lint-textのチェック項目強化
+**lint-textの出力件数の上限を10000件に設定。
+**titlelistの出力形式を修正
+**テスト強化
+**多少の高速化
+**メモリ使用量の多少の削減
+**その他バグ修正
 
-より詳しい開発の経緯は http://www.saoyagi2.net/wikimedian/ に書かれています(それ以外のことも書いてますが)。
+より詳しい開発の経緯は http://www.saoyagi2.net/wikimedian/ に書かれています(それ以外のことも書いてますが)。コードの具体的な修正内容は http://sourceforge.jp/projects/jawptool/svn/view/ で閲覧できます。
 
 == ライセンス ==
 本プログラムはGPLv3でライセンスされます。ライセンスの詳細は同梱のGPL-3.0.txtを参照下さい。日本語参考訳は http://sourceforge.jp/projects/opensource/wiki/licenses%252FGNU_General_Public_License_version_3.0 などにあります。
@@ -73,8 +81,6 @@ command:
 
 == TODO ==
 *XMLパースが超いい加減なのをちゃんとする。ただし、速度低下は出来ればしないように。
-*全体的に高速化。特にXMLパース。
-*全体的に省メモリ化。特にstatisticのメモリ消費が激しい。
 *lint-textのCGI版を作る。
 *Appクラスにある処理を別クラスに移動させ、Appは出来るだけスリムに。
 *テストの充実
