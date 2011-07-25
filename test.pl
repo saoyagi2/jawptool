@@ -1158,7 +1158,7 @@ sub TestJAWPApp {
 	# メソッド呼び出しテスト
 	{
 		foreach my $method ( 'Run', 'Usage', 'LintTitle', 'LintText',
-			'Statistic', 'StatisticReportSub', 'TitleList', 'LivingNoref' ) {
+			'Statistic', 'StatisticReportSub1', 'StatisticReportSub2', 'TitleList', 'LivingNoref' ) {
 			ok( JAWP::App->can($method), "call method $method" );
 		}
 	}

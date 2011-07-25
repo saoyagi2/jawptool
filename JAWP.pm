@@ -804,71 +804,11 @@ sub Statistic {
 STR
 	);
 
-	$text = sprintf( <<"TEXT"
-{| class=\"wikitable\" style=\"text-align:right\"
-! colspan=\"2\" | 本体 !! colspan=\"2\" | ノート
-|-
-! 名前 !! ファイル数 !! 名前 !! ファイル数
-|-
-|通常記事 || %d || ノート || %d
-|-
-|曖昧さ回避 || %d ||
-|-
-|リダイレクト || %d ||
-|-
-|利用者 || %d || 利用者‐会話 || %d
-|-
-|Wikipedia || %d || Wikipedia‐ノート || %d
-|-
-|ファイル || %d || ファイル‐ノート || %d
-|-
-|MediaWiki || %d || MediaWiki‐ノート || %d
-|-
-|Template || %d || Template‐ノート || %d
-|-
-|Help || %d || Help‐ノート || %d
-|-
-|Category || %d || Category‐ノート || %d
-|-
-|Portal || %d || Portal‐ノート || %d
-|-
-|プロジェクト || %d || プロジェクト‐ノート || %d
-|}
-全%d件
-TEXT
-		, ( keys %{ $titlelist->{'標準'} } ) + 0, ( keys %{ $titlelist->{'ノート'} } ) + 0
-		, ( keys %{ $titlelist->{'標準_曖昧'} } ) + 0
-		, ( keys %{ $titlelist->{'標準_リダイレクト'} } ) + 0
-		, ( keys %{ $titlelist->{'利用者'} } ) + 0, ( keys %{ $titlelist->{'利用者‐会話'} } ) + 0
-		, ( keys %{ $titlelist->{'Wikipedia'} } ) + 0, ( keys %{ $titlelist->{'Wikipedia‐ノート'} } ) + 0
-		, ( keys %{ $titlelist->{'ファイル'} } ) + 0, ( keys %{ $titlelist->{'ファイル‐ノート'} } ) + 0
-		, ( keys %{ $titlelist->{'MediaWiki'} } ) + 0, ( keys %{ $titlelist->{'MediaWiki‐ノート'} } ) + 0
-		, ( keys %{ $titlelist->{'Template'} } ) + 0, ( keys %{ $titlelist->{'Template‐ノート'} } ) + 0
-		, ( keys %{ $titlelist->{'Help'} } ) + 0, ( keys %{ $titlelist->{'Help‐ノート'} } ) + 0
-		, ( keys %{ $titlelist->{'Category'} } ) + 0, ( keys %{ $titlelist->{'Category‐ノート'} } ) + 0
-		, ( keys %{ $titlelist->{'Portal'} } ) + 0, ( keys %{ $titlelist->{'Portal‐ノート'} } ) + 0
-		, ( keys %{ $titlelist->{'プロジェクト'} } ) + 0, ( keys %{ $titlelist->{'プロジェクト‐ノート'} } ) + 0
-		, $titlelist->{'allcount'} );
+	StatisticReportSub1( $titlelist, $report );
 
-	$report->OutputWiki( '名前空間別ファイル数', \$text );
-
-
-	undef $titlelist->{'利用者'};
-	undef $titlelist->{'利用者‐会話'};
-	undef $titlelist->{'Wikipedia'};
-	undef $titlelist->{'Wikipedia‐ノート'};
-	undef $titlelist->{'ファイル‐ノート'};
-	undef $titlelist->{'MediaWiki'};
-	undef $titlelist->{'MediaWiki‐ノート'};
-	undef $titlelist->{'Template‐ノート'};
-	undef $titlelist->{'Help'};
-	undef $titlelist->{'Help‐ノート'};
-	undef $titlelist->{'Category‐ノート'};
-	undef $titlelist->{'Portal'};
-	undef $titlelist->{'Portal‐ノート'};
-	undef $titlelist->{'プロジェクト'};
-	undef $titlelist->{'プロジェクト‐ノート'};
-
+	foreach my $namespace ( '利用者', '利用者‐会話', 'Wikipedia', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki', 'MediaWiki‐ノート', 'Template‐ノート', 'Help', 'Help‐ノート', 'Category‐ノート', 'Portal', 'Portal‐ノート', 'プロジェクト', 'プロジェクト‐ノート' ) {
+		undef $titlelist->{$namespace};
+	}
 
 	$n = 1;
 	%linked = %redlink = %redirect = %aimai = %category = %template = %file = ();
@@ -930,22 +870,79 @@ TEXT
 	}
 	print "\n";
 
-	StatisticReportSub( '被リンク数ランキング', \%linked, '', $report );
-	StatisticReportSub( 'リダイレクト呼出数ランキング', \%redirect, '', $report );
-	StatisticReportSub( '曖昧さ回避呼出数ランキング', \%aimai, '', $report );
-	StatisticReportSub( '赤リンク数ランキング', \%redlink, '', $report );
-	StatisticReportSub( 'カテゴリ使用数ランキング', \%category, ':Category:', $report );
-	StatisticReportSub( 'ファイル使用数ランキング', \%file, ':ファイル:', $report );
-	StatisticReportSub( 'テンプレート使用数ランキング', \%template, ':Template:', $report );
+	StatisticReportSub2( '被リンク数ランキング', \%linked, '', $report );
+	StatisticReportSub2( 'リダイレクト呼出数ランキング', \%redirect, '', $report );
+	StatisticReportSub2( '曖昧さ回避呼出数ランキング', \%aimai, '', $report );
+	StatisticReportSub2( '赤リンク数ランキング', \%redlink, '', $report );
+	StatisticReportSub2( 'カテゴリ使用数ランキング', \%category, ':Category:', $report );
+	StatisticReportSub2( 'ファイル使用数ランキング', \%file, ':ファイル:', $report );
+	StatisticReportSub2( 'テンプレート使用数ランキング', \%template, ':Template:', $report );
 }
 
 
-# データ統計レポート出力サブモジュール
+# データ統計レポート出力サブモジュール1
+# param $titlelist JAWP::TitleListオブジェクト
+# param $report JAWP::Reportオブジェクト
+sub StatisticReportSub1 {
+	my( $titlelist, $report ) = @_;
+	my $text;
+
+	$text = sprintf( <<"TEXT"
+{| class=\"wikitable\" style=\"text-align:right\"
+! colspan=\"2\" | 本体 !! colspan=\"2\" | ノート
+|-
+! 名前 !! ファイル数 !! 名前 !! ファイル数
+|-
+|通常記事 || %d || ノート || %d
+|-
+|曖昧さ回避 || %d ||
+|-
+|リダイレクト || %d ||
+|-
+|利用者 || %d || 利用者‐会話 || %d
+|-
+|Wikipedia || %d || Wikipedia‐ノート || %d
+|-
+|ファイル || %d || ファイル‐ノート || %d
+|-
+|MediaWiki || %d || MediaWiki‐ノート || %d
+|-
+|Template || %d || Template‐ノート || %d
+|-
+|Help || %d || Help‐ノート || %d
+|-
+|Category || %d || Category‐ノート || %d
+|-
+|Portal || %d || Portal‐ノート || %d
+|-
+|プロジェクト || %d || プロジェクト‐ノート || %d
+|}
+全%d件
+TEXT
+		, ( keys %{ $titlelist->{'標準'} } ) + 0, ( keys %{ $titlelist->{'ノート'} } ) + 0
+		, ( keys %{ $titlelist->{'標準_曖昧'} } ) + 0
+		, ( keys %{ $titlelist->{'標準_リダイレクト'} } ) + 0
+		, ( keys %{ $titlelist->{'利用者'} } ) + 0, ( keys %{ $titlelist->{'利用者‐会話'} } ) + 0
+		, ( keys %{ $titlelist->{'Wikipedia'} } ) + 0, ( keys %{ $titlelist->{'Wikipedia‐ノート'} } ) + 0
+		, ( keys %{ $titlelist->{'ファイル'} } ) + 0, ( keys %{ $titlelist->{'ファイル‐ノート'} } ) + 0
+		, ( keys %{ $titlelist->{'MediaWiki'} } ) + 0, ( keys %{ $titlelist->{'MediaWiki‐ノート'} } ) + 0
+		, ( keys %{ $titlelist->{'Template'} } ) + 0, ( keys %{ $titlelist->{'Template‐ノート'} } ) + 0
+		, ( keys %{ $titlelist->{'Help'} } ) + 0, ( keys %{ $titlelist->{'Help‐ノート'} } ) + 0
+		, ( keys %{ $titlelist->{'Category'} } ) + 0, ( keys %{ $titlelist->{'Category‐ノート'} } ) + 0
+		, ( keys %{ $titlelist->{'Portal'} } ) + 0, ( keys %{ $titlelist->{'Portal‐ノート'} } ) + 0
+		, ( keys %{ $titlelist->{'プロジェクト'} } ) + 0, ( keys %{ $titlelist->{'プロジェクト‐ノート'} } ) + 0
+		, $titlelist->{'allcount'} );
+
+	$report->OutputWiki( '名前空間別ファイル数', \$text );
+}
+
+
+# データ統計レポート出力サブモジュール2
 # param $title レポートタイトル
 # param $data_ref データハッシュへのリファレンス
 # param $prefix リンク出力時のプレフィックス
 # param $report JAWP::Reportオブジェクト
-sub StatisticReportSub {
+sub StatisticReportSub2 {
 	my( $title, $data_ref, $prefix, $report ) = @_;
 	my( $data2_ref, $text );
 
