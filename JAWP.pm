@@ -655,6 +655,26 @@ sub GetLinkwordList {
 }
 
 
+# テンプレート呼出し語リストの取得
+# param $text 元テキスト
+# return リンク語リスト
+sub GetTemplatewordList {
+	my $text = shift;
+	my( $word, @wordlist );
+
+	while( $text =~ /\{\{(.*?)(\||\}\})/g ) {
+		$word = $1;
+		$word =~ s/[_　‎]/ /g;
+		$word =~ s/^( +|)(.*?)( +|)$/$2/;
+		$word = ucfirst $word;
+
+		push @wordlist, JAWP::Util::DecodeURL( $word );
+	}
+
+	return @wordlist;
+}
+
+
 ################################################################################
 # JAWP::Appクラス
 ################################################################################
@@ -858,11 +878,7 @@ STR
 			}
 		}
 
-		while( $article->{'text'} =~ /\{\{(.*?)(\||\}\})/g ) {
-			$word = $1;
-			$word =~ s/[_　‎]/ /g;
-			$word =~ s/^( +|)(.*?)( +|)$/$2/;
-			$word = ucfirst $word;
+		foreach $word ( JAWP::Util::GetTemplatewordList( $article->{'text'} ) ) {
 			next if( ++$count{$word} > 1 );
 
 			$template{$word}++ if( defined( $titlelist->{'Template'}->{$word} ) );

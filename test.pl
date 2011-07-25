@@ -1063,7 +1063,7 @@ sub TestJAWPUtil {
 
 	# メソッド呼び出しテスト
 	{
-		foreach my $method ( 'UnescapeHTML', 'DecodeURL', 'SortHash', 'GetLinkwordList' ) {
+		foreach my $method ( 'UnescapeHTML', 'DecodeURL', 'SortHash', 'GetLinkwordList', 'GetTemplatewordList' ) {
 			ok( JAWP::Util->can($method), "call method $method" );
 		}
 	}
@@ -1145,6 +1145,46 @@ sub TestJAWPUtil {
 		is( $result[1] , 'ううう', '複数行テキストリンク(リンクワード2)' );
 	}
 
+	# GetTemplatewordListテスト
+	{
+		diag( '# Test JAWP::Util::GetTemplatewordList' );
+
+		my @result;
+
+		@result = JAWP::Util::GetTemplatewordList( '' );
+		is( @result + 0 , 0, '空文字列' );
+
+		@result = JAWP::Util::GetTemplatewordList( 'あああ' );
+		is( @result + 0 , 0, '通常文字列' );
+
+		@result = JAWP::Util::GetTemplatewordList( '{あああ}' );
+		is( @result + 0 , 0, '不完全呼び出し-1' );
+
+		@result = JAWP::Util::GetTemplatewordList( '{{あああ' );
+		is( @result + 0 , 0, '不完全呼び出し-2' );
+
+		@result = JAWP::Util::GetTemplatewordList( '{{あああ}}' );
+		is( @result + 0 , 1, '呼び出し-1' );
+		is( $result[0] , 'あああ', '呼び出し(テンプレートワード)' );
+
+		@result = JAWP::Util::GetTemplatewordList( 'あああ{{いいい}}ううう' );
+		is( @result + 0 , 1, '文字列中呼び出し' );
+		is( $result[0] , 'いいい', '文字列中呼び出し(テンプレートワード)' );
+
+		@result = JAWP::Util::GetTemplatewordList( '{{あああ|いいい}}' );
+		is( @result + 0 , 1, 'パイプリンク' );
+		is( $result[0] , 'あああ', 'パラメータ付き呼び出し(テンプレートワード)' );
+
+		@result = JAWP::Util::GetTemplatewordList( '{{あああ}}いいい{{ううう}}' );
+		is( @result + 0 , 2, '複数リンク' );
+		is( $result[0] , 'あああ', '複数呼び出し(テンプレートワード1)' );
+		is( $result[1] , 'ううう', '複数呼び出し(テンプレートワード2)' );
+
+		@result = JAWP::Util::GetTemplatewordList( "{{あああ}}\nいいい\n{{ううう}}\n" );
+		is( @result + 0 , 2, '複数行テキスト呼び出し' );
+		is( $result[0] , 'あああ', '複数行テキスト呼び出し(テンプレートワード1)' );
+		is( $result[1] , 'ううう', '複数行テキスト呼び出し(テンプレートワード2)' );
+	}
 }
 
 
