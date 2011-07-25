@@ -493,7 +493,7 @@ package JAWP::ReportFile;
 
 
 # コンストラクタ
-# param $filename レポートファイル名。未指定なら'jawp-report.txt'
+# param $filename レポートファイル名
 sub new {
 	my( $class, $filename ) = @_;
 	my( $self, $fh );
