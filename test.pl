@@ -1189,7 +1189,85 @@ sub TestJAWPUtil {
 	# GetLinkTypeテスト
 	{
 		diag( '# Test JAWP::Util::GetLinkType' );
+
+		my( $linktype, $word );
 		my $titlelist = new JAWP::TitleList;
+
+		$titlelist->{'標準'} = { '標準記事'=>1, '曖昧記事'=>1 };
+		$titlelist->{'標準_曖昧'} = { '曖昧記事'=>1 };
+		$titlelist->{'標準_リダイレクト'} = { 'リダイレクト記事'=>1 };
+		$titlelist->{'ファイル'} = { 'ファイル名'=>1 };
+		$titlelist->{'Template'} = { 'テンプレート名'=>1 };
+		$titlelist->{'Category'} = { 'カテゴリ名'=>1 };
+
+		( $linktype, $word ) = JAWP::Util::GetLinkType( '', $titlelist );
+		is( $linktype , 'redlink', '空文字列(linktype)' );
+		is( $word, '', '空文字列(word)' );
+
+		( $linktype, $word ) = JAWP::Util::GetLinkType( '標準記事', $titlelist );
+		is( $linktype , '標準', '標準記事(linktype)' );
+		is( $word, '標準記事', '標準記事(word)' );
+
+		( $linktype, $word ) = JAWP::Util::GetLinkType( '曖昧記事', $titlelist );
+		is( $linktype , 'aimai', '曖昧記事(linktype)' );
+		is( $word, '曖昧記事', '曖昧記事(word)' );
+
+		( $linktype, $word ) = JAWP::Util::GetLinkType( 'リダイレクト記事', $titlelist );
+		is( $linktype , 'redirect', 'リダイレクト記事(linktype)' );
+		is( $word, 'リダイレクト記事', 'リダイレクト記事(word)' );
+
+		foreach my $type ( 'Category', 'カテゴリ' ) {
+			( $linktype, $word ) = JAWP::Util::GetLinkType( "$type:カテゴリ名", $titlelist );
+			is( $linktype , 'category', "カテゴリ名(linktype,$type)" );
+			is( $word, 'カテゴリ名', "カテゴリ名(word,$type)" );
+		}
+
+		foreach my $type ( 'ファイル', '画像', 'メディア', 'file', 'image', 'media' ) {
+			( $linktype, $word ) = JAWP::Util::GetLinkType( "$type:ファイル名", $titlelist );
+			is( $linktype , 'file', "ファイル名(linktype,$type)" );
+			is( $word, 'ファイル名', "ファイル名(word,$type)" );
+		}
+
+		foreach my $type ( 'Template', 'テンプレート' ) {
+			( $linktype, $word ) = JAWP::Util::GetLinkType( "$type:テンプレート名", $titlelist );
+			is( $linktype , 'template', "テンプレート名(linktype,$type)" );
+			is( $word, 'テンプレート名', "テンプレート名(word,$type)" );
+		}
+
+		( $linktype, $word ) = JAWP::Util::GetLinkType( '赤リンク記事', $titlelist );
+		is( $linktype , 'redlink', '赤リンク記事(linktype)' );
+		is( $word, '赤リンク記事', '赤リンク記事(word)' );
+
+		foreach my $type (
+			'Help', 'ヘルプ', 'MediaWiki', 'Portal', 'Wikipedia', 'プロジェクト', 'Project',
+			'Special', '特別', '利用者', 'User', 'ノート', 'トーク', 'talk', '利用者‐会話', '利用者・トーク', 'User talk', 'Wikipedia‐ノート', 'Wikipedia・トーク', 'Wikipedia talk', 'ファイル‐ノート', 'ファイル・トーク', '画像‐ノート', 'File talk', 'Image Talk', 'MediaWiki‐ノート', 'MediaWiki・トーク', 'MediaWiki talk', 'Template‐ノート', 'Template talk', 'Help‐ノート', 'Help talk', 'Category‐ノート', 'Category talk', 'カテゴリ・トーク', 'Portal‐ノート', 'Portal・トーク', 'Portal talk', 'プロジェクト‐ノート', 'Project talk',
+			'aa', 'aar', 'ab', 'abk', 'ace', 'ach', 'ada', 'ady', 'ae', 'af', 'afa', 'afh', 'afr', 'ain', 'ak', 'aka', 'akk', 'alb', 'ale', 'alg', 'als', 'alt', 'am', 'amh', 'an', 'ang', 'apa', 'ar', 'ara', 'arc', 'arg', 'arm', 'arn', 'arp', 'art', 'arw', 'arz', 'as', 'asm', 'ast', 'ath', 'aus', 'av', 'ava', 'ave', 'awa', 'ay', 'aym', 'az', 'aze', 'ba', 'bad', 'bai', 'bak', 'bal', 'bam', 'ban', 'baq', 'bar', 'bas', 'bat', 'bat-smg', 'bcl', 'be', 'be-x-old', 'bej', 'bel', 'bem', 'ben', 'ber', 'bg', 'bh', 'bho', 'bi', 'bih', 'bik', 'bin', 'bis', 'bjn', 'bla', 'bm', 'bn', 'bnt', 'bo', 'bod', 'bos', 'bpy', 'br', 'bra', 'bre', 'bs', 'bua', 'bug', 'bul', 'bur', 'bxr', 'byn', 'ca', 'cad', 'cai', 'car', 'cat', 'cau', 'cbk-zam', 'cdo', 'ce', 'ceb', 'cel', 'ces', 'ch', 'cha', 'chb', 'che', 'chg', 'chi', 'chm', 'chn', 'cho', 'chr', 'chu', 'chv', 'chy', 'ckb', 'co', 'cop', 'cor', 'cos', 'cpe', 'cpf', 'cpp', 'cr', 'cre', 'crh', 'crp', 'cs', 'csb', 'cu', 'cus', 'cv', 'cy', 'cym', 'cze', 'da', 'dak', 'dan', 'dar', 'day', 'de', 'del', 'deu', 'dgr', 'din', 'diq', 'div', 'doi', 'dra', 'dsb', 'dua', 'dum', 'dut', 'dv', 'dyu', 'dz', 'dzo', 'ee', 'efi', 'egy', 'eka', 'el', 'ell', 'elx', 'eml', 'en', 'eng', 'enm', 'eo', 'epo', 'es', 'esk', 'est', 'et', 'eu', 'eus', 'ewe', 'ewo', 'ext', 'fa', 'fan', 'fao', 'fas', 'fat', 'ff', 'fi', 'fij', 'fin', 'fiu', 'fiu-vro', 'fj', 'fo', 'fon', 'fr', 'fra', 'fre', 'frm', 'fro', 'frp', 'frr', 'frs', 'fry', 'ful', 'fur', 'fy', 'ga', 'gaa', 'gag', 'gan', 'gay', 'gd', 'gem', 'geo', 'ger', 'gez', 'gil', 'gl', 'gla', 'gle', 'glg', 'glk', 'glv', 'gmh', 'gn', 'goh', 'gon', 'gor', 'got', 'grb', 'grc', 'gre', 'grn', 'gu', 'guj', 'gv', 'ha', 'hai', 'hak', 'hat', 'hau', 'haw', 'he', 'heb', 'her', 'hi', 'hif', 'hil', 'him', 'hin', 'hit', 'hmn', 'hmo', 'ho', 'hr', 'hrv', 'hsb', 'ht', 'hu', 'hun', 'hup', 'hy', 'hye', 'hz', 'ia', 'iba', 'ibo', 'ice', 'id', 'ido', 'ie', 'ig', 'ii', 'iii', 'ijo', 'ik', 'iku', 'ile', 'ilo', 'ina', 'inc', 'ind', 'ine', 'inh', 'io', 'ipk', 'ira', 'iro', 'is', 'isl', 'it', 'ita', 'iu', 'ja', 'jav', 'jbo', 'jpn', 'jpr', 'jrb', 'jv', 'ka', 'kaa', 'kab', 'kac', 'kal', 'kam', 'kan', 'kar', 'kas', 'kat', 'kau', 'kaw', 'kaz', 'kbd', 'kg', 'kha', 'khi', 'khm', 'kho', 'ki', 'kik', 'kin', 'kir', 'kj', 'kk', 'kl', 'km', 'kmb', 'kn', 'ko', 'koi', 'kok', 'kom', 'kon', 'kor', 'kos', 'kpe', 'kr', 'krc', 'kro', 'kru', 'ks', 'ksh', 'ku', 'kua', 'kum', 'kur', 'kut', 'kv', 'kw', 'ky', 'la', 'lad', 'lah', 'lam', 'lao', 'lat', 'lav', 'lb', 'lbe', 'lez', 'lg', 'li', 'lij', 'lim', 'lin', 'lit', 'lmo', 'ln', 'lo', 'lol', 'loz', 'lt', 'ltg', 'ltz', 'lu', 'lub', 'lug', 'lui', 'lun', 'luo', 'lv', 'mac', 'mad', 'mag', 'mah', 'mai', 'mak', 'mal', 'man', 'mao', 'map', 'map-bms', 'mar', 'mas', 'may', 'mdf', 'men', 'mg', 'mga', 'mh', 'mhr', 'mi', 'mic', 'min', 'mis', 'mk', 'mkd', 'mkh', 'ml', 'mlg', 'mlt', 'mn', 'mnc', 'mni', 'mno', 'mo', 'moh', 'mol', 'mon', 'mos', 'mr', 'mri', 'mrj', 'ms', 'msa', 'mt', 'mul', 'mun', 'mus', 'mwl', 'mwr', 'my', 'mya', 'myn', 'myv', 'mzn', 'na', 'nah', 'nai', 'nap', 'nau', 'nav', 'nb', 'nbl', 'nd', 'nde', 'ndo', 'nds', 'nds-nl', 'ne', 'nep', 'new', 'ng', 'nic', 'niu', 'nl', 'nld', 'nn', 'nno', 'no', 'nob', 'nog', 'non', 'nor', 'nov', 'nr', 'nrm', 'nso', 'nub', 'nv', 'nwc', 'ny', 'nya', 'nym', 'nyn', 'nyo', 'nzi', 'oc', 'oci', 'oj', 'oji', 'ojp', 'om', 'or', 'ori', 'orm', 'os', 'osa', 'oss', 'ota', 'oto', 'pa', 'paa', 'pag', 'pal', 'pam', 'pan', 'pap', 'pau', 'pcd', 'pdc', 'peo', 'per', 'pfl', 'phn', 'pi', 'pih', 'pl', 'pli', 'pms', 'pnb', 'pnt', 'pol', 'pon', 'por', 'pra', 'pro', 'ps', 'pt', 'pus', 'qu', 'que', 'raj', 'rap', 'rar', 'rm', 'rmy', 'rn', 'ro', 'roa', 'roa-rup', 'roa-tara', 'roh', 'rom', 'ron', 'ru', 'rue', 'rum', 'run', 'rus', 'rw', 'sa', 'sad', 'sag', 'sah', 'sai', 'sal', 'sam', 'san', 'sc', 'scc', 'scn', 'sco', 'scr', 'sd', 'se', 'sel', 'sem', 'sg', 'sga', 'sgn', 'sh', 'shn', 'si', 'sid', 'simple', 'sin', 'sio', 'sit', 'sk', 'sl', 'sla', 'slk', 'slo', 'slv', 'sm', 'sma', 'sme', 'smi', 'smj', 'smn', 'smo', 'sms', 'sn', 'sna', 'snd', 'so', 'sog', 'som', 'son', 'sot', 'spa', 'sq', 'sqi', 'sr', 'srd', 'srn', 'srp', 'srr', 'ss', 'ssa', 'ssw', 'st', 'stq', 'su', 'suk', 'sun', 'sus', 'sux', 'sv', 'sw', 'swa', 'swe', 'syr', 'szl', 'ta', 'tah', 'tai', 'tam', 'tat', 'te', 'tel', 'tem', 'ter', 'tet', 'tg', 'tgk', 'tgl', 'th', 'tha', 'ti', 'tib', 'tig', 'tir', 'tiv', 'tju', 'tk', 'tkl', 'tl', 'tlh', 'tli', 'tmh', 'tn', 'to', 'tog', 'ton', 'tpi', 'tr', 'tru', 'ts', 'tsi', 'tsn', 'tso', 'tt', 'tuk', 'tum', 'tup', 'tur', 'tut', 'tw', 'twi', 'ty', 'tyv', 'udm', 'ug', 'uga', 'uig', 'uk', 'ukr', 'umb', 'und', 'ur', 'urd', 'uz', 'uzb', 'vai', 've', 'vec', 'ven', 'vi', 'vie', 'vls', 'vo', 'vol', 'vot', 'wa', 'wak', 'wal', 'war', 'was', 'wel', 'wen', 'wln', 'wo', 'wol', 'wuu', 'xal', 'xh', 'xho', 'yao', 'yap', 'yi', 'yid', 'yo', 'yor', 'za', 'zap', 'zea', 'zen', 'zh', 'zh-classical', 'zh-cn', 'zh-min-nan', 'nan', 'zh-tw', 'zh-yue', 'zha', 'zho', 'zu', 'zul', 'zun',
+			'wikipedia', 'w', 'wiktionary', 'wikt', 'wikinews', 'n', 'wikibooks', 'b', 'wikiquote', 'q', 'wikisource', 's', 'wikispecies', 'species', 'v', 'wikimedia', 'foundation', 'wmf', 'commons', 'meta', 'm', 'incubator', 'mw', 'bugzilla', 'mediazilla', 'translatewiki', 'betawiki', 'tools',
+			'Rev', 'Sulutil', 'Testwiki', 'CentralWikia', 'Choralwiki', 'google', 'irc', 'Mail', 'Mailarchive', 'MarvelDatabase', 'MeatBall', 'MemoryAlpha', 'MozillaWiki', 'Uncyclopedia', 'Wikia', 'Wikitravel', 'IMDbTitle' ) {
+			( $linktype, $word ) = JAWP::Util::GetLinkType( "$type:記事名", $titlelist );
+			is( $linktype , 'none', "記事名(linktype,$type)" );
+			is( $word, "$type:記事名", "記事名(word,$type)" );
+		}
+
+		( $linktype, $word ) = JAWP::Util::GetLinkType( 'http://記事名', $titlelist );
+		is( $linktype , 'none', 'http://記事名(linktype)' );
+		is( $word, 'http://記事名', 'http://記事名(word)' );
+
+		( $linktype, $word ) = JAWP::Util::GetLinkType( '/', $titlelist );
+		is( $linktype , 'none', '/(linktype)' );
+		is( $word, '/', '/(word)' );
+
+		( $linktype, $word ) = JAWP::Util::GetLinkType( '../', $titlelist );
+		is( $linktype , 'none', '../(linktype)' );
+		is( $word, '../', '../(word)' );
+
+		( $linktype, $word ) = JAWP::Util::GetLinkType( '#name', $titlelist );
+		is( $linktype , 'none', '#name(linktype)' );
+		is( $word, '#name', '#name(word)' );
+
+		( $linktype, $word ) = JAWP::Util::GetLinkType( ':es:test', $titlelist );
+		is( $linktype , 'none', ':es:test(linktype)' );
+		is( $word, ':es:test', ':es:test(word)' );
 	}
 }
 
