@@ -1063,7 +1063,7 @@ sub TestJAWPUtil {
 
 	# メソッド呼び出しテスト
 	{
-		foreach my $method ( 'UnescapeHTML', 'DecodeURL', 'SortHash', 'GetLinkwordList', 'GetTemplatewordList' ) {
+		foreach my $method ( 'UnescapeHTML', 'DecodeURL', 'SortHash', 'GetLinkwordList', 'GetTemplatewordList', 'GetLinkType' ) {
 			ok( JAWP::Util->can($method), "call method $method" );
 		}
 	}
@@ -1184,6 +1184,12 @@ sub TestJAWPUtil {
 		is( @result + 0 , 2, '複数行テキスト呼び出し' );
 		is( $result[0] , 'あああ', '複数行テキスト呼び出し(テンプレートワード1)' );
 		is( $result[1] , 'ううう', '複数行テキスト呼び出し(テンプレートワード2)' );
+	}
+
+	# GetLinkTypeテスト
+	{
+		diag( '# Test JAWP::Util::GetLinkType' );
+		my $titlelist = new JAWP::TitleList;
 	}
 }
 

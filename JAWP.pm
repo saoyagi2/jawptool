@@ -675,6 +675,52 @@ sub GetTemplatewordList {
 }
 
 
+# リンク種別判別
+# param $word リンク語
+# param $titlelist JAWP::TitleListオブジェクト
+# return リンク種別、リンク語
+sub GetLinkType {
+	my( $word, $titlelist ) = @_;
+
+	if( defined( $titlelist->{'標準'}->{$word} ) ) {
+		if( defined( $titlelist->{'標準_曖昧'}->{$word} ) ) {
+			return( 'aimai', $word );
+		}
+		else {
+			return( '標準', $word );
+		}
+	}
+	elsif( defined( $titlelist->{'標準_リダイレクト'}->{$word} ) ) {
+		return( 'redirect', $word );
+	}
+	elsif( $word =~ /^(Category|カテゴリ):(.*)/i ) {
+		return( 'category', $2 ) if( defined( $titlelist->{'Category'}->{$2} ) );
+	}
+	elsif( $word =~ /^(ファイル|画像|メディア|file|image|media):(.*)/i ) {
+		return( 'file', $2 ) if( defined( $titlelist->{'ファイル'}->{$2} ) );
+	}
+	elsif( $word =~ /^(Template|テンプレート):(.*)/i ) {
+		return( 'template', $2 ) if( defined( $titlelist->{'Template'}->{$word} ) );
+	}
+	elsif( $word =~ /^(Help|ヘルプ|MediaWiki|Portal|Wikipedia|プロジェクト|Project):/i
+		|| $word =~ /^(Special|特別|利用者|User|ノート|トーク|talk|利用者‐会話|利用者・トーク|User talk|Wikipedia‐ノート|Wikipedia・トーク|Wikipedia talk|ファイル‐ノート|ファイル・トーク|画像‐ノート|File talk|Image Talk|MediaWiki‐ノート|MediaWiki・トーク|MediaWiki talk|Template‐ノート|Template talk|Help‐ノート|Help talk|Category‐ノート|Category talk|カテゴリ・トーク|Portal‐ノート|Portal・トーク|Portal talk|プロジェクト‐ノート|Project talk):/i
+		|| $word =~ /^(aa|aar|ab|abk|ace|ach|ada|ady|ae|af|afa|afh|afr|ain|ak|aka|akk|alb|ale|alg|als|alt|am|amh|an|ang|apa|ar|ara|arc|arg|arm|arn|arp|art|arw|arz|as|asm|ast|ath|aus|av|ava|ave|awa|ay|aym|az|aze|ba|bad|bai|bak|bal|bam|ban|baq|bar|bas|bat|bat\-smg|bcl|be|be\-x\-old|bej|bel|bem|ben|ber|bg|bh|bho|bi|bih|bik|bin|bis|bjn|bla|bm|bn|bnt|bo|bod|bos|bpy|br|bra|bre|bs|bua|bug|bul|bur|bxr|byn|ca|cad|cai|car|cat|cau|cbk\-zam|cdo|ce|ceb|cel|ces|ch|cha|chb|che|chg|chi|chm|chn|cho|chr|chu|chv|chy|ckb|co|cop|cor|cos|cpe|cpf|cpp|cr|cre|crh|crp|cs|csb|cu|cus|cv|cy|cym|cze|da|dak|dan|dar|day|de|del|deu|dgr|din|diq|div|doi|dra|dsb|dua|dum|dut|dv|dyu|dz|dzo|ee|efi|egy|eka|el|ell|elx|eml|en|eng|enm|eo|epo|es|esk|est|et|eu|eus|ewe|ewo|ext|fa|fan|fao|fas|fat|ff|fi|fij|fin|fiu|fiu\-vro|fj|fo|fon|fr|fra|fre|frm|fro|frp|frr|frs|fry|ful|fur|fy|ga|gaa|gag|gan|gay|gd|gem|geo|ger|gez|gil|gl|gla|gle|glg|glk|glv|gmh|gn|goh|gon|gor|got|grb|grc|gre|grn|gu|guj|gv|ha|hai|hak|hat|hau|haw|he|heb|her|hi|hif|hil|him|hin|hit|hmn|hmo|ho|hr|hrv|hsb|ht|hu|hun|hup|hy|hye|hz|ia|iba|ibo|ice|id|ido|ie|ig|ii|iii|ijo|ik|iku|ile|ilo|ina|inc|ind|ine|inh|io|ipk|ira|iro|is|isl|it|ita|iu|ja|jav|jbo|jpn|jpr|jrb|jv|ka|kaa|kab|kac|kal|kam|kan|kar|kas|kat|kau|kaw|kaz|kbd|kg|kha|khi|khm|kho|ki|kik|kin|kir|kj|kk|kl|km|kmb|kn|ko|koi|kok|kom|kon|kor|kos|kpe|kr|krc|kro|kru|ks|ksh|ku|kua|kum|kur|kut|kv|kw|ky|la|lad|lah|lam|lao|lat|lav|lb|lbe|lez|lg|li|lij|lim|lin|lit|lmo|ln|lo|lol|loz|lt|ltg|ltz|lu|lub|lug|lui|lun|luo|lv|mac|mad|mag|mah|mai|mak|mal|man|mao|map|map\-bms|mar|mas|may|mdf|men|mg|mga|mh|mhr|mi|mic|min|mis|mk|mkd|mkh|ml|mlg|mlt|mn|mnc|mni|mno|mo|moh|mol|mon|mos|mr|mri|mrj|ms|msa|mt|mul|mun|mus|mwl|mwr|my|mya|myn|myv|mzn|na|nah|nai|nap|nau|nav|nb|nbl|nd|nde|ndo|nds|nds\-nl|ne|nep|new|ng|nic|niu|nl|nld|nn|nno|no|nob|nog|non|nor|nov|nr|nrm|nso|nub|nv|nwc|ny|nya|nym|nyn|nyo|nzi|oc|oci|oj|oji|ojp|om|or|ori|orm|os|osa|oss|ota|oto|pa|paa|pag|pal|pam|pan|pap|pau|pcd|pdc|peo|per|pfl|phn|pi|pih|pl|pli|pms|pnb|pnt|pol|pon|por|pra|pro|ps|pt|pus|qu|que|raj|rap|rar|rm|rmy|rn|ro|roa|roa\-rup|roa\-tara|roh|rom|ron|ru|rue|rum|run|rus|rw|sa|sad|sag|sah|sai|sal|sam|san|sc|scc|scn|sco|scr|sd|se|sel|sem|sg|sga|sgn|sh|shn|si|sid|simple|sin|sio|sit|sk|sl|sla|slk|slo|slv|sm|sma|sme|smi|smj|smn|smo|sms|sn|sna|snd|so|sog|som|son|sot|spa|sq|sqi|sr|srd|srn|srp|srr|ss|ssa|ssw|st|stq|su|suk|sun|sus|sux|sv|sw|swa|swe|syr|szl|ta|tah|tai|tam|tat|te|tel|tem|ter|tet|tg|tgk|tgl|th|tha|ti|tib|tig|tir|tiv|tju|tk|tkl|tl|tlh|tli|tmh|tn|to|tog|ton|tpi|tr|tru|ts|tsi|tsn|tso|tt|tuk|tum|tup|tur|tut|tw|twi|ty|tyv|udm|ug|uga|uig|uk|ukr|umb|und|ur|urd|uz|uzb|vai|ve|vec|ven|vi|vie|vls|vo|vol|vot|wa|wak|wal|war|was|wel|wen|wln|wo|wol|wuu|xal|xh|xho|yao|yap|yi|yid|yo|yor|za|zap|zea|zen|zh|zh\-classical|zh\-cn|zh\-min\-nan|nan|zh\-tw|zh\-yue|zha|zho|zu|zul|zun):/i # 言語間リンク
+		|| $word =~ /^(wikipedia|w|wiktionary|wikt|wikinews|n|wikibooks|b|wikiquote|q|wikisource|s|wikispecies|species|v|wikimedia|foundation|wmf|commons|meta|m|incubator|mw|bugzilla|mediazilla|translatewiki|betawiki|tools):/i # プロジェクト間リンク
+		|| $word =~ /^(Rev|Sulutil|Testwiki|CentralWikia|Choralwiki|google|irc|Mail|Mailarchive|MarvelDatabase|MeatBall|MemoryAlpha|MozillaWiki|Uncyclopedia|Wikia|Wikitravel|IMDbTitle):/i
+		|| $word =~ /^http:\/\//i
+		|| $word =~ /^(\/|\.\.\/)/
+		|| $word =~ /^[#:]/ ) {
+		;
+		return( 'none', $word );
+	}
+	else {
+		return( 'redlink', $word );
+	}
+
+	return( 'none', $word );
+}
+
+
 ################################################################################
 # JAWP::Appクラス
 ################################################################################
@@ -811,7 +857,7 @@ sub Statistic {
 	my $titlelist = $jawpdata->GetTitleList;
 	my $report = new JAWP::ReportFile( $reportfile );
 	my( $n, $article, $text, $result_ref, $word, %count );
-	my( %linked, %redlink, %redirect, %aimai, %category, %template, %file );
+	my( %linkcount, $linktype );
 
 	$report->OutputDirect( <<"STR"
 = 統計 =
@@ -831,7 +877,9 @@ STR
 	}
 
 	$n = 1;
-	%linked = %redlink = %redirect = %aimai = %category = %template = %file = ();
+	foreach my $linktype ( '標準', 'aimai', 'redirect', 'category', 'file', 'template', 'redlink' ) {
+		$linkcount{$linktype} = {};
+	}
 	while( $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
@@ -845,54 +893,25 @@ STR
 		foreach $word ( JAWP::Util::GetLinkwordList( $article->{'text'} ) ) {
 			next if( ++$count{$word} > 1 );
 
-			if( defined( $titlelist->{'標準'}->{$word} ) ) {
-				$linked{$word}++;
-				if( defined( $titlelist->{'標準_曖昧'}->{$word} ) ) {
-					$aimai{$word}++;
-				}
-			}
-			elsif( defined( $titlelist->{'標準_リダイレクト'}->{$word} ) ) {
-				$redirect{$word}++;
-			}
-			elsif( $word =~ /^(Category|カテゴリ):(.*)/i ) {
-				$category{$2}++ if( defined( $titlelist->{'Category'}->{$2} ) );
-			}
-			elsif( $word =~ /^(ファイル|画像|メディア|file|image|media):(.*)/i ) {
-				$file{$2}++ if( defined( $titlelist->{'ファイル'}->{$2} ) );
-			}
-			elsif( $word =~ /^(Template|テンプレート):(.*)/i ) {
-				$template{$2}++ if( defined( $titlelist->{'Template'}->{$word} ) );
-			}
-			elsif( $word =~ /^(Help|ヘルプ|MediaWiki|Portal|Wikipedia|プロジェクト|Project):/i
-				|| $word =~ /^(Special|特別|利用者|User|ノート|トーク|talk|利用者‐会話|利用者・トーク|User talk|Wikipedia‐ノート|Wikipedia・トーク|Wikipedia talk|ファイル‐ノート|ファイル・トーク|画像‐ノート|File talk|Image Talk|MediaWiki‐ノート|MediaWiki・トーク|MediaWiki talk|Template‐ノート|Template talk|Help‐ノート|Help talk|Category‐ノート|Category talk|カテゴリ・トーク|Portal‐ノート|Portal・トーク|Portal talk|プロジェクト‐ノート|Project talk):/i
-				|| $word =~ /^(aa|aar|ab|abk|ace|ach|ada|ady|ae|af|afa|afh|afr|ain|ak|aka|akk|alb|ale|alg|als|alt|am|amh|an|ang|apa|ar|ara|arc|arg|arm|arn|arp|art|arw|arz|as|asm|ast|ath|aus|av|ava|ave|awa|ay|aym|az|aze|ba|bad|bai|bak|bal|bam|ban|baq|bar|bas|bat|bat\-smg|bcl|be|be\-x\-old|bej|bel|bem|ben|ber|bg|bh|bho|bi|bih|bik|bin|bis|bjn|bla|bm|bn|bnt|bo|bod|bos|bpy|br|bra|bre|bs|bua|bug|bul|bur|bxr|byn|ca|cad|cai|car|cat|cau|cbk\-zam|cdo|ce|ceb|cel|ces|ch|cha|chb|che|chg|chi|chm|chn|cho|chr|chu|chv|chy|ckb|co|cop|cor|cos|cpe|cpf|cpp|cr|cre|crh|crp|cs|csb|cu|cus|cv|cy|cym|cze|da|dak|dan|dar|day|de|del|deu|dgr|din|diq|div|doi|dra|dsb|dua|dum|dut|dv|dyu|dz|dzo|ee|efi|egy|eka|el|ell|elx|eml|en|eng|enm|eo|epo|es|esk|est|et|eu|eus|ewe|ewo|ext|fa|fan|fao|fas|fat|ff|fi|fij|fin|fiu|fiu\-vro|fj|fo|fon|fr|fra|fre|frm|fro|frp|frr|frs|fry|ful|fur|fy|ga|gaa|gag|gan|gay|gd|gem|geo|ger|gez|gil|gl|gla|gle|glg|glk|glv|gmh|gn|goh|gon|gor|got|grb|grc|gre|grn|gu|guj|gv|ha|hai|hak|hat|hau|haw|he|heb|her|hi|hif|hil|him|hin|hit|hmn|hmo|ho|hr|hrv|hsb|ht|hu|hun|hup|hy|hye|hz|ia|iba|ibo|ice|id|ido|ie|ig|ii|iii|ijo|ik|iku|ile|ilo|ina|inc|ind|ine|inh|io|ipk|ira|iro|is|isl|it|ita|iu|ja|jav|jbo|jpn|jpr|jrb|jv|ka|kaa|kab|kac|kal|kam|kan|kar|kas|kat|kau|kaw|kaz|kbd|kg|kha|khi|khm|kho|ki|kik|kin|kir|kj|kk|kl|km|kmb|kn|ko|koi|kok|kom|kon|kor|kos|kpe|kr|krc|kro|kru|ks|ksh|ku|kua|kum|kur|kut|kv|kw|ky|la|lad|lah|lam|lao|lat|lav|lb|lbe|lez|lg|li|lij|lim|lin|lit|lmo|ln|lo|lol|loz|lt|ltg|ltz|lu|lub|lug|lui|lun|luo|lv|mac|mad|mag|mah|mai|mak|mal|man|mao|map|map\-bms|mar|mas|may|mdf|men|mg|mga|mh|mhr|mi|mic|min|mis|mk|mkd|mkh|ml|mlg|mlt|mn|mnc|mni|mno|mo|moh|mol|mon|mos|mr|mri|mrj|ms|msa|mt|mul|mun|mus|mwl|mwr|my|mya|myn|myv|mzn|na|nah|nai|nap|nau|nav|nb|nbl|nd|nde|ndo|nds|nds\-nl|ne|nep|new|ng|nic|niu|nl|nld|nn|nno|no|nob|nog|non|nor|nov|nr|nrm|nso|nub|nv|nwc|ny|nya|nym|nyn|nyo|nzi|oc|oci|oj|oji|ojp|om|or|ori|orm|os|osa|oss|ota|oto|pa|paa|pag|pal|pam|pan|pap|pau|pcd|pdc|peo|per|pfl|phn|pi|pih|pl|pli|pms|pnb|pnt|pol|pon|por|pra|pro|ps|pt|pus|qu|que|raj|rap|rar|rm|rmy|rn|ro|roa|roa\-rup|roa\-tara|roh|rom|ron|ru|rue|rum|run|rus|rw|sa|sad|sag|sah|sai|sal|sam|san|sc|scc|scn|sco|scr|sd|se|sel|sem|sg|sga|sgn|sh|shn|si|sid|simple|sin|sio|sit|sk|sl|sla|slk|slo|slv|sm|sma|sme|smi|smj|smn|smo|sms|sn|sna|snd|so|sog|som|son|sot|spa|sq|sqi|sr|srd|srn|srp|srr|ss|ssa|ssw|st|stq|su|suk|sun|sus|sux|sv|sw|swa|swe|syr|szl|ta|tah|tai|tam|tat|te|tel|tem|ter|tet|tg|tgk|tgl|th|tha|ti|tib|tig|tir|tiv|tju|tk|tkl|tl|tlh|tli|tmh|tn|to|tog|ton|tpi|tr|tru|ts|tsi|tsn|tso|tt|tuk|tum|tup|tur|tut|tw|twi|ty|tyv|udm|ug|uga|uig|uk|ukr|umb|und|ur|urd|uz|uzb|vai|ve|vec|ven|vi|vie|vls|vo|vol|vot|wa|wak|wal|war|was|wel|wen|wln|wo|wol|wuu|xal|xh|xho|yao|yap|yi|yid|yo|yor|za|zap|zea|zen|zh|zh\-classical|zh\-cn|zh\-min\-nan|nan|zh\-tw|zh\-yue|zha|zho|zu|zul|zun):/i # 言語間リンク
-				|| $word =~ /^(wikipedia|w|wiktionary|wikt|wikinews|n|wikibooks|b|wikiquote|q|wikisource|s|wikispecies|species|v|wikimedia|foundation|wmf|commons|meta|m|incubator|mw|bugzilla|mediazilla|translatewiki|betawiki|tools):/i # プロジェクト間リンク
-				|| $word =~ /^(Rev|Sulutil|Testwiki|CentralWikia|Choralwiki|google|irc|Mail|Mailarchive|MarvelDatabase|MeatBall|MemoryAlpha|MozillaWiki|Uncyclopedia|Wikia|Wikitravel|IMDbTitle):/i
-				|| $word =~ /^http:\/\//i
-				|| $word =~ /^(\/|\.\.\/)/
-				|| $word =~ /^[#:]/ ) {
-				;
-			}
-			else {
-				$redlink{$word}++;
-			}
+			( $linktype, $word ) = JAWP::Util::GetLinkType( $word, $titlelist );
+			$linkcount{$linktype}->{$word}++ if( $linktype ne 'none' );
 		}
 
 		foreach $word ( JAWP::Util::GetTemplatewordList( $article->{'text'} ) ) {
 			next if( ++$count{$word} > 1 );
 
-			$template{$word}++ if( defined( $titlelist->{'Template'}->{$word} ) );
+			$linkcount{template}->{$word}++ if( defined( $titlelist->{'Template'}->{$word} ) );
 		}
 	}
 	print "\n";
 
-	StatisticReportSub2( '被リンク数ランキング', \%linked, '', $report );
-	StatisticReportSub2( 'リダイレクト呼出数ランキング', \%redirect, '', $report );
-	StatisticReportSub2( '曖昧さ回避呼出数ランキング', \%aimai, '', $report );
-	StatisticReportSub2( '赤リンク数ランキング', \%redlink, '', $report );
-	StatisticReportSub2( 'カテゴリ使用数ランキング', \%category, ':Category:', $report );
-	StatisticReportSub2( 'ファイル使用数ランキング', \%file, ':ファイル:', $report );
-	StatisticReportSub2( 'テンプレート使用数ランキング', \%template, ':Template:', $report );
+	StatisticReportSub2( '被リンク数ランキング', $linkcount{'標準'}, '', $report );
+	StatisticReportSub2( 'リダイレクト呼出数ランキング', $linkcount{'redirect'}, '', $report );
+	StatisticReportSub2( '曖昧さ回避呼出数ランキング', $linkcount{'aimai'}, '', $report );
+	StatisticReportSub2( '赤リンク数ランキング', $linkcount{'redlink'}, '', $report );
+	StatisticReportSub2( 'カテゴリ使用数ランキング', $linkcount{'category'}, ':Category:', $report );
+	StatisticReportSub2( 'ファイル使用数ランキング', $linkcount{'file'}, ':ファイル:', $report );
+	StatisticReportSub2( 'テンプレート使用数ランキング', $linkcount{'template'}, ':Template:', $report );
 }
 
 
