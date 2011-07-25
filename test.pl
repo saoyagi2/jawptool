@@ -629,10 +629,15 @@ sub TestJAWPArticle {
 			is( @$result_ref + 0, 0, "ref要素-1(警告数)" );
 
 			$article->{'title'} = '標準';
+			$article->{'text'} = "<ref>あああ</ref>\n{{reflist}}\n{{aimai}}";
+			$result_ref = $article->LintText;
+			is( @$result_ref + 0, 0, "ref要素-2(警告数)" );
+
+			$article->{'title'} = '標準';
 			$article->{'text'} = "<ref>あああ</ref>\n{{aimai}}";
 			$result_ref = $article->LintText;
-			is( @$result_ref + 0, 1, "ref要素-2(警告数)" );
-			is( $result_ref->[0], "<ref>要素があるのに<references>要素がありません", "ref要素-2(警告文)" );
+			is( @$result_ref + 0, 1, "ref要素-3(警告数)" );
+			is( $result_ref->[0], "<ref>要素があるのに<references>要素がありません", "ref要素-3(警告文)" );
 		}
 
 		# 定義文テスト
