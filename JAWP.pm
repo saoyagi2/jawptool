@@ -700,7 +700,7 @@ sub GetLinkType {
 		return( 'file', $2 ) if( defined( $titlelist->{'ファイル'}->{$2} ) );
 	}
 	elsif( $word =~ /^(Template|テンプレート):(.*)/i ) {
-		return( 'template', $2 ) if( defined( $titlelist->{'Template'}->{$word} ) );
+		return( 'template', $2 ) if( defined( $titlelist->{'Template'}->{$2} ) );
 	}
 	elsif( $word =~ /^(Help|ヘルプ|MediaWiki|Portal|Wikipedia|プロジェクト|Project):/i
 		|| $word =~ /^(Special|特別|利用者|User|ノート|トーク|talk|利用者‐会話|利用者・トーク|User talk|Wikipedia‐ノート|Wikipedia・トーク|Wikipedia talk|ファイル‐ノート|ファイル・トーク|画像‐ノート|File talk|Image Talk|MediaWiki‐ノート|MediaWiki・トーク|MediaWiki talk|Template‐ノート|Template talk|Help‐ノート|Help talk|Category‐ノート|Category talk|カテゴリ・トーク|Portal‐ノート|Portal・トーク|Portal talk|プロジェクト‐ノート|Project talk):/i
