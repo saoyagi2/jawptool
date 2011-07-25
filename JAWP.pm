@@ -150,7 +150,7 @@ sub LintTitle {
 # return $datalist_ref 結果配列へのリファレンス
 sub LintText {
 	my $self = shift;
-	my( $text, $checktimestamp, @time, @result, $text2, $n, @lines, @lines2, $headlevel, $code, $defaultsort, %category, %interlink, $previnterlink, $mode, $prevmode );
+	my( $text, $checktimestamp, @time, @result, $text2, $n, @lines, @lines2, $headlevel, $prevheadlevel, $code, $defaultsort, %category, %interlink, $previnterlink, $mode, $prevmode );
 
 	if( $self->Namespace ne '標準' || $self->IsRedirect ) {
 		return \@result;
@@ -173,7 +173,7 @@ sub LintText {
 		return \@result;
 	}
 
-	$headlevel = 1;
+	$headlevel = $prevheadlevel = 1;
 	$defaultsort = '';
 	$prevmode = 'text';
 	for( $n = 1; $n < @lines + 1; $n++ ) {
@@ -184,33 +184,19 @@ sub LintText {
 			$mode = 'text';
 		}
 
-		if( $lines[$n - 1] =~ /^=[^=]+?=$/ ) {
-			push @result, "レベル1の見出しがあります($n)";
-		}
-		if( $lines[$n - 1] =~ /^==[^=]+?==$/ ) {
-			$headlevel = 2;
-		}
-		if( $lines[$n - 1] =~ /^===[^=]+?===$/ ) {
-			if( $headlevel < 2 ) {
-				push @result, "レベル3の見出しの前にレベル2の見出しが必要です($n)";
-			}
-			$headlevel = 3;
-		}
-		if( $lines[$n - 1] =~ /^====[^=]+?====$/ ) {
-			if( $headlevel < 3 ) {
-				push @result, "レベル4の見出しの前にレベル3の見出しが必要です($n)";
-			}
-			$headlevel = 4;
-		}
-		if( $lines[$n - 1] =~ /^=====[^=]+?=====$/ ) {
-			if( $headlevel < 4 ) {
-				push @result, "レベル5の見出しの前にレベル4の見出しが必要です($n)";
-			}
-			$headlevel = 5;
-		}
 		if( $lines[$n - 1] =~ /^(=+)[^=]+(=+)$/ ) {
 			if( length( $1 ) != length( $2 ) ) {
 				push @result, "見出し記法の左右の=の数が一致しません($n)";
+			}
+			else {
+				$headlevel = length( $1 );
+				if( $headlevel == 1 ) {
+					push @result, "レベル1の見出しがあります($n)";
+				}
+				if( $headlevel >= 3 && $headlevel - $prevheadlevel >= 2 ) {
+					push @result, sprintf( "レベル%dの見出しの前にレベル%dの見出しが必要です($n)", $headlevel, $headlevel - 1 );
+				}
+				$prevheadlevel = $headlevel;
 			}
 		}
 		if( $lines[$n - 1] =~ /ISBN[0-9]/i ) {
