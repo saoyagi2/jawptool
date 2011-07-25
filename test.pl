@@ -683,6 +683,11 @@ sub TestJAWPArticle {
 			$article->{'text'} = "'''abc'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n";
 			$result_ref = $article->LintText;
 			is( @$result_ref + 0, 0, "定義文あり-6(警告数)" );
+
+			$article->{'title'} = 'Shift JIS';
+			$article->{'text'} = "'''Shift_JIS'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n";
+			$result_ref = $article->LintText;
+			is( @$result_ref + 0, 0, "定義文あり-7(警告数)" );
 		}
 
 		# カテゴリ、デフォルトソート、出典なしテスト

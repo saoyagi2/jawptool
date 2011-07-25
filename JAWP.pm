@@ -306,6 +306,7 @@ sub LintText {
 			}
 			my $tmp = $1;
 			$tmp =~ s/[ 　]//g;
+			$tmp =~ s/_/ /g;
 			if( $tmp =~ $title || $tmp =~ lcfirst $title ) {
 				$teigi = 1;
 				last;
