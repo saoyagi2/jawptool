@@ -810,6 +810,12 @@ sub TestJAWPArticle {
 			$result_ref = $article->LintText;
 			is( @$result_ref + 0, 1, "生没年カテゴリ-13(警告数)" );
 			is( $result_ref->[0], "存命人物または没年のカテゴリがありません", "生没年カテゴリ-13(警告文)" );
+
+			$article->{'title'} = '標準';
+			$article->{'text'} = "[[Category:2001年生]]\n[[Category:存命人物]]\n{{死亡年月日と没年齢|2001|1|1|2011|12|31}}\n{{aimai}}";
+			$result_ref = $article->LintText;
+			is( @$result_ref + 0, 1, "生没年カテゴリ-14(警告数)" );
+			is( $result_ref->[0], "存命人物ではありません", "生没年カテゴリ-14(警告文)" );
 		}
 	}
 }

@@ -326,12 +326,13 @@ sub LintText {
 		}
 	}
 
-	my( $cat存命, $cat生年, $cat没年 );
+	my( $cat存命, $cat生年, $cat没年, $temp死亡年月日 );
 
 	$cat存命 = defined( $category{'存命人物'} );
 	$cat生年 = defined( $category{'生年不明'} ) || grep { /^\d+年生$/ } keys %category;
 	$cat没年 = defined( $category{'没年不明'} ) || grep { /^\d+年没$/ } keys %category;
-	if( $cat存命 && $cat没年 ) {
+	$temp死亡年月日 = $text =~ /{{死亡年月日と没年齢\|/;
+	if( $cat存命 && ( $cat没年 || $temp死亡年月日 ) ) {
 		push @result, "存命人物ではありません";
 	}
 	if( ( $cat存命 || $cat没年 ) && !$cat生年 ) {
