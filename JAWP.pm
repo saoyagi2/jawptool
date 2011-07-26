@@ -404,20 +404,22 @@ sub GetArticle {
 	my $self = shift;
 	my $article = new JAWP::Article;
 	my $fh = $self->{'fh'};
+	my $flag = 0;
 
 	while( <$fh> ) {
 		if( /<title>(.*)<\/title>/ ) {
 			$article->{'title'} = JAWP::Util::UnescapeHTML( $1 );
 			$article->{'title'} =~ s/_/ /g;
+			$flag |= 1;
 		}
 		if( /<timestamp>(.*)<\/timestamp>/ ) {
 			$article->{'timestamp'} = $1;
+			$flag |= 2;
 		}
 		if( /<text xml:space="preserve">(.*)<\/text>/ ) {
 			$article->{'text'} = $1;
 			$article->{'text'} =~ s/<!\-\-.*?\-\->//sg;
-
-			return $article;;
+			$flag |= 4;
 		}
 		elsif( /<text xml:space="preserve">(.*)/ ) {
 			$article->{'text'} = JAWP::Util::UnescapeHTML( "$1\n" );
@@ -436,9 +438,10 @@ sub GetArticle {
 				$tmp =~ s/[^\n]//g;
 				$article->{'text'} =~ s/<!--(.*?)-->/$tmp/s;
 			}
-
-			return $article;
+			$flag |= 4;
 		}
+
+		return $article if( $flag == 7 );
 	}
 
 	close( $self->{'fh'} ) or return;
