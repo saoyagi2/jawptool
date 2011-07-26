@@ -2649,6 +2649,308 @@ sub TestJAWPData {
 		ok( defined( $data->{'fh'} ), "defined member fh" );
 		is( ref $data->{'fh'}, 'GLOB', "member fh value" );
 	}
+
+	# GetArticleテスト
+	{
+		diag( '# Test GetArticle' );
+
+		{
+			WriteTestXMLFile( '' );
+			my $data = new JAWP::DataFile( $testxmlfile );
+			my $article = $data->GetArticle;
+
+			ok( !defined( $article ), '空XMLファイル' );
+		}
+		{
+			WriteTestXMLFile( '<xml></xml>' );
+			my $data = new JAWP::DataFile( $testxmlfile );
+			my $article = $data->GetArticle;
+
+			ok( !defined( $article ), '無意味XMLファイル' );
+		}
+		{
+			my $str = <<'STR';
+<xml>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve">本文</text>
+</xml>
+STR
+			WriteTestXMLFile( $str );
+			my $data = new JAWP::DataFile( $testxmlfile );
+			my $article = $data->GetArticle;
+
+			ok( !defined( $article ), '破損XMLファイル1' );
+		}
+		{
+			my $str = <<'STR';
+<xml>
+	<title>記事名</title>
+	<text xml:space="preserve">本文</text>
+</xml>
+STR
+			WriteTestXMLFile( $str );
+			my $data = new JAWP::DataFile( $testxmlfile );
+			my $article = $data->GetArticle;
+
+			ok( !defined( $article ), '破損XMLファイル2' );
+		}
+		{
+			my $str = <<'STR';
+<xml>
+	<title>記事名</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+</xml>
+STR
+			WriteTestXMLFile( $str );
+			my $data = new JAWP::DataFile( $testxmlfile );
+			my $article = $data->GetArticle;
+
+			ok( !defined( $article ), '破損XMLファイル3' );
+		}
+		{
+			my $str = <<'STR';
+<xml>
+	<title>偽記事名</title>
+	<title>真記事名</title>
+	<timestamp>9999-12-31T23-59-59Z</timestamp>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve">本文</text>
+</xml>
+STR
+			WriteTestXMLFile( $str );
+			my $data = new JAWP::DataFile( $testxmlfile );
+			my $article = $data->GetArticle;
+
+			ok( defined( $article ), '要素重複XMLファイル(記事取得)' );
+			is( $article->{'title'}, '真記事名', '要素重複XMLファイル(記事名)' );
+			is( $article->{'timestamp'}, '2011-01-01T00-00-00Z', '要素重複XMLファイル(timestamp)' );
+			is( $article->{'text'}, '本文', '要素重複XMLファイル(本文)' );
+		}
+		{
+			my $str = <<'STR';
+<xml>
+	<text xml:space="preserve">本文</text>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<title>記事名</title>
+</xml>
+STR
+			WriteTestXMLFile( $str );
+			my $data = new JAWP::DataFile( $testxmlfile );
+			my $article = $data->GetArticle;
+
+			ok( defined( $article ), 'タグ逆順XMLファイル(記事取得)' );
+			is( $article->{'title'}, '記事名', 'タグ逆順XMLファイル(記事名)' );
+			is( $article->{'timestamp'}, '2011-01-01T00-00-00Z', 'タグ逆順XMLファイル(timestamp)' );
+			is( $article->{'text'}, '本文', 'タグ逆順XMLファイル(本文)' );
+		}
+		{
+			my $str = <<'STR';
+<xml>
+	<title>記事名</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve">本文</text>
+</xml>
+STR
+			WriteTestXMLFile( $str );
+			my $data = new JAWP::DataFile( $testxmlfile );
+			my $article = $data->GetArticle;
+
+			ok( defined( $article ), '1記事XMLファイル(1記事目取得)' );
+			is( $article->{'title'}, '記事名', '1記事XMLファイル(1記事目記事名)' );
+			is( $article->{'timestamp'}, '2011-01-01T00-00-00Z', '1記事XMLファイル(1記事目timestamp)' );
+			is( $article->{'text'}, '本文', '1記事XMLファイル(1記事目本文)' );
+
+			$article = $data->GetArticle;
+			ok( !defined( $article ), '1記事XMLファイル(2記事目)' );
+
+			$article = $data->GetArticle;
+
+			ok( defined( $article ), '1記事XMLファイル(2周目1記事目取得)' );
+			is( $article->{'title'}, '記事名', '1記事XMLファイル(2周目1記事目記事名)' );
+			is( $article->{'timestamp'}, '2011-01-01T00-00-00Z', '1記事XMLファイル(2周目1記事目timestamp)' );
+			is( $article->{'text'}, '本文', '1記事XMLファイル(2周目1記事目本文)' );
+
+			$article = $data->GetArticle;
+			ok( !defined( $article ), '1記事XMLファイル(2周目2記事目)' );
+		}
+		{
+			my $str = <<'STR';
+<xml>
+	<title>記事名</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve">
+本文1
+本文2
+本文3
+</text>
+</xml>
+STR
+			WriteTestXMLFile( $str );
+			my $data = new JAWP::DataFile( $testxmlfile );
+			my $article = $data->GetArticle;
+
+			ok( defined( $article ), '1記事XMLファイル本文複数行(1記事目取得)' );
+			is( $article->{'title'}, '記事名', '1記事XMLファイル本文複数行(1記事目記事名)' );
+			is( $article->{'timestamp'}, '2011-01-01T00-00-00Z', '1記事XMLファイル本文複数行(1記事目timestamp)' );
+			is( $article->{'text'}, "\n本文1\n本文2\n本文3\n", '1記事XMLファイル本文複数行(1記事目本文)' );
+		}
+		{
+			my $str = <<'STR';
+<xml>
+	<title>記事名</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve">
+本文1
+<!--
+本文2
+-->
+<!-- 偽本文3 -->真本文3<!-- 偽本文3 -->
+</text>
+</xml>
+STR
+			WriteTestXMLFile( $str );
+			my $data = new JAWP::DataFile( $testxmlfile );
+			my $article = $data->GetArticle;
+
+			ok( defined( $article ), '1記事XMLファイル コメント除去(1記事目取得)' );
+			is( $article->{'title'}, '記事名', '1記事XMLファイル コメント除去(1記事目記事名)' );
+			is( $article->{'timestamp'}, '2011-01-01T00-00-00Z', '1記事XMLファイル コメント除去(1記事目timestamp)' );
+			is( $article->{'text'}, "\n本文1\n\n\n\n真本文3\n", '1記事XMLファイル コメント除去(1記事目本文)' );
+		}
+	}
+
+	# GetTitleListテスト
+	{
+		diag( '# Test GetArticle' );
+
+		{
+			WriteTestXMLFile( '' );
+			my $data = new JAWP::DataFile( $testxmlfile );
+			my $titlelist = $data->GetTitleList;
+
+			ok( defined( $titlelist ), '空XMLファイル' );
+			foreach my $namespace ( '標準', '標準_曖昧', '標準_リダイレクト', '利用者', 'Wikipedia', 'ファイル', 'MediaWiki', 'Template', 'Help', 'Category', 'Portal', 'プロジェクト', 'ノート', '利用者‐会話', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki‐ノート', 'Template‐ノート', 'Help‐ノート', 'Category‐ノート', 'Portal‐ノート', 'プロジェクト‐ノート' ) {
+				ok( defined( $titlelist->{$namespace} ), "空XMLファイル($namespace)" );
+			}
+		}
+		{
+			WriteTestXMLFile( '<xml></xml>' );
+			my $data = new JAWP::DataFile( $testxmlfile );
+			my $titlelist = $data->GetTitleList;
+
+			ok( defined( $titlelist ), '無意味XMLファイル' );
+			foreach my $namespace ( '標準', '標準_曖昧', '標準_リダイレクト', '利用者', 'Wikipedia', 'ファイル', 'MediaWiki', 'Template', 'Help', 'Category', 'Portal', 'プロジェクト', 'ノート', '利用者‐会話', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki‐ノート', 'Template‐ノート', 'Help‐ノート', 'Category‐ノート', 'Portal‐ノート', 'プロジェクト‐ノート' ) {
+				ok( defined( $titlelist->{$namespace} ), "無意味XMLファイル($namespace)" );
+			}
+		}
+		{
+			my $str = <<'STR';
+<xml>
+	<title>標準A</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve"></text>
+
+	<title>標準 曖昧A</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve">{{aimai}}</text>
+
+	<title>A</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve">#redirect[[あああ]]</text>
+
+	<title>利用者:A</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve"></text>
+
+	<title>Wikipedia:A</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve"></text>
+
+	<title>ファイル:A</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve"></text>
+
+	<title>MediaWiki:A</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve"></text>
+
+	<title>Template:A</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve"></text>
+
+	<title>Help:A</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve"></text>
+
+	<title>Category:A</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve"></text>
+
+	<title>Portal:A</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve"></text>
+
+	<title>プロジェクト:A</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve"></text>
+
+	<title>ノート:A</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve"></text>
+
+	<title>利用者‐会話:A</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve"></text>
+
+	<title>Wikipedia‐ノート:A</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve"></text>
+
+	<title>ファイル‐ノート:A</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve"></text>
+
+	<title>MediaWiki‐ノート:A</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve"></text>
+
+	<title>Template‐ノート:A</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve"></text>
+
+	<title>Help‐ノート:A</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve"></text>
+
+	<title>Category‐ノート:A</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve"></text>
+
+	<title>Portal‐ノート:A</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve"></text>
+
+	<title>プロジェクト‐ノート:A</title>
+	<timestamp>2011-01-01T00-00-00Z</timestamp>
+	<text xml:space="preserve"></text>
+</xml>
+STR
+			WriteTestXMLFile( $str );
+			my $data = new JAWP::DataFile( $testxmlfile );
+			my $titlelist = $data->GetTitleList;
+
+			ok( defined( $titlelist ), '標準XMLファイル' );
+			ok( defined( $titlelist->{'標準'} ), "標準XMLファイル(標準)" );
+			is( keys %{$titlelist->{'標準'}}, 2, "標準XMLファイル(標準,記事数)" );
+			ok( defined( $titlelist->{'標準'}->{'標準A'} ), "標準XMLファイル(標準,記事名)" );
+			ok( defined( $titlelist->{'標準'}->{'標準 曖昧A'} ), "標準XMLファイル(標準_曖昧,記事名)" );
+			foreach my $namespace ( '標準_リダイレクト', '利用者', 'Wikipedia', 'ファイル', 'MediaWiki', 'Template', 'Help', 'Category', 'Portal', 'プロジェクト', 'ノート', '利用者‐会話', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki‐ノート', 'Template‐ノート', 'Help‐ノート', 'Category‐ノート', 'Portal‐ノート', 'プロジェクト‐ノート' ) {
+				ok( defined( $titlelist->{$namespace} ), "標準XMLファイル($namespace)" );
+				is( keys %{$titlelist->{$namespace}}, 1, "標準XMLファイル($namespace,記事数)" );
+				ok( defined( $titlelist->{$namespace}->{'A'} ), "標準XMLファイル($namespace,記事名)" );
+			}
+		}
+	}
 }
 
 
