@@ -39,7 +39,7 @@
 
 usageは次の通りです。
 <pre>
-jawptool 0.11
+jawptool 0.12
 
 Usage: jawptool.pl command xmlfile reportfile
 
@@ -66,6 +66,10 @@ command:
 **多少の高速化
 **メモリ使用量の多少の削減
 **その他バグ修正
+*2011年7月27日 - 0.12公開。修正内容は以下の通り。
+**ソースコード整理
+**テスト強化
+**その他バグ修正
 
 より詳しい開発の経緯は http://www.saoyagi2.net/wikimedian/ に書かれています(それ以外のことも書いてますが)。コードの具体的な修正内容は http://sourceforge.jp/projects/jawptool/svn/view/ で閲覧できます。
 
@@ -82,8 +86,7 @@ command:
 == TODO ==
 *XMLパースが超いい加減なのをちゃんとする。ただし、速度低下は出来ればしないように。
 *lint-textのCGI版を作る。
-*Appクラスにある処理を別クラスに移動させ、Appは出来るだけスリムに。
-*テストの充実
+*wiki2htmlの強化
 
 == バグ報告 ==
 プログラムにバグがありましたら、[http://sourceforge.jp/projects/jawptool/ プロジェクトトップページ]の「バグ報告」もしくは「フォーラム」までお知らせいただけたら助かります。
