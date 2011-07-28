@@ -702,6 +702,7 @@ sub GetTemplatewordList {
 	my( $word, @wordlist );
 
 	while( $text =~ /\{\{(.*?)(\||\}\})/g ) {
+		next if( $1 =~ /^(DEFAULTSORT|デフォルトソート)/ );
 		$word = $1;
 		$word =~ s/[_　‎]/ /g;
 		$word =~ s/^( +|)(.*?)( +|)$/$2/;

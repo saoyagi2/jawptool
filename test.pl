@@ -3263,6 +3263,12 @@ sub TestJAWPUtil {
 		@result = JAWP::Util::GetTemplatewordList( '{{あああ' );
 		is( @result + 0 , 0, '不完全呼び出し-2' );
 
+		@result = JAWP::Util::GetTemplatewordList( '{{デフォルトソート:あああ}}' );
+		is( @result + 0 , 0, 'デフォルトソート-1' );
+
+		@result = JAWP::Util::GetTemplatewordList( '{{DEFAULTSORT:あああ}}' );
+		is( @result + 0 , 0, 'デフォルトソート-1' );
+
 		@result = JAWP::Util::GetTemplatewordList( '{{あああ}}' );
 		is( @result + 0 , 1, '呼び出し-1' );
 		is( $result[0] , 'あああ', '呼び出し(テンプレートワード)' );
