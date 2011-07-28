@@ -2036,6 +2036,20 @@ sub TestJAWPArticle {
 		my $titlelist = new JAWP::TitleList;
 		my $result_ref;
 
+		$titlelist->{'標準_リダイレクト'}->{'転送語'} = 1;
+		$titlelist->{'標準_曖昧'}->{'曖昧さ回避語'} = 1;
+		$titlelist->{'Category'}->{'カテゴリ'} = 1;
+		$titlelist->{'Category'}->{'カテゴリ1'} = 1;
+		$titlelist->{'Category'}->{'カテゴリ2'} = 1;
+		$titlelist->{'Category'}->{'存命人物'} = 1;
+		$titlelist->{'Category'}->{'2001年生'} = 1;
+		$titlelist->{'Category'}->{'2011年没'} = 1;
+		$titlelist->{'Category'}->{'生年不明'} = 1;
+		$titlelist->{'Category'}->{'没年不明'} = 1;
+		$titlelist->{'Template'}->{'Reflist'} = 1;
+		$titlelist->{'Template'}->{'Aimai'} = 1;
+		$titlelist->{'Template'}->{'死亡年月日と没年齢'} = 1;
+
 		# 標準記事空間以外は無視確認
 		foreach my $namespace ( '利用者', 'Wikipedia', 'ファイル', 'MediaWiki', 'Template', 'Help', 'Category', 'Portal', 'プロジェクト', 'ノート', '利用者‐会話', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki‐ノート', 'Template‐ノート', 'Help‐ノート', 'Category‐ノート', 'Portal‐ノート', 'プロジェクト‐ノート' ) {
 			$article->{'title'} = "$namespace:TEST";
@@ -2287,6 +2301,12 @@ sub TestJAWPArticle {
 			$result_ref = $article->LintText( $titlelist );
 			is( @$result_ref + 0, 1, "カテゴリ-2(警告数)" );
 			is( $result_ref->[0], "既に使用されているカテゴリです(3)", "カテゴリ-2(警告文)" );
+
+			$article->{'title'} = '標準';
+			$article->{'text'} = "{{aimai}}\n[[Category:カテゴリ3]]\n";
+			$result_ref = $article->LintText( $titlelist );
+			is( @$result_ref + 0, 1, "カテゴリ-3(警告数)" );
+			is( $result_ref->[0], "(カテゴリ3)は存在しないカテゴリです(2)", "カテゴリ-3(警告文)" );
 		}
 
 		# 使用できる文字・文言テスト
@@ -2356,12 +2376,11 @@ sub TestJAWPArticle {
 		# 曖昧さ回避リンクテスト
 		{
 			$article->{'title'} = '標準';
-			$article->{'text'} = "[[曖昧さ回避語]]\n{{aimai}}";
+			$article->{'text'} = "[[標準]]\n{{aimai}}";
 			$result_ref = $article->LintText( $titlelist );
 			is( @$result_ref + 0, 0, "曖昧さ回避リンク-1(警告数)" );
 
 			$article->{'title'} = '標準';
-			$titlelist->{'標準_曖昧'}->{'曖昧さ回避語'} = 1;
 			$article->{'text'} = "[[曖昧さ回避語]]\n{{aimai}}";
 			$result_ref = $article->LintText( $titlelist );
 			is( @$result_ref + 0, 1, "リダイレクトリンク-2(警告数)" );
@@ -2371,12 +2390,11 @@ sub TestJAWPArticle {
 		# リダイレクトリンクテスト
 		{
 			$article->{'title'} = '標準';
-			$article->{'text'} = "[[転送語]]\n{{aimai}}";
+			$article->{'text'} = "[[標準]]\n{{aimai}}";
 			$result_ref = $article->LintText( $titlelist );
 			is( @$result_ref + 0, 0, "リダイレクトリンク-1(警告数)" );
 
 			$article->{'title'} = '標準';
-			$titlelist->{'標準_リダイレクト'}->{'転送語'} = 1;
 			$article->{'text'} = "[[転送語]]\n{{aimai}}";
 			$result_ref = $article->LintText( $titlelist );
 			is( @$result_ref + 0, 1, "リダイレクトリンク-2(警告数)" );

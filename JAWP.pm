@@ -267,6 +267,9 @@ sub LintText {
 			if( defined( $category{$1} ) ) {
 				push @result, "既に使用されているカテゴリです($n)";
 			}
+			if( !defined( $titlelist->{'Category'}->{$1} ) ) {
+				push @result, "($1)は存在しないカテゴリです($n)";
+			}
 			$category{$1} = 1;
 			if( $2 =~ /[ぁぃぅぇぉっゃゅょゎがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽー]/ ) {
 				push @result, "ソートキーには濁音、半濁音、吃音、長音は使用しないことが推奨されます($n)";
@@ -309,6 +312,12 @@ sub LintText {
 			}
 			if( $word =~ /^\d+年\d+月\d+日$/ ) {
 				push @result, "年月日へのリンクは年と月日を分けることが推奨されます($n)";
+			}
+		}
+
+		foreach my $word ( JAWP::Util::GetTemplatewordList( $lines[$n - 1] ) ) {
+			if( !defined( $titlelist->{'Template'}->{$word} ) ) {
+				push @result, "($word)は存在しないテンプレートです($n)";
 			}
 		}
 
