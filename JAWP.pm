@@ -182,9 +182,10 @@ sub LintTitle {
 
 # 文法チェック
 # param $article 記事データ
+# param $titlelist JAWP::TitleListオブジェクト
 # return $datalist_ref 結果配列へのリファレンス
 sub LintText {
-	my $self = shift;
+	my( $self, $titlelist ) = @_;
 	my( $text, $checktimestamp, @time, @result, $text2, $n, @lines, @lines2, $headlevel, $prevheadlevel, $code, $defaultsort, %category, %interlink, $previnterlink, $mode, $prevmode );
 
 	if( $self->Namespace ne '標準' || $self->IsRedirect ) {
@@ -300,6 +301,12 @@ sub LintText {
 		}
 
 		foreach my $word ( JAWP::Util::GetLinkwordList( $lines[$n - 1] ) ) {
+			if( defined( $titlelist->{'標準_曖昧'}->{$word} ) ) {
+				push @result, "($word)のリンク先は曖昧さ回避です($n)";
+			}
+			if( defined( $titlelist->{'標準_リダイレクト'}->{$word} ) ) {
+				push @result, "($word)のリンク先はリダイレクトです($n)";
+			}
 			if( $word =~ /^\d+年\d+月\d+日$/ ) {
 				push @result, "年月日へのリンクは年と月日を分けることが推奨されます($n)";
 			}
@@ -848,6 +855,7 @@ STR
 sub LintText {
 	my( $xmlfile, $reportfile ) = @_;
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
+	my $titlelist = $jawpdata->GetTitleList;
 	my $report = new JAWP::ReportFile( $reportfile );
 	my( $n, $article, $result_ref, $lintcount );
 
@@ -866,7 +874,7 @@ STR
 	while( $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
-		$result_ref = $article->LintText;
+		$result_ref = $article->LintText( $titlelist );
 		if( @$result_ref != 0 ) {
 			$report->OutputWikiList( "[[$article->{'title'}]]", $result_ref );
 			$lintcount++;
