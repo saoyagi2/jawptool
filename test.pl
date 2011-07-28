@@ -54,7 +54,7 @@ sub TestJAWP {
 sub TestJAWPArticle {
 	# メソッド呼び出しテスト
 	{
-		foreach my $method ( 'new', 'IsRedirect', 'IsAimai', 'IsLiving', 'IsNoref', 'LintTitle', 'LintText' ) {
+		foreach my $method ( 'new', 'SetText', 'IsRedirect', 'IsAimai', 'IsLiving', 'IsNoref', 'LintTitle', 'LintText' ) {
 			ok( JAWP::Article->can($method), "call method $method" );
 		}
 	}
@@ -70,6 +70,23 @@ sub TestJAWPArticle {
 			ok( defined( $article->{$member} ), "defined member $member" );
 			is( $article->{$member}, '', "member $member value" );
 		}
+	}
+
+	# SetTextテスト
+	{
+		my $article = new JAWP::Article;
+
+		$article->SetText( '' );
+		is( $article->{'text'}, '', '空文字列' );
+
+		$article->SetText( "あああ\nいいい\n" );
+		is( $article->{'text'}, "あああ\nいいい\n", '複数行文字列' );
+
+		$article->SetText( "<!--あ-->あ<!--あ-->\n<!--\n\n-->\nいいい\n" );
+		is( $article->{'text'}, "あ\n\n\n\nいいい\n", 'コメント除去' );
+
+		$article->SetText( "&amp;" );
+		is( $article->{'text'}, "&", 'アンエスケープHTML' );
 	}
 
 	# IsRedirectテスト

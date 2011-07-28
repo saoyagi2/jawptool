@@ -29,6 +29,22 @@ sub new {
 }
 
 
+# テキスト代入
+# param $text
+sub SetText {
+	my( $self, $text ) = @_;
+
+	$text = JAWP::Util::UnescapeHTML( $text );
+	while( $text =~ /<!--(.*?)-->/s ) {
+		my $tmp = $1;
+		$tmp =~ s/[^\n]//g;
+		$text =~ s/<!--(.*?)-->/$tmp/s;
+	}
+
+	$self->{'text'} = $text;
+}
+
+
 # リダイレクト判別
 # return 真偽値
 sub IsRedirect {
@@ -404,8 +420,9 @@ sub GetArticle {
 	my $self = shift;
 	my $article = new JAWP::Article;
 	my $fh = $self->{'fh'};
-	my $flag = 0;
+	my( $text, $flag );
 
+	$flag = 0;
 	while( <$fh> ) {
 		if( /<title>(.*)<\/title>/ ) {
 			$article->{'title'} = JAWP::Util::UnescapeHTML( $1 );
@@ -417,27 +434,21 @@ sub GetArticle {
 			$flag |= 2;
 		}
 		if( /<text xml:space="preserve">(.*)<\/text>/ ) {
-			$article->{'text'} = $1;
-			$article->{'text'} =~ s/<!\-\-.*?\-\->//sg;
+			$article->SetText( $1 );
 			$flag |= 4;
 		}
 		elsif( /<text xml:space="preserve">(.*)/ ) {
-			$article->{'text'} = JAWP::Util::UnescapeHTML( "$1\n" );
+			$text = "$1\n";
 			while( <$fh> ) {
 				if( /(.*)<\/text>/ ) {
-					$article->{'text'} .= $1;
+					$text .= $1;
 					last;
 				}
 				else {
-					$article->{'text'} .= $_;
+					$text .= $_;
 				}
 			}
-			$article->{'text'} = JAWP::Util::UnescapeHTML( $article->{'text'} );
-			while( $article->{'text'} =~ /<!--(.*?)-->/s ) {
-				my $tmp = $1;
-				$tmp =~ s/[^\n]//g;
-				$article->{'text'} =~ s/<!--(.*?)-->/$tmp/s;
-			}
+			$article->SetText( $text );
 			$flag |= 4;
 		}
 
