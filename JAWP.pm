@@ -29,6 +29,25 @@ sub new {
 }
 
 
+# タイトル代入
+# param $title
+sub SetTitle {
+	my( $self, $title ) = @_;
+
+	$title =~ s/_/ /g;
+	$self->{'title'} = JAWP::Util::UnescapeHTML( $title );
+}
+
+
+# タイムスタンプ代入
+# param $timestamp
+sub SetTimestamp {
+	my( $self, $timestamp ) = @_;
+
+	$self->{'timestamp'} = $timestamp;
+}
+
+
 # テキスト代入
 # param $text
 sub SetText {
@@ -425,12 +444,11 @@ sub GetArticle {
 	$flag = 0;
 	while( <$fh> ) {
 		if( /<title>(.*)<\/title>/ ) {
-			$article->{'title'} = JAWP::Util::UnescapeHTML( $1 );
-			$article->{'title'} =~ s/_/ /g;
+			$article->SetTitle( $1 );
 			$flag |= 1;
 		}
 		if( /<timestamp>(.*)<\/timestamp>/ ) {
-			$article->{'timestamp'} = $1;
+			$article->SetTimestamp( $1 );
 			$flag |= 2;
 		}
 		if( /<text xml:space="preserve">(.*)<\/text>/ ) {

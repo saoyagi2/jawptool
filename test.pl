@@ -54,7 +54,7 @@ sub TestJAWP {
 sub TestJAWPArticle {
 	# メソッド呼び出しテスト
 	{
-		foreach my $method ( 'new', 'SetText', 'IsRedirect', 'IsAimai', 'IsLiving', 'IsNoref', 'LintTitle', 'LintText' ) {
+		foreach my $method ( 'new', 'SetTitle', 'SetTimestamp', 'SetText', 'IsRedirect', 'IsAimai', 'IsLiving', 'IsNoref', 'LintTitle', 'LintText' ) {
 			ok( JAWP::Article->can($method), "call method $method" );
 		}
 	}
@@ -70,6 +70,28 @@ sub TestJAWPArticle {
 			ok( defined( $article->{$member} ), "defined member $member" );
 			is( $article->{$member}, '', "member $member value" );
 		}
+	}
+
+	# SetTitleテスト
+	{
+		my $article = new JAWP::Article;
+
+		$article->SetTitle( '' );
+		is( $article->{'title'}, '', 'SetTitle(空文字列)' );
+
+		$article->SetTitle( "a_b" );
+		is( $article->{'title'}, "a b", 'SetTitle(アンダーバー変換)' );
+
+		$article->SetTitle( "&amp;" );
+		is( $article->{'title'}, "&", 'SetTitle(アンエスケープHTML)' );
+	}
+
+	# SetTimestampテスト
+	{
+		my $article = new JAWP::Article;
+
+		$article->SetTimestamp( '2011-01-01T00:00:00Z' );
+		is( $article->{'timestamp'}, '2011-01-01T00:00:00Z', 'SetTimestamp(2011-01-01T00:00:00Z)' );
 	}
 
 	# SetTextテスト
