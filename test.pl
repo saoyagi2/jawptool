@@ -2042,6 +2042,8 @@ sub TestJAWPArticle {
 		$titlelist->{'Category'}->{'カテゴリ1'} = 1;
 		$titlelist->{'Category'}->{'カテゴリ2'} = 1;
 		$titlelist->{'Category'}->{'存命人物'} = 1;
+		$titlelist->{'Category'}->{'1900年生'} = 1;
+		$titlelist->{'Category'}->{'1902年没'} = 1;
 		$titlelist->{'Category'}->{'2001年生'} = 1;
 		$titlelist->{'Category'}->{'2011年没'} = 1;
 		$titlelist->{'Category'}->{'生年不明'} = 1;
@@ -2586,7 +2588,7 @@ sub TestJAWPArticle {
 			is( @$result_ref + 0, 0, "生没年カテゴリ-2(警告数)" );
 
 			$article->{'title'} = '標準';
-			$article->{'text'} = "[[Category:2001年生]]\n[[Category:2011年没]]\n{{aimai}}";
+			$article->{'text'} = "[[Category:2001年生]]\n[[Category:2011年没]]\n{{死亡年月日と没年齢|2001|1|1|2011|12|31}}\n{{aimai}}";
 			$result_ref = $article->LintText( $titlelist );
 			is( @$result_ref + 0, 0, "生没年カテゴリ-3(警告数)" );
 
@@ -2606,7 +2608,7 @@ sub TestJAWPArticle {
 			is( @$result_ref + 0, 0, "生没年カテゴリ-6(警告数)" );
 
 			$article->{'title'} = '標準';
-			$article->{'text'} = "[[Category:2001年生]]\n[[Category:2011年没]]\n[[Category:存命人物]]\n{{aimai}}";
+			$article->{'text'} = "[[Category:2001年生]]\n[[Category:2011年没]]\n[[Category:存命人物]]\n{{死亡年月日と没年齢|2001|1|1|2011|12|31}}\n{{aimai}}";
 			$result_ref = $article->LintText( $titlelist );
 			is( @$result_ref + 0, 1, "生没年カテゴリ-7(警告数)" );
 			is( $result_ref->[0], "存命人物ではありません", "生没年カテゴリ-7(警告文)" );
@@ -2652,6 +2654,17 @@ sub TestJAWPArticle {
 			$result_ref = $article->LintText( $titlelist );
 			is( @$result_ref + 0, 1, "生没年カテゴリ-14(警告数)" );
 			is( $result_ref->[0], "存命人物ではありません", "生没年カテゴリ-14(警告文)" );
+
+			$article->{'title'} = '標準';
+			$article->{'text'} = "[[Category:1900年生]]\n[[Category:1902年没]]\n{{aimai}}";
+			$result_ref = $article->LintText( $titlelist );
+			is( @$result_ref + 0, 0, "生没年カテゴリ-15(警告数)" );
+
+			$article->{'title'} = '標準';
+			$article->{'text'} = "[[Category:2001年生]]\n[[Category:2011年没]]\n{{aimai}}";
+			$result_ref = $article->LintText( $titlelist );
+			is( @$result_ref + 0, 1, "生没年カテゴリ-16(警告数)" );
+			is( $result_ref->[0], "(死亡年月日と没年齢)のテンプレートの使用を推奨します", "生没年カテゴリ-16(警告文)" );
 		}
 	}
 }
