@@ -42,8 +42,6 @@ my $testreportfile = "$testdir/report.txt";
 ################################################################################
 
 sub TestJAWP {
-	diag( '###################### Test JAWP ######################' );
-
 	# useテスト
 	use_ok( 'JAWP', 'use JAWP' );
 }
@@ -54,8 +52,6 @@ sub TestJAWP {
 ################################################################################
 
 sub TestJAWPArticle {
-	diag( '###################### Test JAWP::Article ######################' );
-
 	# メソッド呼び出しテスト
 	{
 		foreach my $method ( 'new', 'IsRedirect', 'IsAimai', 'IsLiving', 'IsNoref', 'LintTitle', 'LintText' ) {
@@ -78,7 +74,6 @@ sub TestJAWPArticle {
 
 	# IsRedirectテスト
 	{
-		diag( '# Test IsRedirect' );
 		my $article = new JAWP::Article;
 
 		ok( !$article->IsRedirect, 'empty' );
@@ -91,7 +86,6 @@ sub TestJAWPArticle {
 
 	# IsAimaiテスト
 	{
-		diag( '# Test IsAimai' );
 		my $article = new JAWP::Article;
 
 		ok( !$article->IsAimai, 'empty' );
@@ -104,7 +98,6 @@ sub TestJAWPArticle {
 
 	# IsLivingテスト
 	{
-		diag( '# Test IsLiving' );
 		my $article = new JAWP::Article;
 
 		ok( !$article->IsLiving, 'empty' );
@@ -115,7 +108,6 @@ sub TestJAWPArticle {
 
 	# IsNorefテスト
 	{
-		diag( '# Test IsNoref' );
 		my $article = new JAWP::Article;
 
 		ok( $article->IsNoref, 'empty' );
@@ -128,7 +120,6 @@ sub TestJAWPArticle {
 
 	# Namespaceテスト
 	{
-		diag( '# Test Namespace' );
 		my $article = new JAWP::Article;
 		my $namespace;
 
@@ -144,8 +135,6 @@ sub TestJAWPArticle {
 
 	# LintTitleテスト
 	{
-		diag( '# Test LintTitle' );
-
 		my $article = new JAWP::Article;
 		my $result_ref;
 
@@ -2004,8 +1993,6 @@ sub TestJAWPArticle {
 
 	# LintTextテスト
 	{
-		diag( '# Test LintText' );
-
 		my $article = new JAWP::Article;
 		my $result_ref;
 
@@ -2587,8 +2574,6 @@ sub TestJAWPArticle {
 ################################################################################
 
 sub TestJAWPTitleList {
-	diag( '###################### Test JAWP::TitleList ######################' );
-
 	# メソッド呼び出しテスト
 	{
 		ok( JAWP::TitleList->can('new'), "call method new" );
@@ -2620,8 +2605,6 @@ sub TestJAWPTitleList {
 ################################################################################
 
 sub TestJAWPData {
-	diag( '###################### Test JAWP::DataFile ######################' );
-
 	# メソッド呼び出しテスト
 	{
 		foreach my $method ( 'new', 'GetArticle', 'GetTitleList' ) {
@@ -2652,8 +2635,6 @@ sub TestJAWPData {
 
 	# GetArticleテスト
 	{
-		diag( '# Test GetArticle' );
-
 		{
 			WriteTestXMLFile( '' );
 			my $data = new JAWP::DataFile( $testxmlfile );
@@ -2821,8 +2802,6 @@ STR
 
 	# GetTitleListテスト
 	{
-		diag( '# Test GetArticle' );
-
 		{
 			WriteTestXMLFile( '' );
 			my $data = new JAWP::DataFile( $testxmlfile );
@@ -2959,8 +2938,6 @@ STR
 ################################################################################
 
 sub TestJAWPReport {
-	diag( '###################### Test JAWP::ReportFile ######################' );
-
 	# メソッド呼び出しテスト
 	{
 		foreach my $method ( 'new', 'OutputWiki', 'OutputWikiList', 'OutputDirect' ) {
@@ -3122,8 +3099,6 @@ STR
 ################################################################################
 
 sub TestJAWPUtil {
-	diag( '###################### Test JAWP::Util ######################' );
-
 	# メソッド呼び出しテスト
 	{
 		foreach my $method ( 'UnescapeHTML', 'DecodeURL', 'SortHash', 'GetLinkwordList', 'GetTemplatewordList', 'GetLinkType' ) {
@@ -3133,7 +3108,6 @@ sub TestJAWPUtil {
 
 	# HTMLUnescapeテスト
 	{
-		diag( '# Test JAWP::Util::HTMLUnescape' );
 		is( JAWP::Util::UnescapeHTML( 'abcdef') , 'abcdef', '無変換1' );
 		is( JAWP::Util::UnescapeHTML( '&amp') , '&amp', '無変換2' );
 		is( JAWP::Util::UnescapeHTML( '&quot;&amp;&lt;&gt;' ), '"&<>', '文字実体参照(マークアップ記号)' );
@@ -3149,15 +3123,12 @@ sub TestJAWPUtil {
 
 	# DecodeURLテスト
 	{
-		diag( '# Test JAWP::Util::DecodeURL' );
 		is( JAWP::Util::DecodeURL( 'abcdef') , 'abcdef', '無変換' );
 		is( JAWP::Util::DecodeURL( '%E7%89%B9%E5%88%A5:') , '特別:', '変換(特別)' );
 	}
 
 	# SortHashテスト
 	{
-		diag( '# Test JAWP::Util::HTMLUnescape' );
-
 		my %hash = ( 'a'=>2, 'b'=>1, 'c'=>3 );
 		my $sorted = JAWP::Util::SortHash( \%hash );
 		is( ref $sorted, 'ARRAY', 'result is ARRAY reference' );
@@ -3169,8 +3140,6 @@ sub TestJAWPUtil {
 
 	# GetLinkwordListテスト
 	{
-		diag( '# Test JAWP::Util::GetLinkwordList' );
-
 		my @result;
 
 		@result = JAWP::Util::GetLinkwordList( '' );
@@ -3210,8 +3179,6 @@ sub TestJAWPUtil {
 
 	# GetTemplatewordListテスト
 	{
-		diag( '# Test JAWP::Util::GetTemplatewordList' );
-
 		my @result;
 
 		@result = JAWP::Util::GetTemplatewordList( '' );
@@ -3251,8 +3218,6 @@ sub TestJAWPUtil {
 
 	# GetLinkTypeテスト
 	{
-		diag( '# Test JAWP::Util::GetLinkType' );
-
 		my( $linktype, $word );
 		my $titlelist = new JAWP::TitleList;
 
@@ -3340,8 +3305,6 @@ sub TestJAWPUtil {
 ################################################################################
 
 sub TestJAWPApp {
-	diag( '###################### Test JAWP::App ######################' );
-
 	# メソッド呼び出しテスト
 	{
 		foreach my $method ( 'Run', 'Usage', 'LintTitle', 'LintText',
