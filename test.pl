@@ -2311,10 +2311,16 @@ sub TestJAWPArticle {
 			is( $result_ref->[0], "既に使用されているカテゴリです(3)", "カテゴリ-2(警告文)" );
 
 			$article->{'title'} = '標準';
-			$article->{'text'} = "{{aimai}}\n[[Category:カテゴリ3]]\n";
+			$article->{'text'} = "{{aimai}}\n[[Category:カテゴリ]][[Category:カテゴリ]]\n";
 			$result_ref = $article->LintText( $titlelist );
 			is( @$result_ref + 0, 1, "カテゴリ-3(警告数)" );
-			is( $result_ref->[0], "(カテゴリ3)は存在しないカテゴリです(2)", "カテゴリ-3(警告文)" );
+			is( $result_ref->[0], "既に使用されているカテゴリです(2)", "カテゴリ-3(警告文)" );
+
+			$article->{'title'} = '標準';
+			$article->{'text'} = "{{aimai}}\n[[Category:カテゴリ3]]\n";
+			$result_ref = $article->LintText( $titlelist );
+			is( @$result_ref + 0, 1, "カテゴリ-4(警告数)" );
+			is( $result_ref->[0], "(カテゴリ3)は存在しないカテゴリです(2)", "カテゴリ-4(警告文)" );
 		}
 
 		# 使用できる文字・文言テスト

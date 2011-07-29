@@ -263,7 +263,7 @@ sub LintText {
 			}
 			$defaultsort = 'set';
 		}
-		if( $lines[$n - 1] =~ /\[\[Category:(.*?)(|\|.*?)\]\]/i ) {
+		while( $lines[$n - 1] =~ /\[\[Category:(.*?)(|\|.*?)\]\]/ig ) {
 			if( defined( $category{$1} ) ) {
 				push @result, "既に使用されているカテゴリです($n)";
 			}
