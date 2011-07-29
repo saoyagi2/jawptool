@@ -345,10 +345,17 @@ sub LintText {
 	}
 
 	@time = gmtime( time() );
-	$checktimestamp = sprintf( "%04d-%02d-%02dT%02d:%02d:%02dZ", $time[5] + 1900 - 1, $time[4] + 1, $time[3], $time[2], $time[1], $time[0] );
+	if( $time[4] >= 3 ) {
+		$time[4] -= 3;
+	}
+	else {
+		$time[4] += 9;
+		$time[5]--;
+	}
+	$checktimestamp = sprintf( "%04d-%02d-%02dT%02d:%02d:%02dZ", $time[5] + 1900, $time[4] + 1, $time[3], $time[2], $time[1], $time[0] );
 	if( $self->{'timestamp'} lt $checktimestamp ) {
 		if( index( $text, '{{Sakujo/' ) >= 0 ) {
-			push @result, '削除タグが貼られて1年以上経過しています';
+			push @result, '削除タグが貼られて3ヶ月以上経過しています';
 		}
 	}
 
@@ -725,7 +732,7 @@ sub GetTemplatewordList {
 	my( $word, @wordlist );
 
 	while( $text =~ /\{\{(.*?)(\||\}\})/g ) {
-		next if( $1 =~ /^(DEFAULTSORT|デフォルトソート)/ );
+		next if( $1 =~ /^(DEFAULTSORT|デフォルトソート)/ || $1 =~ /^Sakujo\// );
 		$word = $1;
 		$word =~ s/[_　‎]/ /g;
 		$word =~ s/^( +|)(.*?)( +|)$/$2/;
