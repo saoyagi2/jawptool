@@ -2301,28 +2301,30 @@ sub TestJAWPArticle {
 
 		# カテゴリテスト
 		{
-			$article->{'title'} = '標準';
-			$article->{'text'} = "{{aimai}}\n[[Category:カテゴリ1]]\n[[Category:カテゴリ2]]\n";
-			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, "カテゴリ-1(警告数)" );
+			foreach my $type ( 'Category', 'category', 'カテゴリ' ) {
+				$article->{'title'} = '標準';
+				$article->{'text'} = "{{aimai}}\n[[$type:カテゴリ1]]\n[[$type:カテゴリ2]]\n";
+				$result_ref = $article->LintText( $titlelist );
+				is( @$result_ref + 0, 0, "カテゴリ-1($type,警告数)" );
 
-			$article->{'title'} = '標準';
-			$article->{'text'} = "{{aimai}}\n[[Category:カテゴリ]]\n[[Category:カテゴリ]]\n";
-			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, "カテゴリ-2(警告数)" );
-			is( $result_ref->[0], "既に使用されているカテゴリです(3)", "カテゴリ-2(警告文)" );
+				$article->{'title'} = '標準';
+				$article->{'text'} = "{{aimai}}\n[[$type:カテゴリ]]\n[[$type:カテゴリ]]\n";
+				$result_ref = $article->LintText( $titlelist );
+				is( @$result_ref + 0, 1, "カテゴリ-2($type,警告数)" );
+				is( $result_ref->[0], "既に使用されているカテゴリです(3)", "カテゴリ-2($type,警告文)" );
 
-			$article->{'title'} = '標準';
-			$article->{'text'} = "{{aimai}}\n[[Category:カテゴリ]][[Category:カテゴリ]]\n";
-			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, "カテゴリ-3(警告数)" );
-			is( $result_ref->[0], "既に使用されているカテゴリです(2)", "カテゴリ-3(警告文)" );
+				$article->{'title'} = '標準';
+				$article->{'text'} = "{{aimai}}\n[[$type:カテゴリ]][[$type:カテゴリ]]\n";
+				$result_ref = $article->LintText( $titlelist );
+				is( @$result_ref + 0, 1, "カテゴリ-3($type,警告数)" );
+				is( $result_ref->[0], "既に使用されているカテゴリです(2)", "カテゴリ-3($type,警告文)" );
 
-			$article->{'title'} = '標準';
-			$article->{'text'} = "{{aimai}}\n[[Category:カテゴリ3]]\n";
-			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, "カテゴリ-4(警告数)" );
-			is( $result_ref->[0], "(カテゴリ3)は存在しないカテゴリです(2)", "カテゴリ-4(警告文)" );
+				$article->{'title'} = '標準';
+				$article->{'text'} = "{{aimai}}\n[[$type:カテゴリ3]]\n";
+				$result_ref = $article->LintText( $titlelist );
+				is( @$result_ref + 0, 1, "カテゴリ-4($type,警告数)" );
+				is( $result_ref->[0], "(カテゴリ3)は存在しないカテゴリです(2)", "カテゴリ-4($type,警告文)" );
+			}
 		}
 
 		# ファイルテスト
@@ -2337,19 +2339,19 @@ sub TestJAWPArticle {
 				$article->{'text'} = "{{aimai}}\n[[$type:ファイル|a|b|c]]\n";
 				$result_ref = $article->LintText( $titlelist );
 				is( @$result_ref + 0, 0, "ファイル-2($type,警告数)" );
+
+				$article->{'title'} = '標準';
+				$article->{'text'} = "{{aimai}}\n[[$type:ファイル1]]\n";
+				$result_ref = $article->LintText( $titlelist );
+				is( @$result_ref + 0, 1, "ファイル-3($type,警告数)" );
+				is( $result_ref->[0], "(ファイル1)は存在しないファイルです(2)", "ファイル-3($type,警告文)" );
+
+				$article->{'title'} = '標準';
+				$article->{'text'} = "{{aimai}}\n[[$type:ファイル1|a|b|c]]\n";
+				$result_ref = $article->LintText( $titlelist );
+				is( @$result_ref + 0, 1, "ファイル-4($type,警告数)" );
+				is( $result_ref->[0], "(ファイル1)は存在しないファイルです(2)", "ファイル-4($type,警告文)" );
 			}
-
-			$article->{'title'} = '標準';
-			$article->{'text'} = "{{aimai}}\n[[ファイル:ファイル1]]\n";
-			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, "ファイル-3(警告数)" );
-			is( $result_ref->[0], "(ファイル1)は存在しないファイルです(2)", "ファイル-3(警告文)" );
-
-			$article->{'title'} = '標準';
-			$article->{'text'} = "{{aimai}}\n[[ファイル:ファイル1|a|b|c]]\n";
-			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, "ファイル-4(警告数)" );
-			is( $result_ref->[0], "(ファイル1)は存在しないファイルです(2)", "ファイル-4(警告文)" );
 		}
 
 		# テンプレートテスト
@@ -2364,6 +2366,19 @@ sub TestJAWPArticle {
 			$result_ref = $article->LintText( $titlelist );
 			is( @$result_ref + 0, 1, "テンプレート-2(警告数)" );
 			is( $result_ref->[0], "(テンプレート1)は存在しないテンプレートです(2)", "テンプレート-2(警告文)" );
+
+			foreach my $type ( 'Template', 'template', 'テンプレート' ) {
+				$article->{'title'} = '標準';
+				$article->{'text'} = "{{aimai}}\n[[$type:テンプレート]]\n";
+				$result_ref = $article->LintText( $titlelist );
+				is( @$result_ref + 0, 0, "テンプレート-3($type,警告数)" );
+
+				$article->{'title'} = '標準';
+				$article->{'text'} = "{{aimai}}\n[[$type:テンプレート1]]\n";
+				$result_ref = $article->LintText( $titlelist );
+				is( @$result_ref + 0, 1, "テンプレート-4($type,警告数)" );
+				is( $result_ref->[0], "(テンプレート1)は存在しないテンプレートです(2)", "テンプレート-4($type,警告文)" );
+			}
 		}
 
 		# 使用できる文字・文言テスト

@@ -263,15 +263,15 @@ sub LintText {
 			}
 			$defaultsort = 'set';
 		}
-		while( $lines[$n - 1] =~ /\[\[Category:(.*?)(|\|.*?)\]\]/ig ) {
-			if( defined( $category{$1} ) ) {
+		while( $lines[$n - 1] =~ /\[\[(Category|カテゴリ):(.*?)(|\|.*?)\]\]/ig ) {
+			if( defined( $category{$2} ) ) {
 				push @result, "既に使用されているカテゴリです($n)";
 			}
-			if( !defined( $titlelist->{'Category'}->{$1} ) ) {
-				push @result, "($1)は存在しないカテゴリです($n)";
+			if( !defined( $titlelist->{'Category'}->{$2} ) ) {
+				push @result, "($2)は存在しないカテゴリです($n)";
 			}
-			$category{$1} = 1;
-			if( $2 =~ /[ぁぃぅぇぉっゃゅょゎがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽー]/ ) {
+			$category{$2} = 1;
+			if( $3 =~ /[ぁぃぅぇぉっゃゅょゎがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽー]/ ) {
 				push @result, "ソートキーには濁音、半濁音、吃音、長音は使用しないことが推奨されます($n)";
 			}
 			$mode = 'category';
@@ -279,6 +279,11 @@ sub LintText {
 		while( $lines[$n - 1] =~ /\[\[(ファイル|画像|メディア|file|image|media):(.*?)(|\|.*?)\]\]/ig ) {
 			if( !defined( $titlelist->{'ファイル'}->{$2} ) ) {
 				push @result, "($2)は存在しないファイルです($n)";
+			}
+		}
+		while( $lines[$n - 1] =~ /\[\[(Template|テンプレート):(.*?)(|\|.*?)\]\]/ig ) {
+			if( !defined( $titlelist->{'Template'}->{$2} ) ) {
+				push @result, "($2)は存在しないテンプレートです($n)";
 			}
 		}
 		if( $lines[$n - 1] =~ /[，．！？＆＠]/ ) {
