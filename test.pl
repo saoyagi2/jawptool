@@ -2051,6 +2051,7 @@ sub TestJAWPArticle {
 		$titlelist->{'Template'}->{'Reflist'} = 1;
 		$titlelist->{'Template'}->{'Aimai'} = 1;
 		$titlelist->{'Template'}->{'死亡年月日と没年齢'} = 1;
+		$titlelist->{'Template'}->{'テンプレート'} = 1;
 
 		# 標準記事空間以外は無視確認
 		foreach my $namespace ( '利用者', 'Wikipedia', 'ファイル', 'MediaWiki', 'Template', 'Help', 'Category', 'Portal', 'プロジェクト', 'ノート', '利用者‐会話', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki‐ノート', 'Template‐ノート', 'Help‐ノート', 'Category‐ノート', 'Portal‐ノート', 'プロジェクト‐ノート' ) {
@@ -2321,6 +2322,20 @@ sub TestJAWPArticle {
 			$result_ref = $article->LintText( $titlelist );
 			is( @$result_ref + 0, 1, "カテゴリ-4(警告数)" );
 			is( $result_ref->[0], "(カテゴリ3)は存在しないカテゴリです(2)", "カテゴリ-4(警告文)" );
+		}
+
+		# テンプレートテスト
+		{
+			$article->{'title'} = '標準';
+			$article->{'text'} = "{{aimai}}\n{{テンプレート}}\n";
+			$result_ref = $article->LintText( $titlelist );
+			is( @$result_ref + 0, 0, "テンプレート-1(警告数)" );
+
+			$article->{'title'} = '標準';
+			$article->{'text'} = "{{aimai}}\n{{テンプレート1}}\n";
+			$result_ref = $article->LintText( $titlelist );
+			is( @$result_ref + 0, 1, "カテゴリ-2(警告数)" );
+			is( $result_ref->[0], "(テンプレート1)は存在しないテンプレートです(2)", "テンプレート-2(警告文)" );
 		}
 
 		# 使用できる文字・文言テスト
