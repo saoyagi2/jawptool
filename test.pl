@@ -2664,7 +2664,7 @@ sub TestJAWPArticle {
 			$article->{'text'} = "[[Category:2001年生]]\n[[Category:2011年没]]\n{{aimai}}";
 			$result_ref = $article->LintText( $titlelist );
 			is( @$result_ref + 0, 1, "生没年カテゴリ-16(警告数)" );
-			is( $result_ref->[0], "(死亡年月日と没年齢)のテンプレートの使用を推奨します", "生没年カテゴリ-16(警告文)" );
+			is( $result_ref->[0], "(死亡年月日と没年齢)のテンプレートを使うと便利です", "生没年カテゴリ-16(警告文)" );
 		}
 	}
 }

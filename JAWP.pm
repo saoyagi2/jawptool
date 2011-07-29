@@ -395,7 +395,7 @@ sub LintText {
 		push @result, "存命人物または没年のカテゴリがありません";
 	}
 	if( defined( $生年 ) && $生年 >= 1903 && defined( $没年 ) && !$temp死亡年月日 ) {
-		push @result, "(死亡年月日と没年齢)のテンプレートの使用を推奨します";
+		push @result, "(死亡年月日と没年齢)のテンプレートを使うと便利です";
 	}
 
 	return \@result;
