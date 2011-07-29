@@ -2289,6 +2289,12 @@ sub TestJAWPArticle {
 			$result_ref = $article->LintText( $titlelist );
 			is( @$result_ref + 0, 1, "デフォルトソート-2(警告数)" );
 			is( $result_ref->[0], "デフォルトソートではソートキーが必須です(1)", "デフォルトソート-2(警告文)" );
+
+			$article->{'title'} = '標準';
+			$article->{'text'} = "{{DEFAULTSORT:あああ}}{{DEFAULTSORT:あああ}}\n{{aimai}}";
+			$result_ref = $article->LintText( $titlelist );
+			is( @$result_ref + 0, 1, "デフォルトソート-3(警告数)" );
+			is( $result_ref->[0], "デフォルトソートが複数存在します(1)", "デフォルトソート-3(警告文)" );
 		}
 
 		# カテゴリテスト

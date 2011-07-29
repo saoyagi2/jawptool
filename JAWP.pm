@@ -251,7 +251,7 @@ sub LintText {
 		if( index( $lines[$n - 1], '<!--' ) >= 0 ) {
 			push @result, "閉じられていないコメントタグがあります($n)";
 		}
-		if( $lines[$n - 1] =~ /\{\{(DEFAULTSORT|デフォルトソート):(.*?)\}\}/ ) {
+		while( $lines[$n - 1] =~ /\{\{(DEFAULTSORT|デフォルトソート):(.*?)\}\}/g ) {
 			if( $2 eq '' ) {
 				push @result, "デフォルトソートではソートキーが必須です($n)";
 			}
