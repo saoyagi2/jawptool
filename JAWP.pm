@@ -850,7 +850,7 @@ sub LintTitle {
 STR
 	);
 
-	$n = 0;
+	$n = 1;
 	while( $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
@@ -888,7 +888,8 @@ sub LintText {
 STR
 	);
 
-	$n = $lintcount = 0;
+	$lintcount = 0;
+	$n = 1;
 	while( $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
@@ -1100,7 +1101,7 @@ STR
 	);
 
 	$livingcount = $livingnorefcount = 0;
-	$n = 0;
+	$n = 1;
 	while( $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
