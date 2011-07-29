@@ -927,7 +927,7 @@ STR
 	StatisticReportSub1( $titlelist, $report );
 
 	foreach my $namespace ( '利用者', '利用者‐会話', 'Wikipedia', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki', 'MediaWiki‐ノート', 'Template‐ノート', 'Help', 'Help‐ノート', 'Category‐ノート', 'Portal', 'Portal‐ノート', 'プロジェクト', 'プロジェクト‐ノート' ) {
-		undef $titlelist->{$namespace};
+		$titlelist->{$namespace} = {};
 	}
 
 	$n = 1;
@@ -1071,7 +1071,7 @@ sub TitleList {
 	foreach $namespace ( keys %varname ) {
 		$Data::Dumper::Varname = $varname{$namespace};
 		$report->OutputDirect( Data::Dumper::Dumper( $titlelist->{$namespace} ) );
-		undef $titlelist->{$namespace};
+		$titlelist->{$namespace} = {};
 	}
 }
 
