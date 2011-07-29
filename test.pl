@@ -2048,6 +2048,7 @@ sub TestJAWPArticle {
 		$titlelist->{'Category'}->{'2011年没'} = 1;
 		$titlelist->{'Category'}->{'生年不明'} = 1;
 		$titlelist->{'Category'}->{'没年不明'} = 1;
+		$titlelist->{'ファイル'}->{'ファイル'} = 1;
 		$titlelist->{'Template'}->{'Reflist'} = 1;
 		$titlelist->{'Template'}->{'Aimai'} = 1;
 		$titlelist->{'Template'}->{'死亡年月日と没年齢'} = 1;
@@ -2324,6 +2325,33 @@ sub TestJAWPArticle {
 			is( $result_ref->[0], "(カテゴリ3)は存在しないカテゴリです(2)", "カテゴリ-4(警告文)" );
 		}
 
+		# ファイルテスト
+		{
+			foreach my $type ( 'ファイル', '画像', 'メディア', 'file', 'image', 'media' ) {
+				$article->{'title'} = '標準';
+				$article->{'text'} = "{{aimai}}\n[[$type:ファイル]]\n";
+				$result_ref = $article->LintText( $titlelist );
+				is( @$result_ref + 0, 0, "ファイル-1($type,警告数)" );
+
+				$article->{'title'} = '標準';
+				$article->{'text'} = "{{aimai}}\n[[$type:ファイル|a|b|c]]\n";
+				$result_ref = $article->LintText( $titlelist );
+				is( @$result_ref + 0, 0, "ファイル-2($type,警告数)" );
+			}
+
+			$article->{'title'} = '標準';
+			$article->{'text'} = "{{aimai}}\n[[ファイル:ファイル1]]\n";
+			$result_ref = $article->LintText( $titlelist );
+			is( @$result_ref + 0, 1, "ファイル-3(警告数)" );
+			is( $result_ref->[0], "(ファイル1)は存在しないファイルです(2)", "ファイル-3(警告文)" );
+
+			$article->{'title'} = '標準';
+			$article->{'text'} = "{{aimai}}\n[[ファイル:ファイル1|a|b|c]]\n";
+			$result_ref = $article->LintText( $titlelist );
+			is( @$result_ref + 0, 1, "ファイル-4(警告数)" );
+			is( $result_ref->[0], "(ファイル1)は存在しないファイルです(2)", "ファイル-4(警告文)" );
+		}
+
 		# テンプレートテスト
 		{
 			$article->{'title'} = '標準';
@@ -2334,7 +2362,7 @@ sub TestJAWPArticle {
 			$article->{'title'} = '標準';
 			$article->{'text'} = "{{aimai}}\n{{テンプレート1}}\n";
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, "カテゴリ-2(警告数)" );
+			is( @$result_ref + 0, 1, "テンプレート-2(警告数)" );
 			is( $result_ref->[0], "(テンプレート1)は存在しないテンプレートです(2)", "テンプレート-2(警告文)" );
 		}
 

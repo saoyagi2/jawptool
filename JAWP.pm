@@ -276,6 +276,11 @@ sub LintText {
 			}
 			$mode = 'category';
 		}
+		while( $lines[$n - 1] =~ /\[\[(ファイル|画像|メディア|file|image|media):(.*?)(|\|.*?)\]\]/ig ) {
+			if( !defined( $titlelist->{'ファイル'}->{$2} ) ) {
+				push @result, "($2)は存在しないファイルです($n)";
+			}
+		}
 		if( $lines[$n - 1] =~ /[，．！？＆＠]/ ) {
 			push @result, "全角記号の使用は推奨されません($n)";
 		}
