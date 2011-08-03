@@ -927,7 +927,7 @@ sub Statistic {
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
 	my $titlelist = $jawpdata->GetTitleList;
 	my $report = new JAWP::ReportFile( $reportfile );
-	my( $n, $article, $text, $result_ref, $word, %count );
+	my( $n, $article, $text, $result_ref, $word, %count, @linkwordlist );
 	my( %linkcount, $linktype );
 
 	$report->OutputDirect( <<"STR"
@@ -948,7 +948,7 @@ STR
 	}
 
 	$n = 1;
-	foreach my $linktype ( '標準', 'aimai', 'redirect', 'category', 'file', 'template', 'redlink' ) {
+	foreach my $linktype ( '発リンク', '標準', 'aimai', 'redirect', 'category', 'file', 'template', 'redlink' ) {
 		$linkcount{$linktype} = {};
 	}
 	while( $article = $jawpdata->GetArticle ) {
@@ -961,7 +961,11 @@ STR
 
 		%count = ();
 
-		foreach $word ( JAWP::Util::GetLinkwordList( $article->{'text'} ) ) {
+		@linkwordlist = JAWP::Util::GetLinkwordList( $article->{'text'} );
+		if( $article->Namespace eq '標準' ) {
+			$linkcount{'発リンク'}->{$article->{'title'}} = @linkwordlist + 0;
+		}
+		foreach $word ( @linkwordlist ) {
 			next if( ++$count{$word} > 1 );
 
 			( $linktype, $word ) = JAWP::Util::GetLinkType( $word, $titlelist );
@@ -976,6 +980,7 @@ STR
 	}
 	print "\n";
 
+	StatisticReportSub2( '発リンク数ランキング', $linkcount{'発リンク'}, '', $report );
 	StatisticReportSub2( '被リンク数ランキング', $linkcount{'標準'}, '', $report );
 	StatisticReportSub2( 'リダイレクト呼出数ランキング', $linkcount{'redirect'}, '', $report );
 	StatisticReportSub2( '曖昧さ回避呼出数ランキング', $linkcount{'aimai'}, '', $report );
