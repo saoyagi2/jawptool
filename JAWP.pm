@@ -758,12 +758,13 @@ sub GetExternallinkList {
 # return ホスト
 sub GetHost {
 	my $url = shift;
-	my $host;
 
-	$url =~ /s?https?:\/\/([-_.!~*'()a-zA-Z0-9;?:\@&=+\$,%#]+)/;
-	$host = $1;
-
-	return $host;
+	if( $url =~ /s?https?:\/\/([-_.!~*'()a-zA-Z0-9;?:\@&=+\$,%#]+)/ ) {
+		return $1;
+	}
+	else {
+		return;
+	}
 }
 
 
@@ -975,7 +976,7 @@ STR
 	}
 
 	$n = 1;
-	foreach my $linktype ( '発リンク', '標準', 'aimai', 'redirect', 'category', 'file', 'template', 'redlink' ) {
+	foreach my $linktype ( '発リンク', '標準', 'aimai', 'redirect', 'category', 'file', 'template', 'redlink', 'externalhost' ) {
 		$linkcount{$linktype} = {};
 	}
 	while( $article = $jawpdata->GetArticle ) {
@@ -1004,17 +1005,23 @@ STR
 
 			$linkcount{template}->{$word}++ if( defined( $titlelist->{'Template'}->{$word} ) );
 		}
+
+		foreach $word ( JAWP::Util::GetExternallinkList( $article->{'text'} ) ) {
+			$word = JAWP::Util::GetHost( $word );
+			$linkcount{'externalhost'}->{$word}++ if( defined( $word ) );
+		}
 	}
 	print "\n";
 
-	StatisticReportSub2( '発リンク数ランキング', $linkcount{'発リンク'}, '', $report );
-	StatisticReportSub2( '被リンク数ランキング', $linkcount{'標準'}, '', $report );
-	StatisticReportSub2( 'リダイレクト呼出数ランキング', $linkcount{'redirect'}, '', $report );
-	StatisticReportSub2( '曖昧さ回避呼出数ランキング', $linkcount{'aimai'}, '', $report );
-	StatisticReportSub2( '赤リンク数ランキング', $linkcount{'redlink'}, '', $report );
-	StatisticReportSub2( 'カテゴリ使用数ランキング', $linkcount{'category'}, ':Category:', $report );
-	StatisticReportSub2( 'ファイル使用数ランキング', $linkcount{'file'}, ':ファイル:', $report );
-	StatisticReportSub2( 'テンプレート使用数ランキング', $linkcount{'template'}, ':Template:', $report );
+	StatisticReportSub2( '発リンク数ランキング', $linkcount{'発リンク'}, '', $report, 1 );
+	StatisticReportSub2( '被リンク数ランキング', $linkcount{'標準'}, '', $report, 1 );
+	StatisticReportSub2( 'リダイレクト呼出数ランキング', $linkcount{'redirect'}, '', $report, 1 );
+	StatisticReportSub2( '曖昧さ回避呼出数ランキング', $linkcount{'aimai'}, '', $report, 1 );
+	StatisticReportSub2( '赤リンク数ランキング', $linkcount{'redlink'}, '', $report, 1 );
+	StatisticReportSub2( 'カテゴリ使用数ランキング', $linkcount{'category'}, ':Category:', $report, 1 );
+	StatisticReportSub2( 'ファイル使用数ランキング', $linkcount{'file'}, ':ファイル:', $report, 1 );
+	StatisticReportSub2( 'テンプレート使用数ランキング', $linkcount{'template'}, ':Template:', $report, 1 );
+	StatisticReportSub2( '外部リンクホストランキング', $linkcount{'externalhost'}, '', $report, 0 );
 }
 
 
@@ -1080,8 +1087,9 @@ TEXT
 # param $data_ref データハッシュへのリファレンス
 # param $prefix リンク出力時のプレフィックス
 # param $report JAWP::Reportオブジェクト
+# param $innerlink 内部リンク化フラグ
 sub StatisticReportSub2 {
-	my( $title, $data_ref, $prefix, $report ) = @_;
+	my( $title, $data_ref, $prefix, $report, $innerlink ) = @_;
 	my( $data2_ref, $text );
 
 	delete $data_ref->{''};
@@ -1090,7 +1098,12 @@ sub StatisticReportSub2 {
 		$text .= "{{columns-list|2|\n";
 		for my $i( 0..99 ) {
 			last if( !defined( $data2_ref->[$i] ) );
-			$text .= sprintf( "#[[$prefix%s]](%d)\n", $data2_ref->[$i], $data_ref->{$data2_ref->[$i]} );
+			if( $innerlink ) {
+				$text .= sprintf( "#[[$prefix%s]](%d)\n", $data2_ref->[$i], $data_ref->{$data2_ref->[$i]} );
+			}
+			else {
+				$text .= sprintf( "#$prefix%s(%d)\n", $data2_ref->[$i], $data_ref->{$data2_ref->[$i]} );
+			}
 		}
 		$text .= "}}\n";
 	}
