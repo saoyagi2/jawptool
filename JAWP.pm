@@ -753,6 +753,20 @@ sub GetExternallinkList {
 }
 
 
+# URLのホストの取得
+# param $url URL
+# return ホスト
+sub GetHost {
+	my $url = shift;
+	my $host;
+
+	$url =~ /s?https?:\/\/([-_.!~*'()a-zA-Z0-9;?:\@&=+\$,%#]+)/;
+	$host = $1;
+
+	return $host;
+}
+
+
 # リンク種別判別
 # param $word リンク語
 # param $titlelist JAWP::TitleListオブジェクト

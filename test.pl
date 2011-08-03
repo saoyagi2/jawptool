@@ -3265,7 +3265,7 @@ STR
 sub TestJAWPUtil {
 	# メソッド呼び出しテスト
 	{
-		foreach my $method ( 'UnescapeHTML', 'DecodeURL', 'SortHash', 'GetLinkwordList', 'GetTemplatewordList', 'GetExternallinkList', 'GetLinkType' ) {
+		foreach my $method ( 'UnescapeHTML', 'DecodeURL', 'SortHash', 'GetLinkwordList', 'GetTemplatewordList', 'GetExternallinkList', 'GetHost', 'GetLinkType' ) {
 			ok( JAWP::Util->can($method), "call method $method" );
 		}
 	}
@@ -3404,6 +3404,20 @@ sub TestJAWPUtil {
 		is( @result + 0 , 2, 'Yahoo&google(取得数)' );
 		is( $result[0], 'http://www.yahoo.co.jp/aaa/bbb', 'Yahoo&google(URL)' );
 		is( $result[1], 'http://www.google.co.jp/ccc/ddd', 'Yahoo&google(URL)' );
+	}
+
+	# GetHostテスト
+	{
+		my $host;
+
+		$host = JAWP::Util::GetHost( 'http://www.yahoo.co.jp' );
+		is( $host, 'www.yahoo.co.jp', 'Yahoo(ホスト)' );
+
+		$host = JAWP::Util::GetHost( 'http://www.yahoo.co.jp/' );
+		is( $host, 'www.yahoo.co.jp', 'Yahoo2(ホスト)' );
+
+		$host = JAWP::Util::GetHost( 'http://www.yahoo.co.jp/aaa/bbb' );
+		is( $host, 'www.yahoo.co.jp', 'Yahoo3(ホスト)' );
 	}
 
 	# GetLinkTypeテスト
