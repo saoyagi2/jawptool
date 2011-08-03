@@ -740,6 +740,19 @@ sub GetTemplatewordList {
 }
 
 
+# 外部リンクリストの取得
+# param $text 元テキスト
+# return 外部リンクリスト
+sub GetExternallinkList {
+	my $text = shift;
+	my( @linklist );
+
+	@linklist = $text =~ /s?https?:\/\/[-_.!~*'()a-zA-Z0-9;\/?:\@&=+\$,%#]+/g;
+
+	return @linklist;
+}
+
+
 # リンク種別判別
 # param $word リンク語
 # param $titlelist JAWP::TitleListオブジェクト

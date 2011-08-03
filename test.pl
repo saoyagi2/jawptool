@@ -3265,7 +3265,7 @@ STR
 sub TestJAWPUtil {
 	# メソッド呼び出しテスト
 	{
-		foreach my $method ( 'UnescapeHTML', 'DecodeURL', 'SortHash', 'GetLinkwordList', 'GetTemplatewordList', 'GetLinkType' ) {
+		foreach my $method ( 'UnescapeHTML', 'DecodeURL', 'SortHash', 'GetLinkwordList', 'GetTemplatewordList', 'GetExternallinkList', 'GetLinkType' ) {
 			ok( JAWP::Util->can($method), "call method $method" );
 		}
 	}
@@ -3384,6 +3384,26 @@ sub TestJAWPUtil {
 		is( @result + 0 , 2, '複数行テキスト呼び出し' );
 		is( $result[0] , 'あああ', '複数行テキスト呼び出し(テンプレートワード1)' );
 		is( $result[1] , 'ううう', '複数行テキスト呼び出し(テンプレートワード2)' );
+	}
+
+	# GetExternallinkListテスト
+	{
+		my @result;
+
+		@result = JAWP::Util::GetExternallinkList( '' );
+		is( @result + 0 , 0, '空文字列' );
+
+		@result = JAWP::Util::GetExternallinkList( 'あああ' );
+		is( @result + 0 , 0, '通常文字列' );
+
+		@result = JAWP::Util::GetExternallinkList( 'あああ http://www.yahoo.co.jp いいい' );
+		is( @result + 0 , 1, 'Yahoo(取得数)' );
+		is( $result[0], 'http://www.yahoo.co.jp', 'Yahoo(URL)' );
+
+		@result = JAWP::Util::GetExternallinkList( 'あああ http://www.yahoo.co.jp/aaa/bbb http://www.google.co.jp/ccc/ddd いいい' );
+		is( @result + 0 , 2, 'Yahoo&google(取得数)' );
+		is( $result[0], 'http://www.yahoo.co.jp/aaa/bbb', 'Yahoo&google(URL)' );
+		is( $result[1], 'http://www.google.co.jp/ccc/ddd', 'Yahoo&google(URL)' );
 	}
 
 	# GetLinkTypeテスト
