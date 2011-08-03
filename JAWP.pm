@@ -276,11 +276,6 @@ sub LintText {
 			}
 			$mode = 'category';
 		}
-		while( $lines[$n - 1] =~ /\[\[(ファイル|画像|メディア|file|image|media):(.*?)(|\|.*?)\]\]/ig ) {
-			if( !defined( $titlelist->{'ファイル'}->{$2} ) ) {
-				push @result, "($2)は存在しないファイルです($n)";
-			}
-		}
 		while( $lines[$n - 1] =~ /\[\[(Template|テンプレート):(.*?)(|\|.*?)\]\]/ig ) {
 			if( !defined( $titlelist->{'Template'}->{$2} ) ) {
 				push @result, "($2)は存在しないテンプレートです($n)";

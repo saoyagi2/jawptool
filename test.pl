@@ -2327,33 +2327,6 @@ sub TestJAWPArticle {
 			}
 		}
 
-		# ファイルテスト
-		{
-			foreach my $type ( 'ファイル', '画像', 'メディア', 'file', 'image', 'media' ) {
-				$article->{'title'} = '標準';
-				$article->{'text'} = "{{aimai}}\n[[$type:ファイル]]\n";
-				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 0, "ファイル-1($type,警告数)" );
-
-				$article->{'title'} = '標準';
-				$article->{'text'} = "{{aimai}}\n[[$type:ファイル|a|b|c]]\n";
-				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 0, "ファイル-2($type,警告数)" );
-
-				$article->{'title'} = '標準';
-				$article->{'text'} = "{{aimai}}\n[[$type:ファイル1]]\n";
-				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 1, "ファイル-3($type,警告数)" );
-				is( $result_ref->[0], "(ファイル1)は存在しないファイルです(2)", "ファイル-3($type,警告文)" );
-
-				$article->{'title'} = '標準';
-				$article->{'text'} = "{{aimai}}\n[[$type:ファイル1|a|b|c]]\n";
-				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 1, "ファイル-4($type,警告数)" );
-				is( $result_ref->[0], "(ファイル1)は存在しないファイルです(2)", "ファイル-4($type,警告文)" );
-			}
-		}
-
 		# テンプレートテスト
 		{
 			$article->{'title'} = '標準';
