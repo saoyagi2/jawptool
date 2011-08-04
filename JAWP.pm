@@ -1014,14 +1014,23 @@ STR
 	print "\n";
 
 	StatisticReportSub2( '発リンク数ランキング', $linkcount{'発リンク'}, '', $report, 1 );
+	$linkcount{'発リンク'} = {};
 	StatisticReportSub2( '被リンク数ランキング', $linkcount{'標準'}, '', $report, 1 );
+	$linkcount{'標準'} = {};
 	StatisticReportSub2( 'リダイレクト呼出数ランキング', $linkcount{'redirect'}, '', $report, 1 );
+	$linkcount{'redirect'} = {};
 	StatisticReportSub2( '曖昧さ回避呼出数ランキング', $linkcount{'aimai'}, '', $report, 1 );
+	$linkcount{'aimai'} = {};
 	StatisticReportSub2( '赤リンク数ランキング', $linkcount{'redlink'}, '', $report, 1 );
+	$linkcount{'redlink'} = {};
 	StatisticReportSub2( 'カテゴリ使用数ランキング', $linkcount{'category'}, ':Category:', $report, 1 );
+	$linkcount{'category'} = {};
 	StatisticReportSub2( 'ファイル使用数ランキング', $linkcount{'file'}, ':ファイル:', $report, 1 );
+	$linkcount{'file'} = {};
 	StatisticReportSub2( 'テンプレート使用数ランキング', $linkcount{'template'}, ':Template:', $report, 1 );
+	$linkcount{'template'} = {};
 	StatisticReportSub2( '外部リンクホストランキング', $linkcount{'externalhost'}, '', $report, 0 );
+	$linkcount{'externalhost'} = {};
 }
 
 
