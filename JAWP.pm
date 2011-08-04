@@ -814,6 +814,21 @@ sub GetLinkType {
 }
 
 
+# 見出し語リストの取得
+# param $text 元テキスト
+# return 見出し語リスト
+sub GetHeadnameList {
+	my $text = shift;
+	my( @headnamelist );
+
+	while( $text =~ /^=+\s*([^=]+?)\s*=+$/mg ) {
+		push @headnamelist, $1;
+	}
+
+	return @headnamelist;
+}
+
+
 ################################################################################
 # JAWP::Appクラス
 ################################################################################

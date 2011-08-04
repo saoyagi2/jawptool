@@ -3265,7 +3265,7 @@ STR
 sub TestJAWPUtil {
 	# メソッド呼び出しテスト
 	{
-		foreach my $method ( 'UnescapeHTML', 'DecodeURL', 'SortHash', 'GetLinkwordList', 'GetTemplatewordList', 'GetExternallinkList', 'GetHost', 'GetLinkType' ) {
+		foreach my $method ( 'UnescapeHTML', 'DecodeURL', 'SortHash', 'GetLinkwordList', 'GetTemplatewordList', 'GetExternallinkList', 'GetHost', 'GetLinkType', 'GetHeadnameList' ) {
 			ok( JAWP::Util->can($method), "call method $method" );
 		}
 	}
@@ -3501,6 +3501,27 @@ sub TestJAWPUtil {
 		is( $linktype , 'none', ':es:test(linktype)' );
 		is( $word, ':es:test', ':es:test(word)' );
 	}
+
+	# GetHeadnameListテスト
+	{
+		my @result;
+
+		@result = JAWP::Util::GetHeadnameList( '' );
+		is( @result + 0 , 0, 'GetHeadnameList-1(空文字列)' );
+
+		@result = JAWP::Util::GetHeadnameList( 'あああ' );
+		is( @result + 0 , 0, 'GetHeadnameList-2(通常文字列)' );
+
+		@result = JAWP::Util::GetHeadnameList( "あああ\n==見出し==\nいいい" );
+		is( @result + 0 , 1, 'GetHeadnameList-3(取得数)' );
+		is( $result[0], '見出し', 'GetHeadnameList-3(Headname)' );
+
+		@result = JAWP::Util::GetHeadnameList( "あああ\n==見出し==\n== 見出し2 ==\nいいい" );
+		is( @result + 0 , 2, 'GetHeadnameList-4(取得数)' );
+		is( $result[0], '見出し', 'GetHeadnameList-4(Headname)' );
+		is( $result[1], '見出し2', 'GetHeadnameList-4(Headname)' );
+	}
+
 }
 
 
