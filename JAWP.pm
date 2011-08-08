@@ -323,12 +323,6 @@ sub LintText {
 			}
 		}
 
-		foreach my $word ( JAWP::Util::GetTemplatewordList( $lines[$n - 1] ) ) {
-			if( !defined( $titlelist->{'Template'}->{$word} ) ) {
-				push @result, "($word)は存在しないテンプレートです($n)";
-			}
-		}
-
 		if( $lines2[$n - 1] =~ /[\[\]\{\}]/ ) {
 			push @result, "空のリンクまたは閉じられていないカッコがあります($n)";
 		}
