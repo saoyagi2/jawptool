@@ -2465,6 +2465,20 @@ sub TestJAWPArticle {
 			is( $result_ref->[0], "年月日へのリンクは年と月日を分けることが推奨されます(1)", "年月日リンク-3(警告文)" );
 		}
 
+		# 不正URLテスト
+		{
+			$article->{'title'} = '標準';
+			$article->{'text'} = "[http://www.yahoo.co.jp/]\n{{aimai}}";
+			$result_ref = $article->LintText( $titlelist );
+			is( @$result_ref + 0, 0, "不正URL-1(警告数)" );
+
+			$article->{'title'} = '標準';
+			$article->{'text'} = "[http:///www.yahoo.co.jp/]\n{{aimai}}";
+			$result_ref = $article->LintText( $titlelist );
+			is( @$result_ref + 0, 1, "不正URL-2(警告数)" );
+			is( $result_ref->[0], "不正なURLです(1)", "不正URL-2(警告文)" );
+		}
+
 		# カッコ対応テスト
 		{
 			$article->{'title'} = '標準';

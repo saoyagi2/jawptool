@@ -307,6 +307,9 @@ sub LintText {
 			$interlink{uc($1)} = 1;
 			$mode = 'interlink';
 		}
+		if( index( $lines[$n - 1], 'http:///' ) >= 0 ) {
+			push @result, "不正なURLです($n)";
+		}
 
 		foreach my $word ( JAWP::Util::GetLinkwordList( $lines[$n - 1] ) ) {
 			if( defined( $titlelist->{'標準_曖昧'}->{$word} ) ) {
