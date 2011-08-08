@@ -821,8 +821,13 @@ sub GetHeadnameList {
 	my $text = shift;
 	my( @headnamelist );
 
-	while( $text =~ /^=+\s*([^=]+?)\s*=+$/mg ) {
-		push @headnamelist, $1;
+while( $text =~ /^=+([^=]+?)=+$/mg ) {
+        my $tmp = $1;
+        $tmp =~ s/^ *//;
+        $tmp =~ s/ *$//;
+        if( $tmp ne '' ) {
+			push @headnamelist, $tmp;
+        }
 	}
 
 	return @headnamelist;

@@ -3512,16 +3512,22 @@ sub TestJAWPUtil {
 		@result = JAWP::Util::GetHeadnameList( 'あああ' );
 		is( @result + 0 , 0, 'GetHeadnameList-2(通常文字列)' );
 
+		@result = JAWP::Util::GetHeadnameList( '= =' );
+		is( @result + 0 , 0, 'GetHeadnameList-3(空見出し)' );
+
 		@result = JAWP::Util::GetHeadnameList( "あああ\n==見出し==\nいいい" );
-		is( @result + 0 , 1, 'GetHeadnameList-3(取得数)' );
-		is( $result[0], '見出し', 'GetHeadnameList-3(Headname)' );
+		is( @result + 0 , 1, 'GetHeadnameList-4(取得数)' );
+		is( $result[0], '見出し', 'GetHeadnameList-4(Headname)' );
 
 		@result = JAWP::Util::GetHeadnameList( "あああ\n==見出し==\n== 見出し2 ==\nいいい" );
-		is( @result + 0 , 2, 'GetHeadnameList-4(取得数)' );
-		is( $result[0], '見出し', 'GetHeadnameList-4(Headname)' );
-		is( $result[1], '見出し2', 'GetHeadnameList-4(Headname)' );
-	}
+		is( @result + 0 , 2, 'GetHeadnameList-5(取得数)' );
+		is( $result[0], '見出し', 'GetHeadnameList-5(Headname)' );
+		is( $result[1], '見出し2', 'GetHeadnameList-5(Headname)' );
 
+		@result = JAWP::Util::GetHeadnameList( "あああ\n==見 出 し==\nいいい" );
+		is( @result + 0 , 1, 'GetHeadnameList-6(取得数)' );
+		is( $result[0], '見 出 し', 'GetHeadnameList-6(Headname)' );
+	}
 }
 
 
