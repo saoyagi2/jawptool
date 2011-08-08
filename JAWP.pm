@@ -971,7 +971,7 @@ sub Statistic {
 	my $titlelist = $jawpdata->GetTitleList;
 	my $report = new JAWP::ReportFile( $reportfile );
 	my( $n, $article, $text, $result_ref, $word, %count, @linkwordlist );
-	my( %linkcount, $linktype );
+	my( %linkcount, $linktype, %headnamecount );
 
 	$report->OutputDirect( <<"STR"
 = 統計 =
@@ -994,6 +994,7 @@ STR
 	foreach my $linktype ( '発リンク', '標準', 'aimai', 'redirect', 'category', 'file', 'template', 'redlink', 'externalhost' ) {
 		$linkcount{$linktype} = {};
 	}
+	%headnamecount = ();
 	while( $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
@@ -1025,6 +1026,10 @@ STR
 			$word = JAWP::Util::GetHost( $word );
 			$linkcount{'externalhost'}->{$word}++ if( defined( $word ) );
 		}
+
+		foreach $word ( JAWP::Util::GetHeadnameList( $article->{'text'} ) ) {
+			$headnamecount{$word}++;
+		}
 	}
 	print "\n";
 
@@ -1046,6 +1051,8 @@ STR
 	$linkcount{'template'} = {};
 	StatisticReportSub2( '外部リンクホストランキング', $linkcount{'externalhost'}, '', $report, 0 );
 	$linkcount{'externalhost'} = {};
+	StatisticReportSub2( '見出し語ランキング', \%headnamecount, '', $report, 0 );
+	%headnamecount = ();
 }
 
 
