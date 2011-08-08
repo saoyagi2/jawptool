@@ -930,7 +930,7 @@ sub LintText {
 	my $report = new JAWP::ReportFile( $reportfile );
 	my( $n, $article, $result_ref, $lintcount );
 
-	foreach my $namespace ( '利用者', '利用者‐会話', 'Wikipedia', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki', 'MediaWiki‐ノート', 'Template‐ノート', 'Help', 'Help‐ノート', 'Category‐ノート', 'Portal', 'Portal‐ノート', 'プロジェクト', 'プロジェクト‐ノート' ) {
+	foreach my $namespace ( '標準', '利用者', '利用者‐会話', 'Wikipedia', 'Wikipedia‐ノート', 'ファイル', 'ファイル‐ノート', 'MediaWiki', 'MediaWiki‐ノート', 'Template‐ノート', 'Help', 'Help‐ノート', 'Category‐ノート', 'Portal', 'Portal‐ノート', 'プロジェクト', 'プロジェクト‐ノート' ) {
 		$titlelist->{$namespace} = {};
 	}
 
