@@ -39,7 +39,7 @@
 
 usageは次の通りです。
 <pre>
-jawptool 0.12
+jawptool 0.13
 
 Usage: jawptool.pl command xmlfile reportfile
 
@@ -69,6 +69,16 @@ command:
 *2011年7月27日 - 0.12公開。修正内容は以下の通り。
 **ソースコード整理
 **テスト強化
+**その他バグ修正
+*2011年8月9日 - 0.13公開。修正内容は以下の通り。
+**LintText強化
+***リンク先が曖昧さ回避またはリダイレクトの場合に警告
+***存在しないカテゴリ、テンプレートの呼び出しを警告
+**Statistic強化
+***発リンクランキング
+***節名の使用数ランキング
+***外部リンクのドメイン統計
+**メモリ使用量の多少の削減
 **その他バグ修正
 
 より詳しい開発の経緯は http://www.saoyagi2.net/wikimedian/ に書かれています(それ以外のことも書いてますが)。コードの具体的な修正内容は http://sourceforge.jp/projects/jawptool/svn/view/ で閲覧できます。

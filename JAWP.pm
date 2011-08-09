@@ -8,7 +8,7 @@ use open IO  => ":utf8";
 
 use Data::Dumper;
 
-our $VERSION = '0.12';
+our $VERSION = '0.13';
 
 
 ################################################################################
@@ -1034,6 +1034,8 @@ STR
 		}
 	}
 	print "\n";
+
+	undef $titlelist;
 
 	StatisticReportSub2( '発リンク数ランキング', $linkcount{'発リンク'}, '', $report, 1 );
 	$linkcount{'発リンク'} = {};
