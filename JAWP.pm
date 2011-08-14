@@ -388,21 +388,6 @@ sub LintText {
 		$prevmode = $mode;
 	}
 
-	@time = gmtime( time() );
-	if( $time[4] >= 3 ) {
-		$time[4] -= 3;
-	}
-	else {
-		$time[4] += 9;
-		$time[5]--;
-	}
-	$checktimestamp = sprintf( "%04d-%02d-%02dT%02d:%02d:%02dZ", $time[5] + 1900, $time[4] + 1, $time[3], $time[2], $time[1], $time[0] );
-	if( $self->{'timestamp'} lt $checktimestamp ) {
-		if( index( $text, '{{Sakujo/' ) >= 0 ) {
-			push @result, '削除タグが貼られて3ヶ月以上経過しています';
-		}
-	}
-
 	if( ( $text =~ /<ref/i ) && !( $text =~ /<references/i || $text =~ /\{\{reflist/i ) ) {
 		push @result, '<ref>要素があるのに<references>要素がありません';
 	}
@@ -913,6 +898,9 @@ sub Run {
 	elsif( $argv[0] eq 'living-noref' ) {
 		LivingNoref( $argv[1], $argv[2] );
 	}
+	elsif( $argv[0] eq 'passed-sakujo' ) {
+		PassedSakujo( $argv[1], $argv[2] );
+	}
 	else {
 		Usage();
 	}
@@ -933,6 +921,7 @@ command:
   statistic
   titlelist
   living-noref
+  passed-sakujo
 TEXT
 
 	exit;
@@ -1267,6 +1256,41 @@ STR
 	}
 	$report->OutputDirect( "存命人物記事数 $livingcount<br>\n" );
 	$report->OutputDirect( "存命人物出典無し記事数 $livingnorefcount\n" );
+}
+
+
+# 長期間経過した削除依頼
+# param $xmlfile 入力XMLファイル名
+# param $reportfile レポートファイル名
+sub PassedSakujo {
+	my( $xmlfile, $reportfile ) = @_;
+	my $jawpdata = new JAWP::DataFile( $xmlfile );
+	my $report = new JAWP::ReportFile( $reportfile );
+	my( $n, $article, $time, @datalist );
+
+	$report->OutputDirect( <<"STR"
+= 長期間経過した削除依頼 =
+このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から長期間経過した削除依頼を抽出したものです。
+
+過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
+
+STR
+	);
+
+	$time = time();
+	$n = 1;
+	while( $article = $jawpdata->GetArticle ) {
+		print "$n\r"; $n++;
+
+		next if( $article->Namespace ne '標準' );
+
+		if( index( $article->{'text'}, '{{Sakujo/' ) >= 0 && $article->GetPassTime( $time ) gt '0000-03-00T00:00:00Z' ) {
+			push @datalist, "[[$article->{'title'}]]";
+		}
+	}
+	print "\n";
+
+	$report->OutputWikiList( "一覧", \@datalist );
 }
 
 

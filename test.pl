@@ -2533,26 +2533,6 @@ sub TestJAWPArticle {
 			is( $result_ref->[0], "空のリンクまたは閉じられていないカッコがあります(1)", "カッコ対応-6(警告文)" );
 		}
 
-		# 削除タグテスト
-		{
-			my @time;
-
-			$article->{'title'} = '標準';
-			@time = gmtime( time() );
-			$article->{'timestamp'} = sprintf( "%04d-%02d-%02dT%02d:%02d:%02dZ", $time[5] + 1900, $time[4] + 1, $time[3], $time[2], $time[1], $time[0] );
-			$article->{'text'} = "{{Sakujo/}}\n{{aimai}}\n";
-			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, "削除タグ-1(警告数)" );
-
-			$article->{'title'} = '標準';
-			@time = gmtime( time() );
-			$article->{'timestamp'} = sprintf( "%04d-%02d-%02dT%02d:%02d:%02dZ", $time[5] + 1900 - 1, $time[4] + 1, $time[3], $time[2], $time[1], $time[0] );
-			$article->{'text'} = "{{Sakujo/}}\n{{aimai}}\n";
-			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, "削除タグ-2(警告数)" );
-			is( $result_ref->[0], "削除タグが貼られて3ヶ月以上経過しています", "削除タグ-2(警告文)" );
-		}
-
 		# リファレンステスト
 		{
 			$article->{'title'} = '標準';
@@ -3570,7 +3550,7 @@ sub TestJAWPApp {
 	# メソッド呼び出しテスト
 	{
 		foreach my $method ( 'Run', 'Usage', 'LintTitle', 'LintText',
-			'Statistic', 'StatisticReportSub1', 'StatisticReportSub2', 'TitleList', 'LivingNoref' ) {
+			'Statistic', 'StatisticReportSub1', 'StatisticReportSub2', 'TitleList', 'LivingNoref', 'PassedSakujo' ) {
 			ok( JAWP::App->can($method), "call method $method" );
 		}
 	}
