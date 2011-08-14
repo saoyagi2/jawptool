@@ -98,6 +98,9 @@ command:
 *lint-textのCGI版を作る。
 *wiki2htmlの強化
 
+== 既知のバグ ==
+*Windows上のActivePerlでtest.plを実行すると、最後のCleanup()にて"Permission denied"で異常終了する。
+
 == バグ報告 ==
 プログラムにバグがありましたら、[http://sourceforge.jp/projects/jawptool/ プロジェクトトップページ]の「バグ報告」もしくは「フォーラム」までお知らせいただけたら助かります。
 
