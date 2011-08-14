@@ -2350,6 +2350,27 @@ sub TestJAWPArticle {
 			}
 		}
 
+		# テンプレートテスト
+		{
+			$article->{'title'} = '標準';
+			$article->{'text'} = "{{aimai}}\n{{テンプレート}}\n";
+			$result_ref = $article->LintText( $titlelist );
+			is( @$result_ref + 0, 0, "テンプレート-1(警告数)" );
+
+			foreach my $type ( 'Template', 'template', 'テンプレート' ) {
+				$article->{'title'} = '標準';
+				$article->{'text'} = "{{aimai}}\n[[$type:テンプレート]]\n";
+				$result_ref = $article->LintText( $titlelist );
+				is( @$result_ref + 0, 0, "テンプレート-3($type,警告数)" );
+
+				$article->{'title'} = '標準';
+				$article->{'text'} = "{{aimai}}\n[[$type:テンプレート1]]\n";
+				$result_ref = $article->LintText( $titlelist );
+				is( @$result_ref + 0, 1, "テンプレート-4($type,警告数)" );
+				is( $result_ref->[0], "(テンプレート1)は存在しないテンプレートです(2)", "テンプレート-4($type,警告文)" );
+			}
+		}
+
 		# 使用できる文字・文言テスト
 		{
 			$article->{'title'} = '標準';
