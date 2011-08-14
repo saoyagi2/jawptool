@@ -116,6 +116,58 @@ sub Namespace {
 }
 
 
+# 経過時間取得
+# param $time 時刻
+# return 経過時間(YYYY-MM-DDTHH:MM:SSZ形式)
+sub GetPassTime {
+	my( $self, $time ) = @_;
+	my $passtime;
+	my @time;
+
+	@time = gmtime( $time );
+	if( $self->{'timestamp'} =~ /(\d{4})\-(\d{2})\-(\d{2})T(\d{2}):(\d{2}):(\d{2})Z/ ) {
+		$time[0] = $time[0] - $6;
+		if( $time[0] < 0 ) {
+			$time[0] += 60;
+			$time[1]--;
+		}
+		$time[1] = $time[1] - $5;
+		if( $time[1] < 0 ) {
+			$time[1] += 60;
+			$time[2]--;
+		}
+		$time[2] = $time[2] - $4;
+		if( $time[2] < 0 ) {
+			$time[2] += 60;
+			$time[3]--;
+		}
+		$time[3] = $time[3] - $3;
+		if( $time[3] < 0 ) {
+			$time[3] += 30;
+			$time[4]--;
+		}
+		$time[4] = $time[4] + 1 - $2;
+		if( $time[4] < 0 ) {
+			$time[4] += 12;
+			$time[5]--;
+		}
+		$time[5] = $time[5] + 1900 - $1;
+
+		if( $time[5] >= 0 ) {
+			$passtime = sprintf( "%04d-%02d-%02dT%02d:%02d:%02dZ", $time[5], $time[4], $time[3], $time[2], $time[1], $time[0] );
+		}
+		else {
+			$passtime = '0000-00-00T00:00:00Z';
+		}
+	}
+	else {
+		$passtime = '0000-00-00T00:00:00Z';
+	}
+
+	return $passtime;
+}
+
+
 # タイトル文法チェック
 # param $article 記事データ
 # param $titlelist タイトルリスト

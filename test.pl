@@ -54,7 +54,7 @@ sub TestJAWP {
 sub TestJAWPArticle {
 	# メソッド呼び出しテスト
 	{
-		foreach my $method ( 'new', 'SetTitle', 'SetTimestamp', 'SetText', 'IsRedirect', 'IsAimai', 'IsLiving', 'IsNoref', 'LintTitle', 'LintText' ) {
+		foreach my $method ( 'new', 'SetTitle', 'SetTimestamp', 'SetText', 'IsRedirect', 'IsAimai', 'IsLiving', 'IsNoref', 'GetPassTime', 'LintTitle', 'LintText' ) {
 			ok( JAWP::Article->can($method), "call method $method" );
 		}
 	}
@@ -170,6 +170,29 @@ sub TestJAWPArticle {
 			$namespace =~ s/:.*//;
 			is( $article->Namespace, $namespace, $title );
 		}
+	}
+
+	# GetPassTimeテスト
+	{
+		my $article = new JAWP::Article;
+
+		$article->SetTimestamp( '2011-01-01T00:00:00Z' );
+		is( $article->GetPassTime( 1293840000 ), '0000-00-00T00:00:00Z', 'GetPassTime-1' );
+
+		$article->SetTimestamp( '2010-01-01T00:00:01Z' );
+		is( $article->GetPassTime( 1293840000 ), '0000-11-29T59:59:59Z', 'GetPassTime-2' );
+
+		$article->SetTimestamp( '2010-01-01T00:01:00Z' );
+		is( $article->GetPassTime( 1293840000 ), '0000-11-29T59:59:00Z', 'GetPassTime-3' );
+
+		$article->SetTimestamp( '2010-01-01T01:00:00Z' );
+		is( $article->GetPassTime( 1293840000 ), '0000-11-29T59:00:00Z', 'GetPassTime-4' );
+
+		$article->SetTimestamp( '2010-01-02T00:00:00Z' );
+		is( $article->GetPassTime( 1293840000 ), '0000-11-29T00:00:00Z', 'GetPassTime-5' );
+
+		$article->SetTimestamp( '2010-02-01T00:00:00Z' );
+		is( $article->GetPassTime( 1293840000 ), '0000-11-00T00:00:00Z', 'GetPassTime-6' );
 	}
 
 	# LintTitleテスト
