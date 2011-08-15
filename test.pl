@@ -54,7 +54,7 @@ sub TestJAWP {
 sub TestJAWPArticle {
 	# メソッド呼び出しテスト
 	{
-		foreach my $method ( 'new', 'SetTitle', 'SetTimestamp', 'SetText', 'IsRedirect', 'IsAimai', 'IsLiving', 'IsNoref', 'GetPassTime', 'LintTitle', 'LintText' ) {
+		foreach my $method ( 'new', 'SetTitle', 'SetTimestamp', 'SetText', 'IsRedirect', 'IsAimai', 'IsLiving', 'IsNoref', 'IsSeibotsuDoujitsu', 'GetPassTime', 'LintTitle', 'LintText' ) {
 			ok( JAWP::Article->can($method), "call method $method" );
 		}
 	}
@@ -155,6 +155,19 @@ sub TestJAWPArticle {
 			$article->{'text'} = "あああ\n$text\nいいい\n";
 			ok( !$article->IsNoref, $text );
 		}
+	}
+
+	# IsSeibotsuDoujitsuテスト
+	{
+		my $article = new JAWP::Article;
+
+		ok( !$article->IsSeibotsuDoujitsu, 'empty' );
+
+		$article->SetText( "{{死亡年月日と没年齢|2001|1|1|2011|12|31}}" );
+		ok( !$article->IsSeibotsuDoujitsu, 'IsSeibotsuDoujitsu-1' );
+
+		$article->SetText( "{{死亡年月日と没年齢|2001|1|1|2011|1|1}}" );
+		ok( $article->IsSeibotsuDoujitsu, 'IsSeibotsuDoujitsu-2' );
 	}
 
 	# Namespaceテスト
@@ -3550,7 +3563,7 @@ sub TestJAWPApp {
 	# メソッド呼び出しテスト
 	{
 		foreach my $method ( 'Run', 'Usage', 'LintTitle', 'LintText',
-			'Statistic', 'StatisticReportSub1', 'StatisticReportSub2', 'TitleList', 'LivingNoref', 'PassedSakujo' ) {
+			'Statistic', 'StatisticReportSub1', 'StatisticReportSub2', 'TitleList', 'LivingNoref', 'PassedSakujo', 'SeibotsuDoujitsu' ) {
 			ok( JAWP::App->can($method), "call method $method" );
 		}
 	}
