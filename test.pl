@@ -143,6 +143,9 @@ sub TestJAWPArticle {
 
 		$article->{'text'} = '[[Category:存命人物]]';
 		ok( $article->IsLiving, '[[Category:存命人物]]' );
+
+		$article->{'text'} = '{{Blp}}';
+		ok( $article->IsLiving, '{{Blp}}' );
 	}
 
 	# IsNorefテスト
