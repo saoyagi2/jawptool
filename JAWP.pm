@@ -747,6 +747,19 @@ sub SortHash {
 }
 
 
+# ハッシュの文字列によるソート
+# param $hash_ref ハッシュへのリファレンス
+# return ソート結果配列へのリファレンス
+sub SortHashByStr {
+	my $hash_ref = shift;
+	my @result;
+
+	@result = sort { ( $hash_ref->{$b} cmp $hash_ref->{$a} ) } keys %$hash_ref;
+
+	return \@result;
+}
+
+
 # リンク語リストの取得
 # param $text 元テキスト
 # return リンク語リスト
