@@ -754,7 +754,7 @@ sub SortHashByStr {
 	my $hash_ref = shift;
 	my @result;
 
-	@result = sort { ( $hash_ref->{$b} cmp $hash_ref->{$a} ) } keys %$hash_ref;
+	@result = sort { ( $hash_ref->{$a} cmp $hash_ref->{$b} ) } keys %$hash_ref;
 
 	return \@result;
 }
