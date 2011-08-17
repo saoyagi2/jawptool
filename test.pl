@@ -173,6 +173,19 @@ sub TestJAWPArticle {
 		ok( $article->IsSeibotsuDoujitsu, 'IsSeibotsuDoujitsu-2' );
 	}
 
+	# IsIndexテスト
+	{
+		my $article = new JAWP::Article;
+
+		ok( !$article->IsIndex, 'empty' );
+
+		$article->SetTitle( '索引' );
+		ok( !$article->IsIndex, 'IsIndex-1' );
+
+		$article->SetTitle( 'Wikipedia:索引' );
+		ok( $article->IsIndex, 'IsIndex-2' );
+	}
+
 	# Namespaceテスト
 	{
 		my $article = new JAWP::Article;

@@ -118,6 +118,16 @@ sub IsSeibotsuDoujitsu {
 }
 
 
+# 索引判別
+# param $article 記事データ
+# return 真偽値
+sub IsIndex {
+	my $self = shift;
+
+	return index( $self->{'title'}, 'Wikipedia:索引' ) >= 0;
+}
+
+
 # 名前空間取得
 # return 名前空間
 sub Namespace {
