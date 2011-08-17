@@ -3348,9 +3348,9 @@ sub TestJAWPUtil {
 		my $sorted = JAWP::Util::SortHashByStr( \%hash );
 		is( ref $sorted, 'ARRAY', 'result is ARRAY reference' );
 		is( @$sorted + 0, 3, 'sorted array size' );
-		is( $sorted->[0], 'c', 'sorted array[0]' );
+		is( $sorted->[0], 'b', 'sorted array[0]' );
 		is( $sorted->[1], 'a', 'sorted array[1]' );
-		is( $sorted->[2], 'b', 'sorted array[2]' );
+		is( $sorted->[2], 'c', 'sorted array[2]' );
 	}
 
 	# GetLinkwordListテスト
