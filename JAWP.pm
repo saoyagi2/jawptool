@@ -1412,7 +1412,7 @@ STR
 	while( $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
-		next if( index( $article->{'title'}, 'Wikipedia:索引' ) < 0 );
+		next if( !$article->IsIndex );
 
 		foreach my $word ( JAWP::Util::GetLinkwordList( $article->{'text'} ) ) {
 			delete $titlelist{$word};
