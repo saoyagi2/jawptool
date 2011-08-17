@@ -1262,18 +1262,13 @@ STR
 			$livingcount++;
 			if( $article->IsNoref ) {
 				$livingnorefcount++;
-				if( $livingnorefcount <= 10000 ) {
-					push @livingnoreflist, "[[$article->{'title'}]]";
-				}
+				push @livingnoreflist, "[[$article->{'title'}]]";
 			}
 		}
 	}
 	print "\n";
 
 	$report->OutputWikiList( "一覧", \@livingnoreflist );
-	if( $livingnorefcount > 10000 ) {
-		$report->OutputDirect( "以下省略\n\n" );
-	}
 	$report->OutputDirect( "存命人物記事数 $livingcount<br>\n" );
 	$report->OutputDirect( "存命人物出典無し記事数 $livingnorefcount\n" );
 }
