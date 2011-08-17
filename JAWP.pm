@@ -124,7 +124,7 @@ sub IsSeibotsuDoujitsu {
 sub IsIndex {
 	my $self = shift;
 
-	return index( $self->{'title'}, 'Wikipedia:索引' ) >= 0;
+	return index( $self->{'title'}, 'Wikipedia:索引' ) == 0;
 }
 
 

@@ -184,6 +184,9 @@ sub TestJAWPArticle {
 
 		$article->SetTitle( 'Wikipedia:索引' );
 		ok( $article->IsIndex, 'IsIndex-2' );
+
+		$article->SetTitle( ' Wikipedia:索引' );
+		ok( !$article->IsIndex, 'IsIndex-3' );
 	}
 
 	# Namespaceテスト
