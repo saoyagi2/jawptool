@@ -785,7 +785,9 @@ sub GetLinkwordList {
 		$word =~ s/^( +|)(.*?)( +|)$/$2/;
 		$word = ucfirst $word;
 
-		push @wordlist, JAWP::Util::DecodeURL( $word );
+		if( $word ne '' ) {
+			push @wordlist, JAWP::Util::DecodeURL( $word );
+		}
 	}
 
 	return @wordlist;
@@ -806,7 +808,9 @@ sub GetTemplatewordList {
 		$word =~ s/^( +|)(.*?)( +|)$/$2/;
 		$word = ucfirst $word;
 
-		push @wordlist, JAWP::Util::DecodeURL( $word );
+		if( $word ne '' ) {
+			push @wordlist, JAWP::Util::DecodeURL( $word );
+		}
 	}
 
 	return @wordlist;
@@ -1464,7 +1468,7 @@ STR
 
 		@datalist = ();
 		foreach my $word ( JAWP::Util::GetLinkwordList( $article->{'text'} ) ) {
-			if( $word ne '' && !defined( $titlelist{$word} ) ) {
+			if( !defined( $titlelist{$word} ) ) {
 				push @datalist, "[[$word]]";
 			}
 		}

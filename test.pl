@@ -3372,6 +3372,12 @@ sub TestJAWPUtil {
 		@result = JAWP::Util::GetLinkwordList( '[[あああ' );
 		is( @result + 0 , 0, '不完全リンク' );
 
+		@result = JAWP::Util::GetLinkwordList( '[[]]' );
+		is( @result + 0 , 0, '空リンク' );
+
+		@result = JAWP::Util::GetLinkwordList( '[[#abc]]' );
+		is( @result + 0 , 0, 'ページ内リンク' );
+
 		@result = JAWP::Util::GetLinkwordList( '[[あああ]]' );
 		is( @result + 0 , 1, 'リンク' );
 		is( $result[0] , 'あああ', 'リンク(リンクワード)' );
@@ -3416,6 +3422,9 @@ sub TestJAWPUtil {
 
 		@result = JAWP::Util::GetTemplatewordList( '{{DEFAULTSORT:あああ}}' );
 		is( @result + 0 , 0, 'デフォルトソート-1' );
+
+		@result = JAWP::Util::GetTemplatewordList( '{{}}' );
+		is( @result + 0 , 0, '空テンプレート' );
 
 		@result = JAWP::Util::GetTemplatewordList( '{{あああ}}' );
 		is( @result + 0 , 1, '呼び出し-1' );
