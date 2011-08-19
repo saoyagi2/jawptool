@@ -458,16 +458,16 @@ sub LintText {
 	$生年 = $1 if( $text =~ /\[\[Category:(\d+)年生/i );
 	$没年 = $1 if( $text =~ /\[\[Category:(\d+)年没/i );
 	if( $cat存命 && ( $cat没年 || $temp死亡年月日 ) ) {
-		push @result, "存命人物ではありません";
+		push @result, '存命人物ではありません';
 	}
 	if( ( $cat存命 || $cat没年 ) && !$cat生年 ) {
-		push @result, "生年のカテゴリがありません";
+		push @result, '生年のカテゴリがありません';
 	}
 	if( $cat生年 && !$cat存命 && !$cat没年 ) {
-		push @result, "存命人物または没年のカテゴリがありません";
+		push @result, '存命人物または没年のカテゴリがありません';
 	}
 	if( defined( $生年 ) && $生年 >= 1903 && defined( $没年 ) && !$temp死亡年月日 ) {
-		push @result, "(死亡年月日と没年齢)のテンプレートを使うと便利です";
+		push @result, '(死亡年月日と没年齢)のテンプレートを使うと便利です';
 	}
 
 	return \@result;
@@ -1358,7 +1358,7 @@ STR
 	}
 	print "\n";
 
-	$report->OutputWikiList( "一覧", \@livingnoreflist );
+	$report->OutputWikiList( '一覧', \@livingnoreflist );
 	$report->OutputDirect( "存命人物記事数 $livingcount<br>\n" );
 	$report->OutputDirect( "存命人物出典無し記事数 $livingnorefcount\n" );
 }
@@ -1395,7 +1395,7 @@ STR
 	}
 	print "\n";
 
-	$report->OutputWikiList( "一覧", \@datalist );
+	$report->OutputWikiList( '一覧', \@datalist );
 }
 
 
@@ -1433,7 +1433,7 @@ STR
 	print "\n";
 
 	@datalist = map { "[[$_]]" } grep { !( $seibotsudoujitsu_text =~ /$_/ ) } @datalist;
-	$report->OutputWikiList( "一覧", \@datalist );
+	$report->OutputWikiList( '一覧', \@datalist );
 }
 
 
@@ -1484,7 +1484,7 @@ STR
 	print "\n";
 
 	@datalist = map { "[[$_]]" } @{ JAWP::Util::SortHashByStr( \%titlelist ) };
-	$report->OutputWikiList( "一覧", \@datalist );
+	$report->OutputWikiList( '一覧', \@datalist );
 	$report->OutputDirect( sprintf( "記事数 %d\n", @datalist + 0 ) );
 }
 
