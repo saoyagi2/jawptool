@@ -474,6 +474,24 @@ sub LintText {
 }
 
 
+# リダイレクト文法チェック
+# param $article 記事データ
+# param $titlelist タイトルリスト
+# return $datalist_ref 結果配列へのリファレンス
+sub LintRedirect {
+	my $self = shift;
+	my( @result, $n, $c, $code, $str );
+
+	if( !$self->IsRedirect ) {
+		return \@result;
+	}
+
+	if( $self->{'title'} =~ /\([^\(]+\)$/ ) {
+		push @result, 'カッコ付きのリダイレクトは有用ではない可能性があります';
+	}
+
+	return \@result;
+}
 
 
 ################################################################################
@@ -932,6 +950,9 @@ sub Run {
 	elsif( $argv[0] eq 'lint-text' ) {
 		LintText( $argv[1], $argv[2] );
 	}
+	elsif( $argv[0] eq 'lint-redirect' ) {
+		LintRedirect( $argv[1], $argv[2] );
+	}
 	elsif( $argv[0] eq 'statistic' ) {
 		Statistic( $argv[1], $argv[2] );
 	}
@@ -970,6 +991,7 @@ Usage: jawptool.pl command xmlfile reportfile
 command:
   lint-title
   lint-text
+  lint-redirect
   statistic
   titlelist
   living-noref
@@ -1054,6 +1076,39 @@ STR
 				$report->OutputDirect( "以下省略\n" );
 				last;
 			}
+		}
+	}
+	print "\n";
+}
+
+
+# リダイレクト文法チェック
+# param $xmlfile 入力XMLファイル名
+# param $reportfile レポートファイル名
+sub LintRedirect {
+	my( $xmlfile, $reportfile ) = @_;
+	my $jawpdata = new JAWP::DataFile( $xmlfile );
+	my $report = new JAWP::ReportFile( $reportfile );
+	my( $n, $article, $result_ref );
+
+	$report->OutputDirect( <<"STR"
+= リダイレクトlint =
+このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile をリダイレクトの誤りの可能性について検査したものです。
+
+過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
+
+プログラムで機械的に検査しているため、修正すべきでない記事についても検出されている可能性は大いにあります。この一覧を元に修正を行う場合は、個別にその修正が行われるべきか、十分に検討してから行うようにお願いします。
+
+STR
+	);
+
+	$n = 1;
+	while( $article = $jawpdata->GetArticle ) {
+		print "$n\r"; $n++;
+
+		$result_ref = $article->LintRedirect;
+		if( @$result_ref != 0 ) {
+			$report->OutputWikiList( "[[$article->{'title'}]]", $result_ref );
 		}
 	}
 	print "\n";
