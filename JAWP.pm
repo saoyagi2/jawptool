@@ -974,8 +974,8 @@ sub Run {
 	elsif( $argv[0] eq 'index-redlink' ) {
 		IndexRedlink( $argv[1], $argv[2] );
 	}
-	elsif( $argv[0] eq 'big-index' ) {
-		BigIndex( $argv[1], $argv[2] );
+	elsif( $argv[0] eq 'index-list' ) {
+		IndexList( $argv[1], $argv[2] );
 	}
 	else {
 		Usage();
@@ -1002,7 +1002,7 @@ command:
   seibotsu-doujitsu
   noindex
   index-redlink
-  big-index
+  index-list
 TEXT
 
 	exit;
@@ -1539,18 +1539,18 @@ STR
 }
 
 
-# 大きな索引一覧
+# 索引一覧
 # param $xmlfile 入力XMLファイル名
 # param $reportfile レポートファイル名
-sub BigIndex {
+sub IndexList {
 	my( $xmlfile, $reportfile ) = @_;
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
 	my $report = new JAWP::ReportFile( $reportfile );
-	my( $n, $article, $size, @datalist );
+	my( $n, $article, %indexlist, @datalist );
 
 	$report->OutputDirect( <<"STR"
 = 大きな索引一覧 =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から大きな索引を抽出したもので、[[Wikipedia:索引]]の支援を行うためのものです。
+このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から索引の一覧を抽出したものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -1563,14 +1563,13 @@ STR
 
 		next if( !$article->IsIndex );
 
-		$size = length( Encode::encode( 'utf-8', $article->{'text'} ) );
-		if( $size > 100000 ) {
-			push @datalist, "[[$article->{'title'}]]($size)";
-		}
+		$indexlist{$article->{'title'}} = length( Encode::encode( 'utf-8', $article->{'text'} ) );
 	}
 	print "\n";
 
+	@datalist = map { "[[$_]]($indexlist{$_})]]" } @{ JAWP::Util::SortHash( \%indexlist ) };
 	$report->OutputWikiList( '一覧', \@datalist );
+	$report->OutputDirect( sprintf( "索引数 %d\n", @datalist + 0 ) );
 }
 
 
