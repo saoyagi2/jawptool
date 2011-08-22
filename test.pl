@@ -2317,19 +2317,19 @@ sub TestJAWPArticle {
 				$article->SetText( "{{DEFAULTSORT:あああ$char}}\n{{aimai}}" );
 				$result_ref = $article->LintText( $titlelist );
 				is( @$result_ref + 0, 1, "ソートキー-4 $char(警告数)" );
-				is( $result_ref->[0], "ソートキーには濁音、半濁音、吃音、長音は使用しないことが推奨されます(1)", "ソートキー-4 $char(警告文)" );
+				is( $result_ref->[0], "ソートキーには濁音、半濁音、吃音、長音は清音化することが推奨されます(1)", "ソートキー-4 $char(警告文)" );
 
 				$article->SetTitle( '標準' );
 				$article->SetText( "{{デフォルトソート:あああ$char}}\n{{aimai}}" );
 				$result_ref = $article->LintText( $titlelist );
 				is( @$result_ref + 0, 1, "ソートキー-5 $char(警告数)" );
-				is( $result_ref->[0], "ソートキーには濁音、半濁音、吃音、長音は使用しないことが推奨されます(1)", "ソートキー-5 $char(警告文)" );
+				is( $result_ref->[0], "ソートキーには濁音、半濁音、吃音、長音は清音化することが推奨されます(1)", "ソートキー-5 $char(警告文)" );
 
 				$article->SetTitle( '標準' );
 				$article->SetText( "{{aimai}}\n[[Category:カテゴリ|あああ$char]]\n" );
 				$result_ref = $article->LintText( $titlelist );
 				is( @$result_ref + 0, 1, "ソートキー-6 $char(警告数)" );
-				is( $result_ref->[0], "ソートキーには濁音、半濁音、吃音、長音は使用しないことが推奨されます(2)", "ソートキー-6 $char(警告文)" );
+				is( $result_ref->[0], "ソートキーには濁音、半濁音、吃音、長音は清音化することが推奨されます(2)", "ソートキー-6 $char(警告文)" );
 			}
 		}
 
