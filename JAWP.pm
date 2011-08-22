@@ -1698,7 +1698,7 @@ sub IndexList {
 	my( $n, $article, %indexlist, @datalist );
 
 	$report->OutputDirect( <<"STR"
-= 大きな索引一覧 =
+= 索引一覧 =
 このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から索引の一覧を抽出したものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
@@ -1716,7 +1716,7 @@ STR
 	}
 	print "\n";
 
-	@datalist = map { "[[$_]]($indexlist{$_})]]" } @{ JAWP::Util::SortHash( \%indexlist ) };
+	@datalist = map { "[[$_]]($indexlist{$_})" } @{ JAWP::Util::SortHash( \%indexlist ) };
 	$report->OutputWikiList( '一覧', \@datalist );
 	$report->OutputDirect( sprintf( "索引数 %d\n", @datalist + 0 ) );
 }
