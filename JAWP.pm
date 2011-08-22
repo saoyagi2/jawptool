@@ -1499,8 +1499,9 @@ STR
 sub IndexRedlink {
 	my( $xmlfile, $reportfile ) = @_;
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
+	my $titlelist = $jawpdata->GetTitleList;
 	my $report = new JAWP::ReportFile( $reportfile );
-	my( %titlelist, $n, $article, @datalist );
+	my( %titlelist, $n, $article, $linktype, $word, @datalist );
 
 	$report->OutputDirect( <<"STR"
 = 索引赤リンク一覧 =
@@ -1515,19 +1516,12 @@ STR
 	while( $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
-		$titlelist{$article->{'title'}} = 1;
-	}
-	print "\n";
-
-	$n = 1;
-	while( $article = $jawpdata->GetArticle ) {
-		print "$n\r"; $n++;
-
 		next if( !$article->IsIndex );
 
 		@datalist = ();
-		foreach my $word ( JAWP::Util::GetLinkwordList( $article->{'text'} ) ) {
-			if( !defined( $titlelist{$word} ) ) {
+		foreach $word ( JAWP::Util::GetLinkwordList( $article->{'text'} ) ) {
+			( $linktype, $word ) = JAWP::Util::GetLinkType( $word, $titlelist );
+			if( $linktype eq 'redlink' ) {
 				push @datalist, "[[$word]]";
 			}
 		}
