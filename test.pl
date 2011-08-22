@@ -160,6 +160,58 @@ sub TestJAWPArticle {
 		}
 	}
 
+	# GetBirthdayテスト
+	{
+		my $article = new JAWP::Article;
+		my( $y, $m, $d );
+
+		( $y, $m, $d ) = $article->GetBirthday;
+		is( $y, 0, 'empty-y' );
+		is( $m, 0, 'empty-m' );
+		is( $d, 0, 'empty-d' );
+
+		$article->SetText( "{{生年月日と年齢|2001|1|11}}" );
+		( $y, $m, $d ) = $article->GetBirthday;
+		is( $y, 2001, 'GetBirthday-1-y' );
+		is( $m, 1, 'GetBirthday-1-m' );
+		is( $d, 11, 'GetBirthday-1-d' );
+
+		$article->SetText( "{{死亡年月日と没年齢|2001|1|11|2011|12|31}}" );
+		( $y, $m, $d ) = $article->GetBirthday;
+		is( $y, 2001, 'GetBirthday-2-y' );
+		is( $m, 1, 'GetBirthday-2-m' );
+		is( $d, 11, 'GetBirthday-2-d' );
+
+		$article->SetText( "{{没年齢|2001|1|11|2011|12|31}}" );
+		( $y, $m, $d ) = $article->GetBirthday;
+		is( $y, 2001, 'GetBirthday-3-y' );
+		is( $m, 1, 'GetBirthday-3-m' );
+		is( $d, 11, 'GetBirthday-3-d' );
+	}
+
+	# GetDeathdayテスト
+	{
+		my $article = new JAWP::Article;
+		my( $y, $m, $d );
+
+		( $y, $m, $d ) = $article->GetDeathday;
+		is( $y, 0, 'empty-y' );
+		is( $m, 0, 'empty-m' );
+		is( $d, 0, 'empty-d' );
+
+		$article->SetText( "{{死亡年月日と没年齢|2001|1|11|2011|12|31}}" );
+		( $y, $m, $d ) = $article->GetBirthday;
+		is( $y, 2001, 'GetDeathday-1-y' );
+		is( $m, 1, 'GetDeathday-1-m' );
+		is( $d, 11, 'GetDeathday-1-d' );
+
+		$article->SetText( "{{没年齢|2001|1|11|2011|12|31}}" );
+		( $y, $m, $d ) = $article->GetBirthday;
+		is( $y, 2001, 'GetDeathday-2-y' );
+		is( $m, 1, 'GetDeathday-2-m' );
+		is( $d, 11, 'GetDeathday-2-d' );
+	}
+
 	# IsSeibotsuDoujitsuテスト
 	{
 		my $article = new JAWP::Article;
@@ -171,6 +223,12 @@ sub TestJAWPArticle {
 
 		$article->SetText( "{{死亡年月日と没年齢|2001|1|1|2011|1|1}}" );
 		ok( $article->IsSeibotsuDoujitsu, 'IsSeibotsuDoujitsu-2' );
+
+		$article->SetText( "{{没年齢|2001|1|1|2011|12|31}}" );
+		ok( !$article->IsSeibotsuDoujitsu, 'IsSeibotsuDoujitsu-3' );
+
+		$article->SetText( "{{没年齢|2001|1|1|2011|1|1}}" );
+		ok( $article->IsSeibotsuDoujitsu, 'IsSeibotsuDoujitsu-4' );
 	}
 
 	# IsIndexテスト

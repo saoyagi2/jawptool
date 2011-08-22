@@ -102,14 +102,45 @@ sub IsNoref {
 }
 
 
+# 誕生日取得
+# param $article 記事データ
+# return 年、月、日(不存在なら0,0,0)
+sub GetBirthday {
+	my $self = shift;
+
+	if( $self->{'text'} =~ /\{\{生年月日と年齢\|(\d+)\|(\d+)\|(\d+)/ ) {
+		return( $1, $2, $3 );
+	}
+	if( $self->{'text'} =~ /\{\{(死亡年月日と没年齢|没年齢)\|(\d+)\|(\d+)\|(\d+)\|(\d+)\|(\d+)\|(\d+)\}\}/ ) {
+		return( $2, $3, $4 );
+	}
+
+	return( 0, 0, 0 );
+}
+
+
+# 死亡日取得
+# param $article 記事データ
+# return 年、月、日(不存在なら0,0,0)
+sub GetDeathday {
+	my $self = shift;
+
+	if( $self->{'text'} =~ /\{\{(死亡年月日と没年齢|没年齢)\|(\d+)\|(\d+)\|(\d+)\|(\d+)\|(\d+)\|(\d+)\}\}/ ) {
+		return( $5, $6, $7 );
+	}
+
+	return( 0, 0, 0 );
+}
+
+
 # 生没同日判別
 # param $article 記事データ
 # return 真偽値
 sub IsSeibotsuDoujitsu {
 	my $self = shift;
 
-	if( $self->{'text'} =~ /\{\{死亡年月日と没年齢\|(\d+)\|(\d+)\|(\d+)\|(\d+)\|(\d+)\|(\d+)\}\}/ ) {
-		if( $2 == $5 && $3 == $6 ) {
+	if( $self->{'text'} =~ /\{\{(死亡年月日と没年齢|没年齢)\|(\d+)\|(\d+)\|(\d+)\|(\d+)\|(\d+)\|(\d+)\}\}/ ) {
+		if( $3 == $6 && $4 == $7 ) {
 			return 1;
 		}
 	}
