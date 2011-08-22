@@ -1512,6 +1512,10 @@ sub IndexRedlink {
 STR
 	);
 
+	foreach my $namespace ( '利用者', '利用者‐会話', 'Wikipedia', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki', 'MediaWiki‐ノート', 'Template‐ノート', 'Help', 'Help‐ノート', 'Category‐ノート', 'Portal', 'Portal‐ノート', 'プロジェクト', 'プロジェクト‐ノート' ) {
+		$titlelist->{$namespace} = {};
+	}
+
 	$n = 1;
 	while( $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
