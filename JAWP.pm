@@ -6,8 +6,6 @@ use utf8;
 use Encode;
 use open IO  => ":utf8";
 
-use Data::Dumper;
-
 our $VERSION = '0.13';
 
 
@@ -1344,7 +1342,7 @@ sub TitleList {
 	my( $xmlfile, $reportfile ) = @_;
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
 	my $titlelist = $jawpdata->GetTitleList;
-	my $report = new JAWP::ReportFile( $reportfile );
+	my $report;
 	my $namespace;
 	my %varname = (
 		'標準'=>'article', '標準_曖昧'=>'aimai', '標準_リダイレクト'=>'redirect',
@@ -1356,9 +1354,14 @@ sub TitleList {
 		'Category‐ノート'=>'category_note', 'Portal‐ノート'=>'portal_note', 'プロジェクト‐ノート'=>'project_note' );
 
 	foreach $namespace ( keys %varname ) {
-		$Data::Dumper::Varname = $varname{$namespace};
-		$report->OutputDirect( Data::Dumper::Dumper( $titlelist->{$namespace} ) );
-		$titlelist->{$namespace} = {};
+		$report = new JAWP::ReportFile( sprintf( "%s_%s.pl", $reportfile, $varname{$namespace} ) );
+		$report->OutputDirect( "use utf8;\n" );
+		$report->OutputDirect( "\$xmlfile = '$xmlfile';\n" );
+		$report->OutputDirect( sprintf( "\$%s = {\n", $varname{$namespace} ) );
+		foreach( keys %{$titlelist->{$namespace}} ) {
+			$report->OutputDirect( "'$_'=>1,\n" );
+		}
+		$report->OutputDirect( "''=>1 };\n\n" );
 	}
 }
 
