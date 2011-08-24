@@ -958,6 +958,21 @@ while( $text =~ /^=+([^=]+?)=+$/mg ) {
 }
 
 
+# 発言タイムスタンプリストの取得
+# param $text 元テキスト
+# return 発言タイムスタンプリスト
+sub GetTalkTimestampList {
+	my $text = shift;
+	my( @timestamplist );
+
+	while( $text =~ /(\d+)年(\d+)月(\d+)日.*?(\d+):(\d+) \(UTC\)/g ) {
+		push @timestamplist, sprintf( "%04d-%02d-%02dT%02d:%02d:00Z", $1, $2, $3, $4, $5 );
+	}
+
+	return sort @timestamplist;
+}
+
+
 ################################################################################
 # JAWP::Appクラス
 ################################################################################

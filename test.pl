@@ -3391,7 +3391,9 @@ STR
 sub TestJAWPUtil {
 	# メソッド呼び出しテスト
 	{
-		foreach my $method ( 'UnescapeHTML', 'DecodeURL', 'SortHash', 'GetLinkwordList', 'GetTemplatewordList', 'GetExternallinkList', 'GetHost', 'GetLinkType', 'GetHeadnameList' ) {
+		foreach my $method ( 'UnescapeHTML', 'DecodeURL', 'SortHash',
+			'GetLinkwordList', 'GetTemplatewordList', 'GetExternallinkList',
+			'GetHost', 'GetLinkType', 'GetHeadnameList', 'GetTalkTimestampList' ) {
 			ok( JAWP::Util->can($method), "call method $method" );
 		}
 	}
@@ -3673,6 +3675,26 @@ sub TestJAWPUtil {
 		@result = JAWP::Util::GetHeadnameList( "あああ\n==見 出 し==\nいいい" );
 		is( @result + 0 , 1, 'GetHeadnameList-6(取得数)' );
 		is( $result[0], '見 出 し', 'GetHeadnameList-6(Headname)' );
+	}
+
+	# GetTalkTimestampListテスト
+	{
+		my @result;
+
+		@result = JAWP::Util::GetTalkTimestampList( '' );
+		is( @result + 0 , 0, 'GetTalkTimestampList-1(空文字列)' );
+
+		@result = JAWP::Util::GetTalkTimestampList( 'あああ' );
+		is( @result + 0 , 0, 'GetTalkTimestampList-2(通常文字列)' );
+
+		@result = JAWP::Util::GetTalkTimestampList( '2011年8月2日 (火) 14:14 (UTC)' );
+		is( @result + 0 , 1, 'GetTalkTimestampList-3(取得数)' );
+		is( $result[0], '2011-08-02T14:14:00Z', 'GetHeadnameList-3(Headname)' );
+
+		@result = JAWP::Util::GetTalkTimestampList( '2011年8月2日 (火) 14:14 (UTC)あああ2011年8月7日 (日) 14:55 (UTC)' );
+		is( @result + 0 , 2, 'GetTalkTimestampList-4(取得数)' );
+		is( $result[0], '2011-08-02T14:14:00Z', 'GetHeadnameList-4(Headname)' );
+		is( $result[1], '2011-08-07T14:55:00Z', 'GetHeadnameList-4(Headname)' );
 	}
 }
 
