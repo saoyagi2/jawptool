@@ -965,7 +965,7 @@ sub GetTalkTimestampList {
 	my $text = shift;
 	my( @timestamplist );
 
-	while( $text =~ /(\d+)年(\d+)月(\d+)日.*?(\d+):(\d+) \(UTC\)/g ) {
+	while( $text =~ /(\d{4})年(\d{1,2})月(\d{1,2})日.{5}(\d{2}):(\d{2}) \(UTC\)/g ) {
 		push @timestamplist, sprintf( "%04d-%02d-%02dT%02d:%02d:00Z", $1, $2, $3, $4, $5 );
 	}
 
