@@ -1606,7 +1606,7 @@ STR
 	}
 	print "\n";
 
-	@datalist = map { "[[$_]]" } grep { !( $seibotsudoujitsu_text =~ /$_/ ) } @datalist;
+	@datalist = map { "[[$_]]" } grep { index( $seibotsudoujitsu_text, $_ ) < 0 } @datalist;
 	$report->OutputWikiList( '一覧', \@datalist );
 }
 
