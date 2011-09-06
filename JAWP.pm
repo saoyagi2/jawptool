@@ -1260,6 +1260,34 @@ STR
 	$linkcount{'externalhost'} = {};
 	StatisticReportSub2( '見出し語ランキング', \%headnamecount, '', $report, 0 );
 	%headnamecount = ();
+
+
+	my @timestamplist;
+	my( %idobatacount, %idobataspeakcount );
+	$n = 1;
+	while( $article = $jawpdata->GetArticle ) {
+		print "$n\r"; $n++;
+
+		if( index( $article->{'title'}, 'Wikipedia:井戸端/subj/' ) == 0 ) {
+			@timestamplist = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
+			if( @timestamplist + 0 ) {
+				$idobatacount{substr( $timestamplist[0], 0, 7 )}++;
+				$idobataspeakcount{substr( $timestamplist[0], 0, 7 )} += ( @timestamplist + 0 );
+			}
+		}
+	}
+	print "\n";
+
+	$text = <<'TEXT';
+{| class="wikitable" style="text-align:right"
+! 年月 !! サブページ数 !! 発言数 !! 発言数/サブページ数
+TEXT
+	foreach( sort keys %idobatacount ) {
+		$text .= "|-\n";
+		$text .= sprintf( "|%s || %d || %d || %2.1f\n", $_, $idobatacount{$_}, $idobataspeakcount{$_}, $idobataspeakcount{$_} / $idobatacount{$_} );
+	}
+	$text .= "|}";
+	$report->OutputWiki( '井戸端統計', \$text );
 }
 
 
