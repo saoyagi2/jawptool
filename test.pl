@@ -54,7 +54,7 @@ sub TestJAWP {
 sub TestJAWPArticle {
 	# メソッド呼び出しテスト
 	{
-		foreach my $method ( 'new', 'SetTitle', 'SetTimestamp', 'SetText', 'IsRedirect', 'IsAimai', 'IsLiving', 'IsNoref', 'IsSeibotsuDoujitsu', 'GetPassTime', 'LintTitle', 'LintText' ) {
+		foreach my $method ( 'new', 'SetTitle', 'SetTimestamp', 'SetText', 'IsRedirect', 'IsAimai', 'IsLiving', 'IsNoref', 'IsSeibotsuDoujitsu', 'GetPassTime', 'LintTitle', 'LintText', 'LintIndex' ) {
 			ok( JAWP::Article->can($method), "call method $method" );
 		}
 	}

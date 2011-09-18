@@ -523,6 +523,25 @@ sub LintRedirect {
 }
 
 
+# 索引文法チェック
+# param $article 記事データ
+# param $titlelist タイトルリスト
+# return $datalist_ref 結果配列へのリファレンス
+sub LintIndex {
+	my( $self, $titlelist ) = @_;
+	my( @result, $word, $linktype );
+
+	return \@result if( !$self->IsIndex );
+
+	foreach $word ( JAWP::Util::GetLinkwordList( $self->{'text'} ) ) {
+		( $linktype, $word ) = JAWP::Util::GetLinkType( $word, $titlelist );
+		if( $linktype eq 'redlink' ) {
+			push @result, "$word は赤リンクです";
+		}
+	}
+}
+
+
 ################################################################################
 # JAWP::TitleListクラス
 ################################################################################
@@ -1175,7 +1194,7 @@ sub LintIndex {
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
 	my $titlelist = $jawpdata->GetTitleList;
 	my $report = new JAWP::ReportFile( $reportfile );
-	my( %titlelist, $n, $article, $linktype, $word, @datalist );
+	my( %titlelist, $article, $n, $result_ref );
 
 	$report->OutputDirect( <<"STR"
 = 索引赤リンク一覧 =
@@ -1194,17 +1213,9 @@ STR
 	while( $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
-		next if( !$article->IsIndex );
-
-		@datalist = ();
-		foreach $word ( JAWP::Util::GetLinkwordList( $article->{'text'} ) ) {
-			( $linktype, $word ) = JAWP::Util::GetLinkType( $word, $titlelist );
-			if( $linktype eq 'redlink' ) {
-				push @datalist, "[[$word]]";
-			}
-		}
-		if( @datalist != 0 ) {
-			$report->OutputWikiList( "[[$article->{'title'}]]", \@datalist );
+		$result_ref = $article->LintIndex;
+		if( @$result_ref != 0 ) {
+			$report->OutputWikiList( "[[$article->{'title'}]]", $result_ref );
 		}
 	}
 	print "\n";
