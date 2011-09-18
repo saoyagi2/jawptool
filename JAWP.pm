@@ -1031,11 +1031,8 @@ sub Run {
 	elsif( $argv[0] eq 'passed-sakujo' ) {
 		PassedSakujo( $argv[1], $argv[2] );
 	}
-	elsif( $argv[0] eq 'seibotsu' ) {
-		Seibotsu( $argv[1], $argv[2] );
-	}
-	elsif( $argv[0] eq 'seibotsu-doujitsu' ) {
-		SeibotsuDoujitsu( $argv[1], $argv[2] );
+	elsif( $argv[0] eq 'person' ) {
+		Person( $argv[1], $argv[2] );
 	}
 	elsif( $argv[0] eq 'noindex' ) {
 		NoIndex( $argv[1], $argv[2] );
@@ -1066,8 +1063,7 @@ command:
   titlelist
   living-noref
   passed-sakujo
-  seibotsu
-  seibotsu-doujitsu
+  person
   noindex
   index-list
 TEXT
@@ -1540,19 +1536,20 @@ STR
 }
 
 
-# 生没未登録記事一覧
+# 人物一覧
 # param $xmlfile 入力XMLファイル名
 # param $reportfile レポートファイル名
-sub Seibotsu {
+sub Person {
 	my( $xmlfile, $reportfile ) = @_;
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
 	my $report = new JAWP::ReportFile( $reportfile );
-	my( $n, $article, %birth, %death, @datalist );
+	my( $n, $article, $seibotsudoujitsu_text, @datalist );
+	my( %birth, %death );
 	my( $y, $m, $d, $key );
 
 	$report->OutputDirect( <<"STR"
-= 生没未登録記事一覧 =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から年記事・月日記事への生没日が未登録の人物を抽出したもので、年記事・月日記事の記事作成の支援を行うためのものです。「死亡年月日と没年齢テンプレート」の記載を元に抽出しているため、抽出漏れもありえます。あくまでも支援ツールの一つとしてお使い下さい。
+= 人物一覧 =
+このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から人物一覧記事に未掲載の人物記事を抽出したもので、[[生没同日]]・年記事・月日記事の記事作成の支援を行うためのものです。「死亡年月日と没年齢テンプレート」の記載を元に抽出しているため、抽出漏れもありえます。あくまでも支援ツールの一つとしてお使い下さい。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -1564,6 +1561,13 @@ STR
 		print "$n\r"; $n++;
 
 		next if( $article->Namespace ne '標準' );
+
+		if( $article->{'title'} eq '生没同日' ) {
+			$seibotsudoujitsu_text = $article->{'text'}
+		}
+		if( $article->IsSeibotsuDoujitsu ) {
+			push @datalist, $article->{'title'};
+		}
 
 		( $y, $m, $d ) = $article->GetBirthday;
 		if( $y != 0 && $m != 0 && $d != 0 ) {
@@ -1596,6 +1600,9 @@ STR
 		}
 	}
 	print "\n";
+
+	@datalist = map { "[[$_]]" } grep { index( $seibotsudoujitsu_text, $_ ) < 0 } @datalist;
+	$report->OutputWikiList( '生没同日', \@datalist );
 
 	$n = 1;
 	while( $article = $jawpdata->GetArticle ) {
@@ -1653,44 +1660,6 @@ STR
 
 	}
 	print "\n";
-}
-
-
-# 生没同日一覧
-# param $xmlfile 入力XMLファイル名
-# param $reportfile レポートファイル名
-sub SeibotsuDoujitsu {
-	my( $xmlfile, $reportfile ) = @_;
-	my $jawpdata = new JAWP::DataFile( $xmlfile );
-	my $report = new JAWP::ReportFile( $reportfile );
-	my( $n, $article, $seibotsudoujitsu_text, @datalist );
-
-	$report->OutputDirect( <<"STR"
-= 生没同日人物一覧 =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から生没同日の人物を抽出したもので、[[生没同日]]の記事作成の支援を行うためのものです。「死亡年月日と没年齢テンプレート」の記載を元に抽出しているため、抽出漏れもありえます。あくまでも支援ツールの一つとしてお使い下さい。
-
-過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
-
-STR
-	);
-
-	$n = 1;
-	while( $article = $jawpdata->GetArticle ) {
-		print "$n\r"; $n++;
-
-		next if( $article->Namespace ne '標準' );
-
-		if( $article->{'title'} eq '生没同日' ) {
-			$seibotsudoujitsu_text = $article->{'text'}
-		}
-		if( $article->IsSeibotsuDoujitsu ) {
-			push @datalist, $article->{'title'};
-		}
-	}
-	print "\n";
-
-	@datalist = map { "[[$_]]" } grep { index( $seibotsudoujitsu_text, $_ ) < 0 } @datalist;
-	$report->OutputWikiList( '一覧', \@datalist );
 }
 
 
