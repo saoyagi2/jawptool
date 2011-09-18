@@ -997,6 +997,9 @@ sub Run {
 	elsif( $argv[0] eq 'lint-redirect' ) {
 		LintRedirect( $argv[1], $argv[2] );
 	}
+	elsif( $argv[0] eq 'lint-index' ) {
+		LintIndex( $argv[1], $argv[2] );
+	}
 	elsif( $argv[0] eq 'statistic' ) {
 		Statistic( $argv[1], $argv[2] );
 	}
@@ -1021,9 +1024,6 @@ sub Run {
 	elsif( $argv[0] eq 'index-redlink' ) {
 		IndexRedlink( $argv[1], $argv[2] );
 	}
-	elsif( $argv[0] eq 'index-list' ) {
-		IndexList( $argv[1], $argv[2] );
-	}
 	else {
 		Usage();
 	}
@@ -1042,6 +1042,7 @@ command:
   lint-title
   lint-text
   lint-redirect
+  lint-index
   statistic
   titlelist
   living-noref
@@ -1049,7 +1050,6 @@ command:
   seibotsu
   seibotsu-doujitsu
   noindex
-  index-redlink
   index-list
 TEXT
 
@@ -1161,6 +1161,50 @@ STR
 		$result_ref = $article->LintRedirect;
 		if( @$result_ref != 0 ) {
 			$report->OutputWikiList( "[[$article->{'title'}]]", $result_ref );
+		}
+	}
+	print "\n";
+}
+
+
+# 索引文法チェック
+# param $xmlfile 入力XMLファイル名
+# param $reportfile レポートファイル名
+sub LintIndex {
+	my( $xmlfile, $reportfile ) = @_;
+	my $jawpdata = new JAWP::DataFile( $xmlfile );
+	my $titlelist = $jawpdata->GetTitleList;
+	my $report = new JAWP::ReportFile( $reportfile );
+	my( %titlelist, $n, $article, $linktype, $word, @datalist );
+
+	$report->OutputDirect( <<"STR"
+= 索引赤リンク一覧 =
+このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から索引の誤りの可能性を検査したもので、[[Wikipedia:索引]]の支援を行うためのものです。
+
+過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
+
+STR
+	);
+
+	foreach my $namespace ( '利用者', '利用者‐会話', 'Wikipedia', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki', 'MediaWiki‐ノート', 'Template‐ノート', 'Help', 'Help‐ノート', 'Category‐ノート', 'Portal', 'Portal‐ノート', 'プロジェクト', 'プロジェクト‐ノート' ) {
+		$titlelist->{$namespace} = {};
+	}
+
+	$n = 1;
+	while( $article = $jawpdata->GetArticle ) {
+		print "$n\r"; $n++;
+
+		next if( !$article->IsIndex );
+
+		@datalist = ();
+		foreach $word ( JAWP::Util::GetLinkwordList( $article->{'text'} ) ) {
+			( $linktype, $word ) = JAWP::Util::GetLinkType( $word, $titlelist );
+			if( $linktype eq 'redlink' ) {
+				push @datalist, "[[$word]]";
+			}
+		}
+		if( @datalist != 0 ) {
+			$report->OutputWikiList( "[[$article->{'title'}]]", \@datalist );
 		}
 	}
 	print "\n";
@@ -1688,50 +1732,6 @@ STR
 	@datalist = map { "[[$_]]" } @{ JAWP::Util::SortHashByStr( \%titlelist ) };
 	$report->OutputWikiList( '一覧', \@datalist );
 	$report->OutputDirect( sprintf( "記事数 %d\n", @datalist + 0 ) );
-}
-
-
-# 索引赤リンク一覧
-# param $xmlfile 入力XMLファイル名
-# param $reportfile レポートファイル名
-sub IndexRedlink {
-	my( $xmlfile, $reportfile ) = @_;
-	my $jawpdata = new JAWP::DataFile( $xmlfile );
-	my $titlelist = $jawpdata->GetTitleList;
-	my $report = new JAWP::ReportFile( $reportfile );
-	my( %titlelist, $n, $article, $linktype, $word, @datalist );
-
-	$report->OutputDirect( <<"STR"
-= 索引赤リンク一覧 =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から索引中の赤リンクを抽出したもので、[[Wikipedia:索引]]の支援を行うためのものです。
-
-過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
-
-STR
-	);
-
-	foreach my $namespace ( '利用者', '利用者‐会話', 'Wikipedia', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki', 'MediaWiki‐ノート', 'Template‐ノート', 'Help', 'Help‐ノート', 'Category‐ノート', 'Portal', 'Portal‐ノート', 'プロジェクト', 'プロジェクト‐ノート' ) {
-		$titlelist->{$namespace} = {};
-	}
-
-	$n = 1;
-	while( $article = $jawpdata->GetArticle ) {
-		print "$n\r"; $n++;
-
-		next if( !$article->IsIndex );
-
-		@datalist = ();
-		foreach $word ( JAWP::Util::GetLinkwordList( $article->{'text'} ) ) {
-			( $linktype, $word ) = JAWP::Util::GetLinkType( $word, $titlelist );
-			if( $linktype eq 'redlink' ) {
-				push @datalist, "[[$word]]";
-			}
-		}
-		if( @datalist != 0 ) {
-			$report->OutputWikiList( "[[$article->{'title'}]]", \@datalist );
-		}
-	}
-	print "\n";
 }
 
 

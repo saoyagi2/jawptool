@@ -3706,10 +3706,10 @@ sub TestJAWPUtil {
 sub TestJAWPApp {
 	# メソッド呼び出しテスト
 	{
-		foreach my $method ( 'Run', 'Usage', 'LintTitle', 'LintText',
+		foreach my $method ( 'Run', 'Usage', 'LintTitle', 'LintText', 'LintIndex',
 			'LintRedirect', 'Statistic', 'StatisticReportSub1', 'StatisticReportSub2',
 			'TitleList', 'LivingNoref', 'PassedSakujo', 'Seibotsu', 'SeibotsuDoujitsu',
-			'NoIndex', 'IndexRedlink', 'IndexList' ) {
+			'NoIndex', 'IndexList' ) {
 			ok( JAWP::App->can($method), "call method $method" );
 		}
 	}
