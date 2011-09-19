@@ -1037,8 +1037,8 @@ sub Run {
 	elsif( $argv[0] eq 'noindex' ) {
 		NoIndex( $argv[1], $argv[2] );
 	}
-	elsif( $argv[0] eq 'index-redlink' ) {
-		IndexRedlink( $argv[1], $argv[2] );
+	elsif( $argv[0] eq 'index-list' ) {
+		IndexList( $argv[1], $argv[2] );
 	}
 	else {
 		Usage();
