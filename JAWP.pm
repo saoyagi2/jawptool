@@ -1604,7 +1604,7 @@ STR
 	print "\n";
 
 	@datalist = map { "[[$_]]" } grep { index( $seibotsudoujitsu_text, $_ ) < 0 } @datalist;
-	$report->OutputWikiList( '生没同日', \@datalist );
+	$report->OutputWikiList( '[[生没同日]]', \@datalist );
 
 	$n = 1;
 	while( $article = $jawpdata->GetArticle ) {
