@@ -539,6 +539,8 @@ sub LintIndex {
 			push @result, "$word は赤リンクです";
 		}
 	}
+
+	return \@result;
 }
 
 
@@ -1209,7 +1211,7 @@ STR
 	while( $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
-		$result_ref = $article->LintIndex;
+		$result_ref = $article->LintIndex( $titlelist );
 		if( @$result_ref != 0 ) {
 			$report->OutputWikiList( "[[$article->{'title'}]]", $result_ref );
 		}
