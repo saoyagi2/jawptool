@@ -6,6 +6,8 @@ use utf8;
 use Encode;
 use open IO  => ":utf8";
 
+use CGI;
+
 our $VERSION = '0.13';
 
 
@@ -1748,6 +1750,67 @@ STR
 	@datalist = map { "[[$_]]($indexlist{$_})" } @{ JAWP::Util::SortHash( \%indexlist ) };
 	$report->OutputWikiList( '一覧', \@datalist );
 	$report->OutputDirect( sprintf( "索引数 %d\n", @datalist + 0 ) );
+}
+
+
+################################################################################
+# JAWP::CGIAppクラス
+################################################################################
+
+package JAWP::CGIApp;
+
+
+# CGIアプリ実行
+sub Run {
+	my $cgi = new CGI;
+	my( $body, $wikitext, $titlelist, $article, $result_ref );
+
+	$wikitext = Encode::decode( 'utf-8', $cgi->param( 'wikitext' ) );
+	if( $wikitext ) {
+		$titlelist = new JAWP::TitleList;
+		$article = new JAWP::Article;
+		$article->SetText( $wikitext );
+		$result_ref = $article->LintText( $titlelist );
+
+		$body = '<p>■チェック結果</p><ul>';
+		foreach( @$result_ref ) {
+			$body .= "<li>$_</li>";
+		}
+		$body .= '</ul><hr>';
+
+		$wikitext = $cgi->escapeHTML( $wikitext );
+	}
+	else {
+		$body = $wikitext = '';
+	}
+
+	$body .= <<"HTML";
+<form action="jawp-lint.cgi" method="post">
+<p>■ウィキテキスト</p>
+<textarea name="wikitext" style="width: 600px; height: 400px;">$wikitext</textarea>
+<br>
+<input type="submit" value="lint">
+</form>
+HTML
+
+	print <<"HTML";
+Content-Type: text/html; charset=utf-8;
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>jawp-lint.cgi/ウィキペディア日本語版文法チェックCGI</title>
+</head>
+<body>
+<h1>jawp-lint.cgi/ウィキペディア日本語版文法チェックCGI</h1>
+<p>
+このCGIは、ウィキペディア日本語版記事本文のウィキ文法及びスタイルが適切であるかどうかを調べるものです。プログラムで機械的に検査しているため、修正すべきでない記事についても検出されている可能性は大いにあります。このチェック結果を元に修正を行う場合は、個別にその修正が行われるべきか、十分に検討してから行うようにお願いします。また、修正は必ず各ガイドラインに従って行ってください。本プログラムの開発時より後にガイドラインが更新されている可能性もあることを留意下さい。
+</p>
+<hr>
+$body
+</body>
+</html>
+HTML
 }
 
 

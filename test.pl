@@ -32,6 +32,7 @@ my $testreportfile = "$testdir/report.txt";
 	TestJAWPUtil();
 	TestJAWPReport();
 	TestJAWPApp();
+	TestJAWPCGIApp();
 
 	Cleanup();
 }
@@ -3711,6 +3712,20 @@ sub TestJAWPApp {
 			'TitleList', 'LivingNoref', 'PassedSakujo', 'Person',
 			'NoIndex', 'IndexList' ) {
 			ok( JAWP::App->can($method), "call method $method" );
+		}
+	}
+}
+
+
+################################################################################
+# JAWP::CGIAppクラス
+################################################################################
+
+sub TestJAWPCGIApp {
+	# メソッド呼び出しテスト
+	{
+		foreach my $method ( 'Run' ) {
+			ok( JAWP::CGIApp->can($method), "call method $method" );
 		}
 	}
 }
