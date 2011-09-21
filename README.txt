@@ -7,6 +7,7 @@
 チェックは出来たのですが、プログラムを作っているうちに「統計処理をしたら面白いかな」とか色々夢が膨らんできたので、チェック(lint)専用のツールではなく、汎用的なツールとして作り直したのが、このjawptoolです。(wpja→jawpのミスもここで修正しました)。
 
 == 機能 ==
+=== jawptool.pl ===
 ;lint-title
 :記事名の文法チェックを行います。
 :レポートの冒頭にも書いていますが、このチェックに引っかかったからといって、必ずしも間違った記事名というわけではありません。改名する場合は、その改名が適切か個別に判断してから行うようにお願いいたします。
@@ -34,24 +35,40 @@
 
 文法チェック全てに言えることですが、チェック結果を元にした機械的な修正は厳に謹んで下さい。チェックに引っかかったとしても、必要があってわざとガイドラインを逸脱している可能性もあります。プログラムの開発時より後にガイドラインが更新されている可能性もあります。必ず実際の記事とガイドラインを確認の上で修正を行うようにしてください。
 
+=== lint-text.cgi ===
+;lint-text.cgi
+:lint-textをCGI経由で実行するものです。文法チェックは記事単位で行います。
+
+
 == 使用法 ==
+=== jawptool.pl ===
 プログラムのインストールの手順は特にありません。jawptool.plとJAWP.pmを作業用ディレクトリに置いてください。環境によっては、jawptoo.plの先頭行のperlのパスを修正する必要があるかもしれません。
 
 解析するデータは http://dumps.wikimedia.org/jawiki/ よりダウンロードしてきます。基本的にpages-meta-current.xml.bz2か、pages-articles.xml.bz2のどちらかを使用します。jawptoolは標準入力からデータを受け取ることができませんので、bzip2は事前に解凍しておいてください。
 
 usageは次の通りです。
 <pre>
-jawptool 0.13
+jawptool 0.20
 
 Usage: jawptool.pl command xmlfile reportfile
 
 command:
   lint-title
   lint-text
+  lint-redirect
+  lint-index
   statistic
   titlelist
   living-noref
+  passed-sakujo
+  person
+  noindex
+  index-list
+  aimai
 </pre>
+
+=== lint-text.cgi ===
+jawp-lint.cgiとJAWP.pmをウェブサーバからアクセスできるディレクトリに置いてください。ウェブブラウザからjawp-lint.cgiにアクセスすると、テキストフォームが表示されますので、そこにウィキテキストを入力し「lint」ボタンを押すとtext-lintの結果が表示されます。
 
 == 歴史 ==
 *2011年5月17日 - 初めてプログラムの構想を思いつく。
@@ -82,6 +99,13 @@ command:
 ***外部リンクのドメイン統計
 **メモリ使用量の多少の削減
 **その他バグ修正
+*2011年9月21日 - 0.20公開。修正内容は以下の通り。
+**jawp-lint.cgi - 新設
+**lint-redirect、lint-index、passed-sakujo、person、noindex、index-list、aimaiの各コマンドを新設
+**living-noref - 出力上限1万件の制限を解除
+**titlelist - Data::Dumperを使用しないように変更。名前空間ごとに別ファイルに出力するように変更
+**statistic - 井戸端統計を追加
+**その他バグ修正
 
 より詳しい開発の経緯は http://www.saoyagi2.net/wikimedian/ に書かれています(それ以外のことも書いてますが)。コードの具体的な修正内容は http://sourceforge.jp/projects/jawptool/svn/view/ で閲覧できます。
 
@@ -97,7 +121,6 @@ command:
 
 == TODO ==
 *XMLパースが超いい加減なのをちゃんとする。ただし、速度低下は出来ればしないように。
-*lint-textのCGI版を作る。
 *wiki2htmlの強化
 
 == 既知のバグ ==
