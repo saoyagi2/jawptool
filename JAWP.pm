@@ -1825,6 +1825,7 @@ sub Run {
 
 	$wikitext = Encode::decode( 'utf-8', $cgi->param( 'wikitext' ) );
 	if( $wikitext ) {
+		$wikitext =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 		$titlelist = new JAWP::TitleList;
 		$article = new JAWP::Article;
 		$article->SetText( $wikitext );
