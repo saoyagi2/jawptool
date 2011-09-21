@@ -1044,6 +1044,9 @@ sub Run {
 	elsif( $argv[0] eq 'index-list' ) {
 		IndexList( $argv[1], $argv[2] );
 	}
+	elsif( $argv[0] eq 'aimai' ) {
+		Aimai( $argv[1], $argv[2] );
+	}
 	else {
 		Usage();
 	}
@@ -1070,6 +1073,7 @@ command:
   person
   noindex
   index-list
+  aimai
 TEXT
 
 	exit;
@@ -1750,6 +1754,60 @@ STR
 	@datalist = map { "[[$_]]($indexlist{$_})" } @{ JAWP::Util::SortHash( \%indexlist ) };
 	$report->OutputWikiList( '一覧', \@datalist );
 	$report->OutputDirect( sprintf( "索引数 %d\n", @datalist + 0 ) );
+}
+
+
+# 曖昧さ回避
+# param $xmlfile 入力XMLファイル名
+# param $reportfile レポートファイル名
+sub Aimai {
+	my( $xmlfile, $reportfile ) = @_;
+	my $jawpdata = new JAWP::DataFile( $xmlfile );
+	my $titlelist = $jawpdata->GetTitleList;
+	my $report = new JAWP::ReportFile( $reportfile );
+	my( $n, $article, $title, %titlelist2, @datalist );
+
+	$report->OutputDirect( <<"STR"
+= 曖昧さ回避 =
+このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から曖昧さ回避記事に登録されていない記事を抽出したものです。
+
+過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
+
+プログラムで機械的に検査しているため、掲載すべきでない記事についても検出されている可能性は大いにあります。この一覧を元に編集を行う場合は、個別にその編集が行われるべきか、十分に検討してから行うようにお願いします。
+
+STR
+	);
+
+	foreach( keys %{$titlelist->{'標準'}} ) {
+		$title = $_;
+		$title =~ s/ \(.*\)$//;
+		if( defined( $titlelist2{$title} ) ) {
+			push @{$titlelist2{$title}}, $_;
+		}
+		else {
+			$titlelist2{$title} = [ $_ ];
+		}
+	}
+
+	$n = 1;
+	while( $article = $jawpdata->GetArticle ) {
+		print "$n\r"; $n++;
+
+		next if( $article->Namespace ne '標準' || !$article->IsAimai );
+
+		$title = $article->{'title'};
+		$title =~ s/ \(.*\)$//;
+		@datalist = ();
+		foreach( @{$titlelist2{$title}} ) {
+			if( index( $article->{'text'}, $_ ) < 0 && $article->{'title'} ne $_ ) {
+				push @datalist, $_;
+			}
+		}
+		if( @datalist != 0 ) {
+			$report->OutputWikiList( "[[$article->{'title'}]]", \@datalist );
+		}
+	}
+	print "\n";
 }
 
 
