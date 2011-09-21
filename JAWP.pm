@@ -376,7 +376,7 @@ sub LintText {
 			if( defined( $category{$2} ) ) {
 				push @result, "既に使用されているカテゴリです($n)";
 			}
-			if( !defined( $titlelist->{'Category'}->{$2} ) ) {
+			if( keys %{$titlelist->{'Category'}} != 0 && !defined( $titlelist->{'Category'}->{$2} ) ) {
 				push @result, "($2)は存在しないカテゴリです($n)";
 			}
 			$category{$2} = 1;
@@ -386,7 +386,7 @@ sub LintText {
 			$mode = 'category';
 		}
 		while( $lines[$n - 1] =~ /\[\[(Template|テンプレート):(.*?)(|\|.*?)\]\]/ig ) {
-			if( !defined( $titlelist->{'Template'}->{$2} ) ) {
+			if( keys %{$titlelist->{'Template'}} != 0 && !defined( $titlelist->{'Template'}->{$2} ) ) {
 				push @result, "($2)は存在しないテンプレートです($n)";
 			}
 		}
@@ -466,7 +466,7 @@ sub LintText {
 				last;
 			}
 		}
-		if( !$teigi ) {
+		if( $self->{'title'} ne '' && !$teigi ) {
 			push @result, '定義文が見当たりません';
 		}
 		if( keys( %category ) + 0 == 0 ) {
