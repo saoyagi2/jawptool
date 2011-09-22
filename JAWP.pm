@@ -1763,9 +1763,8 @@ STR
 sub Aimai {
 	my( $xmlfile, $reportfile ) = @_;
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
-	my $titlelist = $jawpdata->GetTitleList;
 	my $report = new JAWP::ReportFile( $reportfile );
-	my( $n, $article, $title, %titlelist2, @datalist );
+	my( $n, $article, $title, $title2, %aimailist, %aimaitext, @datalist );
 
 	$report->OutputDirect( <<"STR"
 = 曖昧さ回避 =
@@ -1778,36 +1777,40 @@ sub Aimai {
 STR
 	);
 
-	foreach( keys %{$titlelist->{'標準'}} ) {
-		$title = $_;
-		$title =~ s/ \(.*\)$//;
-		if( defined( $titlelist2{$title} ) ) {
-			push @{$titlelist2{$title}}, $_;
-		}
-		else {
-			$titlelist2{$title} = [ $_ ];
-		}
-	}
-
 	$n = 1;
 	while( $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
-		next if( $article->Namespace ne '標準' || !$article->IsAimai );
+		next if( $article->Namespace ne '標準' );
 
 		$title = $article->{'title'};
 		$title =~ s/ \(.*\)$//;
+		if( defined( $aimailist{$title} ) ) {
+			push @{$aimailist{$title}}, $article->{'title'};
+		}
+		else {
+			$aimailist{$title} = [ $article->{'title'} ];
+		}
+
+		if( $article->IsAimai ) {
+			$aimaitext{$article->{'title'}} = $article->{'text'};
+		}
+	}
+	print "\n";
+
+	foreach $title ( keys %aimaitext ) {
+		$title2 = $title;
+		$title2 =~ s/ \(.*\)$//;
 		@datalist = ();
-		foreach( @{$titlelist2{$title}} ) {
-			if( index( $article->{'text'}, $_ ) < 0 && $article->{'title'} ne $_ ) {
+		foreach( @{$aimailist{$title2}} ) {
+			if( index( $aimaitext{$title}, $_ ) < 0 && $title ne $_ ) {
 				push @datalist, $_;
 			}
 		}
 		if( @datalist != 0 ) {
-			$report->OutputWikiList( "[[$article->{'title'}]]", \@datalist );
+			$report->OutputWikiList( "[[$title]]", \@datalist );
 		}
 	}
-	print "\n";
 }
 
 
