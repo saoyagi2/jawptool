@@ -1678,7 +1678,7 @@ sub NoIndex {
 	my( $xmlfile, $reportfile ) = @_;
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
 	my $report = new JAWP::ReportFile( $reportfile );
-	my( %titlelist, $n, $article, @datalist );
+	my( %titlelist, $n, $article, %indextext, @datalist );
 
 	$report->OutputDirect( <<"STR"
 = 索引未登録記事一覧 =
@@ -1702,20 +1702,18 @@ STR
 				$titlelist{$article->{'title'}} = $article->{'title'};
 			}
 		}
-	}
-	print "\n";
 
-	$n = 1;
-	while( $article = $jawpdata->GetArticle ) {
-		print "$n\r"; $n++;
-
-		next if( !$article->IsIndex );
-
-		foreach my $word ( JAWP::Util::GetLinkwordList( $article->{'text'} ) ) {
-			delete $titlelist{$word};
+		if( $article->IsIndex ) {
+			$indextext{$article->{'title'}} = $article->{'text'};
 		}
 	}
 	print "\n";
+
+	foreach( keys %indextext ) {
+		foreach my $word ( JAWP::Util::GetLinkwordList( $indextext{$_} ) ) {
+			delete $titlelist{$word};
+		}
+	}
 
 	@datalist = map { "[[$_]]" } @{ JAWP::Util::SortHashByStr( \%titlelist ) };
 	$report->OutputWikiList( '一覧', \@datalist );
