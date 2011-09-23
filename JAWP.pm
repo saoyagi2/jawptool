@@ -1551,8 +1551,8 @@ sub Person {
 	my( $xmlfile, $reportfile ) = @_;
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
 	my $report = new JAWP::ReportFile( $reportfile );
-	my( $n, $article, $seibotsudoujitsu_text, @datalist );
-	my( %birth, %death );
+	my( $n, $article, @datalist );
+	my( %birth, %death, @seibotsudoujitu, %text );
 	my( $y, $m, $d, $key );
 
 	$report->OutputDirect( <<"STR"
@@ -1570,13 +1570,6 @@ STR
 
 		next if( $article->Namespace ne '標準' );
 
-		if( $article->{'title'} eq '生没同日' ) {
-			$seibotsudoujitsu_text = $article->{'text'}
-		}
-		if( $article->IsSeibotsuDoujitsu ) {
-			push @datalist, $article->{'title'};
-		}
-
 		( $y, $m, $d ) = $article->GetBirthday;
 		if( $y != 0 && $m != 0 && $d != 0 ) {
 			$key = sprintf( "%d年", $y );
@@ -1591,7 +1584,6 @@ STR
 			}
 			push @{$birth{$key}}, $article->{'title'};
 		}
-
 		( $y, $m, $d ) = $article->GetDeathday;
 		if( $y != 0 && $m != 0 && $d != 0 ) {
 			$key = sprintf( "%d年", $y );
@@ -1606,68 +1598,62 @@ STR
 			}
 			push @{$death{$key}}, $article->{'title'};
 		}
+		if( $article->IsSeibotsuDoujitsu ) {
+			push @seibotsudoujitu, $article->{'title'};
+		}
+
+		if( $article->{'title'} =~ /^(\d+)年$/ || $article->{'title'} =~ /^(\d+)月(\d+)日$/ || $article->{'title'} eq '生没同日' ) {
+			$text{$article->{'title'}} = $article->{'text'};
+		}
 	}
 	print "\n";
 
-	@datalist = map { "[[$_]]" } grep { index( $seibotsudoujitsu_text, $_ ) < 0 } @datalist;
-	$report->OutputWikiList( '[[生没同日]]', \@datalist );
-
-	$n = 1;
-	while( $article = $jawpdata->GetArticle ) {
-		print "$n\r"; $n++;
-
-		next if( $article->Namespace ne '標準' );
-
-		if( $article->{'title'} =~ /^(\d+)年$/ ) {
-			$key = sprintf( "%d年", $1 );
-
-			@datalist = ();
-			foreach my $title ( @{$birth{$key}} ) {
-				if( index( $article->{'text'}, $title ) < 0 ) {
-					push @datalist, "[[$title]]";
-				}
-			}
-			if( @datalist + 0 != 0 ) {
-				$report->OutputWikiList( "[[$article->{'title'}]](誕生)", \@datalist );
-			}
-
-			@datalist = ();
-			foreach my $title ( @{$death{$key}} ) {
-				if( index( $article->{'text'}, $title ) < 0 ) {
-					push @datalist, "[[$title]]";
-				}
-			}
-			if( @datalist + 0 != 0 ) {
-				$report->OutputWikiList( "[[$article->{'title'}]](死去)", \@datalist );
+	foreach $key ( sort grep { /^(\d+)年$/ } keys %text ) {
+		@datalist = ();
+		foreach my $title ( @{$birth{$key}} ) {
+			if( index( $text{$key}, $title ) < 0 ) {
+				push @datalist, "[[$title]]";
 			}
 		}
-
-		if( $article->{'title'} =~ /^(\d+)月(\d+)日$/ ) {
-			$key = sprintf( "%d月%d日", $1, $2 );
-
-			@datalist = ();
-			foreach my $title ( @{$birth{$key}} ) {
-				if( index( $article->{'text'}, $title ) < 0 ) {
-					push @datalist, "[[$title]]";
-				}
-			}
-			if( @datalist + 0 != 0 ) {
-				$report->OutputWikiList( "[[$article->{'title'}]](誕生)", \@datalist );
-			}
-
-			@datalist = ();
-			foreach my $title ( @{$death{$key}} ) {
-				if( index( $article->{'text'}, $title ) < 0 ) {
-					push @datalist, "[[$title]]";
-				}
-			}
-			if( @datalist + 0 != 0 ) {
-				$report->OutputWikiList( "[[$article->{'title'}]](死去)", \@datalist );
-			}
+		if( @datalist + 0 != 0 ) {
+			$report->OutputWikiList( "[[$key]](誕生)", \@datalist );
 		}
 
+		@datalist = ();
+		foreach my $title ( @{$death{$key}} ) {
+			if( index( $text{$key}, $title ) < 0 ) {
+				push @datalist, "[[$title]]";
+			}
+		}
+		if( @datalist + 0 != 0 ) {
+			$report->OutputWikiList( "[[$key]](死去)", \@datalist );
+		}
 	}
-	print "\n";
+	foreach $key ( sort grep { /^(\d+)月(\d+)日$/ } keys %text ) {
+		@datalist = ();
+		foreach my $title ( @{$birth{$key}} ) {
+			if( index( $text{$key}, $title ) < 0 ) {
+				push @datalist, "[[$title]]";
+			}
+		}
+		if( @datalist + 0 != 0 ) {
+			$report->OutputWikiList( "[[$key]](誕生)", \@datalist );
+		}
+
+		@datalist = ();
+		foreach my $title ( @{$death{$key}} ) {
+			if( index( $text{$key}, $title ) < 0 ) {
+				push @datalist, "[[$title]]";
+			}
+		}
+		if( @datalist + 0 != 0 ) {
+			$report->OutputWikiList( "[[$key]](死去)", \@datalist );
+		}
+	}
+	@datalist = map { "[[$_]]" } grep { index( $text{'生没同日'}, $_ ) < 0 } @seibotsudoujitu;
+	if( @datalist + 0 != 0 ) {
+		$report->OutputWikiList( '[[生没同日]]', \@datalist );
+	}
 }
 
 
