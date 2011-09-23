@@ -1609,43 +1609,21 @@ STR
 	print "\n";
 
 	foreach $key ( sort grep { /^(\d+)年$/ } keys %text ) {
-		@datalist = ();
-		foreach my $title ( @{$birth{$key}} ) {
-			if( index( $text{$key}, $title ) < 0 ) {
-				push @datalist, "[[$title]]";
-			}
-		}
+		@datalist = map { "[[$_]]" } grep { index( $text{$key},$_ ) < 0 } @{$birth{$key}};
 		if( @datalist + 0 != 0 ) {
 			$report->OutputWikiList( "[[$key]](誕生)", \@datalist );
 		}
-
-		@datalist = ();
-		foreach my $title ( @{$death{$key}} ) {
-			if( index( $text{$key}, $title ) < 0 ) {
-				push @datalist, "[[$title]]";
-			}
-		}
+		@datalist = map { "[[$_]]" } grep { index( $text{$key},$_ ) < 0 } @{$death{$key}};
 		if( @datalist + 0 != 0 ) {
 			$report->OutputWikiList( "[[$key]](死去)", \@datalist );
 		}
 	}
 	foreach $key ( sort grep { /^(\d+)月(\d+)日$/ } keys %text ) {
-		@datalist = ();
-		foreach my $title ( @{$birth{$key}} ) {
-			if( index( $text{$key}, $title ) < 0 ) {
-				push @datalist, "[[$title]]";
-			}
-		}
+		@datalist = map { "[[$_]]" } grep { index( $text{$key},$_ ) < 0 } @{$birth{$key}};
 		if( @datalist + 0 != 0 ) {
 			$report->OutputWikiList( "[[$key]](誕生)", \@datalist );
 		}
-
-		@datalist = ();
-		foreach my $title ( @{$death{$key}} ) {
-			if( index( $text{$key}, $title ) < 0 ) {
-				push @datalist, "[[$title]]";
-			}
-		}
+		@datalist = map { "[[$_]]" } grep { index( $text{$key},$_ ) < 0 } @{$death{$key}};
 		if( @datalist + 0 != 0 ) {
 			$report->OutputWikiList( "[[$key]](死去)", \@datalist );
 		}
