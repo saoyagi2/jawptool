@@ -1552,7 +1552,7 @@ sub Person {
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
 	my $report = new JAWP::ReportFile( $reportfile );
 	my( $n, $article, @datalist );
-	my( %birth, %death, @seibotsudoujitu, %text );
+	my( %birth, %death, %pref, @seibotsudoujitu, %text );
 	my( $y, $m, $d, $key );
 
 	$report->OutputDirect( <<"STR"
@@ -1601,9 +1601,19 @@ STR
 		if( $article->IsSeibotsuDoujitsu ) {
 			push @seibotsudoujitu, $article->{'title'};
 		}
+		if( $article->{'text'} =~ /\[\[(Category|カテゴリ):(.*)(都|道|府|県)出身の人物/i ) {
+			$key = "$2$3";
+			if( !defined( $pref{$key} ) ) {
+				$pref{$key} = [];
+			}
+			push @{$pref{$key}}, $article->{'title'};
+		}
 
 		if( $article->{'title'} =~ /^(\d+)年$/ || $article->{'title'} =~ /^(\d+)月(\d+)日$/ || $article->{'title'} eq '生没同日' ) {
 			$text{$article->{'title'}} = $article->{'text'};
+		}
+		if( $article->{'title'} =~ /^(.*)(都|道|府|県)出身の人物一覧$/ ) {
+			$text{"$1$2"} = $article->{'text'};
 		}
 	}
 	print "\n";
@@ -1631,6 +1641,12 @@ STR
 	@datalist = map { "[[$_]]" } grep { index( $text{'生没同日'}, $_ ) < 0 } @seibotsudoujitu;
 	if( @datalist + 0 != 0 ) {
 		$report->OutputWikiList( '[[生没同日]]', \@datalist );
+	}
+	foreach $key ( sort grep { /^.*(都|道|府|県)$/ } keys %text ) {
+		@datalist = map { sprintf( "[[%s出身の人物一覧]]", $_ ) } grep { index( $text{$key},$_ ) < 0 } @{$pref{$key}};
+		if( @datalist + 0 != 0 ) {
+			$report->OutputWikiList( "[[$key]]", \@datalist );
+		}
 	}
 }
 
