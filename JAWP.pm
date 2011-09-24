@@ -532,13 +532,26 @@ sub LintRedirect {
 sub LintIndex {
 	my( $self, $titlelist ) = @_;
 	my( @result, $word, $linktype );
+	my( $text, $n, @lines );
 
 	return \@result if( !$self->IsIndex );
 
-	foreach $word ( JAWP::Util::GetLinkwordList( $self->{'text'} ) ) {
-		( $linktype, $word ) = JAWP::Util::GetLinkType( $word, $titlelist );
-		if( $linktype eq 'redlink' ) {
-			push @result, "$word は赤リンクです";
+	$text = $self->{'text'};
+	while( $text =~ /<(math|code|pre|nowiki)(.*?)(\/math|\/code|\/pre|\/nowiki)>/is ) {
+		my $tmp = $2;
+		$tmp =~ s/[^\n]//g;
+		$text =~ s/<(math|code|pre|nowiki)(.*?)(\/math|\/code|\/pre|\/nowiki)>/$tmp/is;
+	}
+
+	@lines = split( /\n/, $text );
+	for( $n = 1; $n < @lines + 1; $n++ ) {
+		if( $lines[$n - 1] =~ /^\*/ ) {
+			foreach $word ( JAWP::Util::GetLinkwordList( $lines[$n - 1] ) ) {
+				( $linktype, $word ) = JAWP::Util::GetLinkType( $word, $titlelist );
+				if( $linktype eq 'redlink' ) {
+					push @result, "($word)は赤リンクです($n)";
+				}
+			}
 		}
 	}
 
