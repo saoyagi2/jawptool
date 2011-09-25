@@ -532,9 +532,12 @@ sub LintRedirect {
 sub LintIndex {
 	my( $self, $titlelist ) = @_;
 	my( @result, $word, $linktype );
-	my( $text, $n, @lines );
+	my( $title, $text, @words, $n, @lines );
 
-	return \@result if( !$self->IsIndex );
+	return \@result if( !$self->IsIndex || $self->{'title'} eq 'Wikipedia:索引' );
+
+	$title = $self->{'title'};
+	$title = s/Wikipedia:索引 //;
 
 	$text = $self->{'text'};
 	while( $text =~ /<(math|code|pre|nowiki)(.*?)(\/math|\/code|\/pre|\/nowiki)>/is ) {
@@ -546,10 +549,27 @@ sub LintIndex {
 	@lines = split( /\n/, $text );
 	for( $n = 1; $n < @lines + 1; $n++ ) {
 		if( $lines[$n - 1] =~ /^\*/ ) {
-			foreach $word ( JAWP::Util::GetLinkwordList( $lines[$n - 1] ) ) {
-				( $linktype, $word ) = JAWP::Util::GetLinkType( $word, $titlelist );
-				if( $linktype eq 'redlink' ) {
-					push @result, "($word)は赤リンクです($n)";
+			@words = JAWP::Util::GetLinkwordList( $lines[$n - 1] );
+			if( @words + 0 != 0 ) {
+				foreach( @words ) {
+					( $linktype, $word ) = JAWP::Util::GetLinkType( $_, $titlelist );
+					if( $linktype eq 'redlink' ) {
+						push @result, "($word)は赤リンクです($n)";
+					}
+				}
+				$words[0] =~ s/ \(.+\)$//;
+				if( index( $words[0], 'Wikipedia:索引' ) < 0 ) {
+					if( !( $words[0] =~ /^[ぁ-ゟァ-ヿA-Za-z!"#\$%&'\(\)\*\+,\-\.\/！”＃＄％＆’\（\）＋，．／：；＜＝＞\？\｛\｜\｝・ 　]+$/ ) && !( $lines[$n - 1] =~ /(\(|\（)(\[\[|)[ぁ-ゟァ-ヿ=\-]+(\]\]|)(\)|\）)/ ) ) {
+						push @result, "読み仮名がありません($n)";
+					}
+					if( $lines[$n - 1] =~ /【(.+)】/ ) {
+						if( $1 eq '曖昧' ) {
+							push @result, "【曖昧】より【曖昧さ回避】が推奨されます($n)";
+						}
+					}
+					elsif( index( $lines[$n - 1], '⇒' ) < 0 ) {
+						push @result, "分野名がありません($n)";
+					}
 				}
 			}
 		}
