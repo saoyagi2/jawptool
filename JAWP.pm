@@ -1822,6 +1822,18 @@ STR
 			$report->OutputWikiList( "[[$title]]", \@datalist );
 		}
 	}
+
+	foreach $title ( keys %aimailist ) {
+		next if( @{$aimailist{$title}} + 0 < 2 );
+		if( !defined( $aimaitext{$title} ) && !defined( $aimaitext{"$title (曖昧さ回避)"} ) ) {
+			if( defined( $aimailist{$title} ) ) {
+				$report->OutputWikiList( "[[$title (曖昧さ回避)]]", $aimailist{$title} );
+			}
+			else {
+				$report->OutputWikiList( "[[$title]]", $aimailist{$title} );
+			}
+		}
+	}
 }
 
 
