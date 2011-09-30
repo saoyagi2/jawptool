@@ -718,6 +718,25 @@ sub GetTitleList {
 }
 
 
+# RawTitleList取得
+# return TitleList
+sub GetRawTitleList {
+	my $self = shift;
+	my %rawtitlelist;
+	my( $n, $article, $namespace );
+
+	$n = 1;
+	while( $article = $self->GetArticle ) {
+		print "$n\r";$n++;
+
+		$rawtitlelist{$article->{'title'}} = 1;
+	}
+	print "\n";
+
+	return \%rawtitlelist;
+}
+
+
 ################################################################################
 # JAWP::ReportFileクラス
 ################################################################################
