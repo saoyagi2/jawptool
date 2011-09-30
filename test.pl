@@ -130,7 +130,7 @@ sub TestJAWPArticle {
 
 		ok( !$article->IsAimai, 'empty' );
 
-		foreach my $text ( '{{aimai}}', '{{人名の曖昧さ回避}}', '{{地名の曖昧さ回避}}' ) {
+		foreach my $text ( '{{aimai}}', '{{Aimai}}', '{{曖昧さ回避}}', '{{人名の曖昧さ回避}}', '{{地名の曖昧さ回避}}' ) {
 			$article->SetText( $text );
 			ok( $article->IsAimai, $text );
 		}
