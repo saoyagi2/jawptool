@@ -523,6 +523,9 @@ sub LintRedirect {
 	if( $self->{'title'} =~ /\([^\(]+\)$/ ) {
 		push @result, 'カッコ付きのリダイレクトは有用ではない可能性があります';
 	}
+	if( $self->Namespace eq 'ノート' ) {
+		push @result, 'ノートのリダイレクトは有用ではない可能性があります';
+	}
 
 	return \@result;
 }
