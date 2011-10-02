@@ -1230,8 +1230,9 @@ STR
 sub LintRedirect {
 	my( $xmlfile, $reportfile ) = @_;
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
+	my $titlelist = $jawpdata->GetTitleList;
 	my $report = new JAWP::ReportFile( $reportfile );
-	my( $n, $article, %result );
+	my( $n, $article, $word, @wordlist, $linktype, %result );
 
 	$report->OutputDirect( <<"STR"
 = リダイレクトlint =
@@ -1246,6 +1247,7 @@ STR
 
 	$result{'aimai'} = [];
 	$result{'note'} = [];
+	$result{'redlink'} = [];
 	$n = 1;
 	while( $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
@@ -1258,11 +1260,19 @@ STR
 		if( $article->Namespace eq 'ノート' ) {
 			push @{$result{'note'}}, "[[$article->{'title'}]]";
 		}
+		@wordlist = JAWP::Util::GetLinkwordList( $article->{'text'} );
+		if( @wordlist + 0 > 0 ) {
+			( $linktype, $word ) = JAWP::Util::GetLinkType( $wordlist[0], $titlelist );
+			if( $linktype eq 'redlink' ) {
+				push @{$result{'redlink'}}, "[[$article->{'title'}]]";
+			}
+		}
 	}
 	print "\n";
 
 	$report->OutputWikiList( '曖昧さ回避のカッコ付きリダイレクト', $result{'aimai'} );
 	$report->OutputWikiList( 'ノートのリダイレクト', $result{'note'} );
+	$report->OutputWikiList( '赤リンクへのリダイレクト', $result{'redlink'} );
 }
 
 
