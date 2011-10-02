@@ -1963,6 +1963,9 @@ STR
 
 		$title = $article->{'title'};
 		$title =~ s/ \(.*\)$//;
+		if( $title =~ /立(.*)(高等学校|中学校|小学校)$/ ) {
+			$title = "$1$2";
+		}
 		if( defined( $aimailist{$title} ) ) {
 			push @{$aimailist{$title}}, $article->{'title'};
 		}
