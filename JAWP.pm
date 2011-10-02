@@ -484,6 +484,7 @@ sub LintText {
 	}
 
 	my( $cat存命, $cat生年, $cat没年, $temp死亡年月日, $生年, $没年 );
+	my( $y, $m, $d );
 
 	$cat存命 = defined( $category{'存命人物'} );
 	$cat生年 = defined( $category{'生年不明'} ) || grep { /^\d+年生$/ } keys %category;
@@ -502,6 +503,14 @@ sub LintText {
 	}
 	if( defined( $生年 ) && $生年 >= 1903 && defined( $没年 ) && !$temp死亡年月日 ) {
 		push @result, '(死亡年月日と没年齢)のテンプレートを使うと便利です';
+	}
+	( $y, $m, $d ) = $self->GetBirthday;
+	if( $y != 0 && $m != 0 && $d != 0 && defined( $生年 ) && $y != $生年 ) {
+		push @result, '(死亡年月日と没年齢)テンプレートと生年のカテゴリが一致しません';
+	}
+	( $y, $m, $d ) = $self->GetDeathday;
+	if( $y != 0 && $m != 0 && $d != 0 && defined( $没年 ) && $y != $没年 ) {
+		push @result, '(死亡年月日と没年齢)テンプレートと没年のカテゴリが一致しません';
 	}
 
 	return \@result;
