@@ -547,12 +547,13 @@ sub LintRedirect {
 sub LintIndex {
 	my( $self, $titlelist ) = @_;
 	my( @result, $word, $linktype );
-	my( $title, $text, @words, $n, @lines );
+	my( $head, $head2, $title, $text, @words, $n, @lines );
 
 	return \@result if( !$self->IsIndex || $self->{'title'} eq 'Wikipedia:索引' );
 
-	$title = $self->{'title'};
-	$title = s/Wikipedia:索引 //;
+	if( $self->{'title'} =~ /Wikipedia:索引 ([あ-ん]+)$/ ) {
+		$title = $1;
+	}
 
 	$text = $self->{'text'};
 	while( $text =~ /<(math|code|pre|nowiki)(.*?)(\/math|\/code|\/pre|\/nowiki)>/is ) {
@@ -562,7 +563,20 @@ sub LintIndex {
 	}
 
 	@lines = split( /\n/, $text );
+	$head = '';
 	for( $n = 1; $n < @lines + 1; $n++ ) {
+		if( defined( $title ) && $lines[$n - 1] =~ /^=+ *([^=]+) *=+$/ ) {
+			$head2 = $1;
+			if( $head2 =~ /^[あ-ん]+$/ ) {
+				if( index( $head2, $title ) != 0 ) {
+					push @result, "見出しが記事名に一致しません($n,$head2,$title)";
+				}
+				if( $head gt $head2 ) {
+					push @result, "見出しがあいうえお順ではありません($n,$head,$head2)";
+				}
+				$head = $head2;
+			}
+		}
 		if( $lines[$n - 1] =~ /^\*/ ) {
 			@words = JAWP::Util::GetLinkwordList( $lines[$n - 1] );
 			if( @words + 0 != 0 ) {
