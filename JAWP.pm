@@ -705,11 +705,12 @@ sub GetArticle {
 
 
 # TitleList取得
+# param $withsection 節データフラグ。真なら含む、偽なら含まない
 # return TitleList
 sub GetTitleList {
-	my $self = shift;
+	my( $self, $withsection ) = @_;
 	my $titlelist = new JAWP::TitleList;
-	my( $n, $article, $namespace );
+	my( $n, $article, $title, $namespace );
 
 	$n = 1;
 	while( $article = $self->GetArticle ) {
@@ -719,20 +720,27 @@ sub GetTitleList {
 
 		$namespace = $article->Namespace;
 		if( $namespace eq '標準' ) {
+			$title = $article->{'title'};
 			if( $article->IsRedirect ) {
-				$titlelist->{'標準_リダイレクト'}->{$article->{'title'}} = 1;
+				$titlelist->{'標準_リダイレクト'}->{$title} = 1;
 			}
 			else {
-				$titlelist->{'標準'}->{$article->{'title'}} = 1;
+				$titlelist->{'標準'}->{$title} = 1;
 
 				if( $article->IsAimai ) {
-					$titlelist->{'標準_曖昧'}->{$article->{'title'}} = 1;
+					$titlelist->{'標準_曖昧'}->{$title} = 1;
 				}
 			}
 		}
 		else {
 			$article->{'title'} =~ /:(.*)$/;
-			$titlelist->{$namespace}->{$1} = 1;
+			$title = $1;
+			$titlelist->{$namespace}->{$title} = 1;
+		}
+		if( $withsection ) {
+			foreach my $section ( JAWP::Util::GetHeadnameList( $article->{'text'} ) ) {
+				$titlelist->{$namespace}->{"$title#$section"} = 1;
+			}
 		}
 	}
 	print "\n";
@@ -923,15 +931,16 @@ sub SortHashByStr {
 
 # リンク語リストの取得
 # param $text 元テキスト
+# param $withsection 節データフラグ。真なら含む、偽なら含まない
 # return リンク語リスト
 sub GetLinkwordList {
-	my $text = shift;
+	my( $text, $withsection ) = @_;
 	my( $word, @wordlist );
 
 	while( $text =~ /\[\[(.*?)(\||\]\])/g ) {
 		next if( $1 =~ /[\[\{\}]/ );
 		$word = $1;
-		$word =~ s/#.*?$//;
+		$word =~ s/#.*?$// if( !$withsection );
 		$word =~ s/[_　‎]/ /g;
 		$word =~ s/^( +|)(.*?)( +|)$/$2/;
 		$word = ucfirst $word;
