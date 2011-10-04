@@ -423,7 +423,7 @@ sub LintText {
 			push @result, "不正なURLです($n)";
 		}
 
-		foreach my $word ( JAWP::Util::GetLinkwordList( $lines[$n - 1] ) ) {
+		foreach my $word ( JAWP::Util::GetLinkwordList( $lines[$n - 1], 1 ) ) {
 			if( defined( $titlelist->{'標準_曖昧'}->{$word} ) ) {
 				push @result, "($word)のリンク先は曖昧さ回避です($n)";
 			}
@@ -432,6 +432,13 @@ sub LintText {
 			}
 			if( $word =~ /^\d+年\d+月\d+日$/ ) {
 				push @result, "年月日へのリンクは年と月日を分けることが推奨されます($n)";
+			}
+			if( index( $word, '#' ) >= 0 ) {
+				my $linktype;
+				( $linktype, $word ) = JAWP::Util::GetLinkType( $word, $titlelist );
+				if( $linktype eq 'redlink' ) {
+					push @result, "リンク先の節がありません($n)";
+				}
 			}
 		}
 
@@ -1209,7 +1216,7 @@ STR
 sub LintText {
 	my( $xmlfile, $reportfile ) = @_;
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
-	my $titlelist = $jawpdata->GetTitleList;
+	my $titlelist = $jawpdata->GetTitleList( 1 );
 	my $report = new JAWP::ReportFile( $reportfile );
 	my( $n, $article, $result_ref, $lintcount );
 
@@ -1253,7 +1260,7 @@ STR
 sub LintRedirect {
 	my( $xmlfile, $reportfile ) = @_;
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
-	my $titlelist = $jawpdata->GetTitleList;
+	my $titlelist = $jawpdata->GetTitleList( 1 );
 	my $report = new JAWP::ReportFile( $reportfile );
 	my( $n, $article, $word, @wordlist, $linktype, %result );
 
@@ -1283,15 +1290,16 @@ STR
 		if( $article->Namespace eq 'ノート' ) {
 			push @{$result{'note'}}, "[[$article->{'title'}]]";
 		}
-		@wordlist = JAWP::Util::GetLinkwordList( $article->{'text'} );
+		@wordlist = JAWP::Util::GetLinkwordList( $article->{'text'}, 1 );
 		if( @wordlist + 0 > 0 ) {
 			( $linktype, $word ) = JAWP::Util::GetLinkType( $wordlist[0], $titlelist );
 			if( $linktype eq 'redlink' ) {
-				push @{$result{'redlink'}}, "[[$article->{'title'}]]";
+				push @{$result{'redlink'}}, "[[$article->{'title'}]]($word)";
 			}
 		}
 	}
 	print "\n";
+	$titlelist = undef;
 
 	$report->OutputWikiList( '曖昧さ回避のカッコ付きリダイレクト', $result{'aimai'} );
 	$report->OutputWikiList( 'ノートのリダイレクト', $result{'note'} );
