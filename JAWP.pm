@@ -2042,6 +2042,21 @@ sub Run {
 	if( $wikitext ) {
 		$wikitext =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 		$titlelist = new JAWP::TitleList;
+		if( -f 'titlelist_aimai.pl' ) {
+			our $aimai;
+			require 'titlelist_aimai.pl';
+			$titlelist->{'標準_曖昧'} = $aimai;
+		}
+		if( -f 'titlelist_category.pl' ) {
+			our $category;
+			require 'titlelist_category.pl';
+			$titlelist->{'Category'} = $category;
+		}
+		if( -f 'titlelist_template.pl' ) {
+			our $template;
+			require 'titlelist_template.pl';
+			$titlelist->{'Template'} = $template;
+		}
 		$article = new JAWP::Article;
 		$article->SetText( $wikitext );
 		$result_ref = $article->LintText( $titlelist );
