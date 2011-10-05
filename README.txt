@@ -48,7 +48,7 @@
 
 usageは次の通りです。
 <pre>
-jawptool 0.20
+jawptool 0.21
 
 Usage: jawptool.pl command xmlfile reportfile
 
@@ -105,6 +105,16 @@ jawp-lint.cgiとJAWP.pmをウェブサーバからアクセスできるディレ
 **living-noref - 出力上限1万件の制限を解除
 **titlelist - Data::Dumperを使用しないように変更。名前空間ごとに別ファイルに出力するように変更
 **statistic - 井戸端統計を追加
+**その他バグ修正
+*2011年10月5日 - 0.21公開。修正内容は以下の通り。
+**lint-title - チェック機能強化
+**lint-redirect - チェック機能強化、レポート形式変更
+**lint-index - チェック機能強化
+**statistic - 議論の統計項目追加
+**person - 都道府県別出身人物検出機能追加
+**Aimai - 小中高等学校加筆候補検出機能追加
+**jawp-lint.cgi - titlelist読み込み機能追加
+**多少の高速化
 **その他バグ修正
 
 より詳しい開発の経緯は http://www.saoyagi2.net/wikimedian/ に書かれています(それ以外のことも書いてますが)。コードの具体的な修正内容は http://sourceforge.jp/projects/jawptool/svn/view/ で閲覧できます。
