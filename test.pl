@@ -343,7 +343,7 @@ sub TestJAWPArticle {
 				$article->SetTitle( $title );
 				$result_ref = $article->LintTitle;
 				is( @$result_ref + 0, 1, "$title(非リダイレクト)" );
-				is( $result_ref->[0], '全角記号の使用は推奨されません', "$title(非リダイレクト)" );
+				is( $result_ref->[0], '全角スペース、全角記号の使用は推奨されません', "$title(非リダイレクト)" );
 			}
 			$article->SetText( '' );
 			foreach my $title ( 'Ａ', 'Ｚ', 'ａ', 'ｚ', '０', '９' ) {
