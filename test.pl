@@ -116,6 +116,7 @@ sub TestJAWPArticle {
 	{
 		my $article = new JAWP::Article;
 
+		$article->SetText( '' );
 		ok( !$article->IsRedirect, 'empty' );
 
 		foreach my $text ( '#redirect[[転送先]]', '#REDIRECT[[転送先]]', '#転送[[転送先]]', '＃redirect[[転送先]]', '＃REDIRECT[[転送先]]', '＃転送[[転送先]]' ) {
@@ -128,6 +129,7 @@ sub TestJAWPArticle {
 	{
 		my $article = new JAWP::Article;
 
+		$article->SetText( '' );
 		ok( !$article->IsAimai, 'empty' );
 
 		foreach my $text ( '{{aimai}}', '{{Aimai}}', '{{曖昧さ回避}}', '{{人名の曖昧さ回避}}', '{{地名の曖昧さ回避}}' ) {
@@ -140,6 +142,7 @@ sub TestJAWPArticle {
 	{
 		my $article = new JAWP::Article;
 
+		$article->SetText( '' );
 		ok( !$article->IsLiving, 'empty' );
 
 		$article->SetText( '[[Category:存命人物]]' );
@@ -153,6 +156,7 @@ sub TestJAWPArticle {
 	{
 		my $article = new JAWP::Article;
 
+		$article->SetText( '' );
 		ok( $article->IsNoref, 'empty' );
 
 		foreach my $text ( '== 参考 ==', '== 文献 ==', '== 資料 ==', '== 書籍 ==', '== 図書 ==', '== 注 ==', '== 註 ==', '== 出典 ==', '== 典拠 ==', '== 出所 ==', '== 原典 ==', '== ソース ==', '== 情報源 ==', '== 引用元 ==', '== 論拠 ==', '== 参照 ==', '<ref>' ) {
@@ -166,6 +170,7 @@ sub TestJAWPArticle {
 		my $article = new JAWP::Article;
 		my( $y, $m, $d );
 
+		$article->SetText( '' );
 		( $y, $m, $d ) = $article->GetBirthday;
 		is( $y, 0, 'empty-y' );
 		is( $m, 0, 'empty-m' );
@@ -195,6 +200,7 @@ sub TestJAWPArticle {
 		my $article = new JAWP::Article;
 		my( $y, $m, $d );
 
+		$article->SetText( '' );
 		( $y, $m, $d ) = $article->GetDeathday;
 		is( $y, 0, 'empty-y' );
 		is( $m, 0, 'empty-m' );
@@ -217,6 +223,7 @@ sub TestJAWPArticle {
 	{
 		my $article = new JAWP::Article;
 
+		$article->SetText( '' );
 		ok( !$article->IsSeibotsuDoujitsu, 'empty' );
 
 		$article->SetText( "{{死亡年月日と没年齢|2001|1|1|2011|12|31}}" );
@@ -236,6 +243,7 @@ sub TestJAWPArticle {
 	{
 		my $article = new JAWP::Article;
 
+		$article->SetTitle( '' );
 		ok( !$article->IsIndex, 'empty' );
 
 		$article->SetTitle( '索引' );
@@ -253,6 +261,7 @@ sub TestJAWPArticle {
 		my $article = new JAWP::Article;
 		my $namespace;
 
+		$article->SetTitle( '' );
 		is( $article->Namespace, '標準', 'empty' );
 
 		foreach my $title ( '利用者:dummy', 'Wikipedia:dummy', 'ファイル:dummy', 'MediaWiki:dummy', 'Template:dummy', 'Help:dummy', 'Category:dummy', 'Portal:dummy', 'プロジェクト:dummy', 'ノート:dummy', '利用者‐会話:dummy', 'Wikipedia‐ノート:dummy', 'ファイル‐ノート:dummy', 'MediaWiki‐ノート:dummy', 'Template‐ノート:dummy', 'Help‐ノート:dummy', 'Category‐ノート:dummy', 'Portal‐ノート:dummy', 'プロジェクト‐ノート:dummy' ) {
