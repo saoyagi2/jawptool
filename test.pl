@@ -2193,7 +2193,6 @@ sub TestJAWPArticle {
 		is( ref $result_ref, 'ARRAY', 'JAWP::Article::LintText(リダイレクト無視:リファレンス種別)' );
 		is( @$result_ref + 0, 0, 'JAWP::Article::LintText(リダイレクト無視:警告数)' );
 
-
 		# 特定タグ内は無視確認
 		{
 			foreach my $tag ( 'math', 'code', 'pre', 'nowiki' ) {
@@ -2899,7 +2898,6 @@ sub TestJAWPTitleList {
 }
 
 
-
 ################################################################################
 # JAWP::DataFileクラス
 ################################################################################
@@ -3245,14 +3243,12 @@ sub TestJAWPReport {
 		}
 	}
 
-
 	# 空new失敗確認テスト
 	{
 		my $report = new JAWP::ReportFile;
 
 		ok( !defined( $report ), 'JAWP::ReportFile(空new)' );
 	}
-
 
 	# メンバー変数確認
 	{
@@ -3267,7 +3263,6 @@ sub TestJAWPReport {
 		ok( defined( $report->{'fh'} ), 'JAWP::ReportFile(メンバ変数宣言,fh)' );
 		is( ref $report->{'fh'}, 'GLOB', 'JAWP::ReportFile(メンバ変数リファレンス種別,fh)' );
 	}
-
 
 	# OutputWikiテスト(テキスト)
 	{
