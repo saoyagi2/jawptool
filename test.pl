@@ -314,7 +314,7 @@ sub TestJAWPArticle {
 
 		# リダイレクト記事は無視確認
 		$article->SetText( '#redirect[[転送先]]' );
-		foreach my $title ( '株式会社あいうえお', 'あいうえお株式会社', '髙' ) {
+		foreach my $title ( '株式会社あいうえお', 'あいうえお株式会社', @{GetNotJIS_X_0208_KANJI()} ) {
 			$article->SetTitle( $title );
 			$result_ref = $article->LintTitle;
 			is( @$result_ref + 0, 0, "JAWP::Article::LintTitle(リダイレクト無視,$title:警告数)" );
