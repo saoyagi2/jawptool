@@ -360,7 +360,7 @@ sub LintText {
 		if( $lines[$n - 1] =~ /['’]\d\d年/ ) {
 			push @result, "西暦は全桁表示が推奨されます($n)";
 		}
-		if( index( $lines[$n - 1], '<!--' ) >= 0 ) {
+		if( index( $lines[$n - 1], '<!--' ) >= 0 || index( $lines[$n - 1], '-->' ) >= 0 ) {
 			push @result, "閉じられていないコメントタグがあります($n)";
 		}
 		while( $lines[$n - 1] =~ /\{\{(DEFAULTSORT|デフォルトソート):(.*?)\}\}/g ) {
