@@ -341,6 +341,9 @@ sub LintText {
 				if( $headlevel == 1 ) {
 					push @result, "レベル1の見出しがあります($n)";
 				}
+				if( $headlevel > 6 ) {
+					push @result, "見出しレベルは6までです($n)";
+				}
 				if( $headlevel >= 3 && $headlevel - $prevheadlevel >= 2 ) {
 					push @result, sprintf( "レベル%dの見出しの前にレベル%dの見出しが必要です($n)", $headlevel, $headlevel - 1 );
 				}
