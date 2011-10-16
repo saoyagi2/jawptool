@@ -490,13 +490,14 @@ sub LintText {
 		}
 	}
 
-	my( $cat存命, $cat生年, $cat没年, $temp死亡年月日, $生年, $没年 );
+	my( $cat存命, $cat生年, $cat没年, $temp生年月日, $temp死亡年月日, $生年, $没年 );
 	my( $y, $m, $d );
 
 	$cat存命 = defined( $category{'存命人物'} );
 	$cat生年 = defined( $category{'生年不明'} ) || grep { /^\d+年生$/ } keys %category;
 	$cat没年 = defined( $category{'没年不明'} ) || grep { /^\d+年没$/ } keys %category;
-	$temp死亡年月日 = $text =~ /{{死亡年月日と没年齢\|/;
+	$temp生年月日 = $text =~ /{{生年月日と年齢\|/;
+	$temp死亡年月日 = $text =~ /{{(死亡年月日と没年齢|没年齢)\|/;
 	$生年 = $1 if( $text =~ /\[\[Category:(\d+)年生/i );
 	$没年 = $1 if( $text =~ /\[\[Category:(\d+)年没/i );
 	if( $cat存命 && ( $cat没年 || $temp死亡年月日 ) ) {
@@ -507,6 +508,9 @@ sub LintText {
 	}
 	if( $cat生年 && !$cat存命 && !$cat没年 ) {
 		push @result, '存命人物または没年のカテゴリがありません';
+	}
+	if( defined( $生年 ) && $cat存命 && !$cat没年 && !$temp死亡年月日 && !$temp生年月日 ) {
+		push @result, '(生年月日と年齢)のテンプレートを使うと便利です';
 	}
 	if( defined( $生年 ) && $生年 >= 1903 && defined( $没年 ) && !$temp死亡年月日 ) {
 		push @result, '(死亡年月日と没年齢)のテンプレートを使うと便利です';
