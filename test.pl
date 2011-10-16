@@ -576,6 +576,34 @@ sub TestJAWPArticle {
 			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(見出しレベル5,無効:警告数)' );
 
 			$article->SetTitle( '標準' );
+			$article->SetText( "あああ\n== いいい ==\n=== ううう ===\n==== えええ ====\n===== おおお =====\n====== かかか ======\n{{aimai}}" );
+			$result_ref = $article->LintText( $titlelist );
+			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(見出しレベル6:警告数)' );
+
+			$article->SetTitle( '標準' );
+			$article->SetText( "あああ\n== いいい ==\n=== ううう ===\n==== えええ ====\n====== かかか ======\n{{aimai}}" );
+			$result_ref = $article->LintText( $titlelist );
+			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(見出しレベル5,レベル違反(2-3-4-6):警告数)' );
+			is( $result_ref->[0], 'レベル6の見出しの前にレベル5の見出しが必要です(5)', 'JAWP::Article::LintText(見出しレベル6,レベル違反(2-3-4-6):警告文)' );
+
+			$article->SetTitle( '標準' );
+			$article->SetText( "あああ\n====== いいい ======\nううう\n{{aimai}}" );
+			$result_ref = $article->LintText( $titlelist );
+			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(見出しレベル5,レベル違反(6):警告数)' );
+			is( $result_ref->[0], 'レベル6の見出しの前にレベル5の見出しが必要です(2)', 'JAWP::Article::LintText(見出しレベル6,レベル違反(6):警告文)' );
+
+			$article->SetTitle( '標準' );
+			$article->SetText( "あああ\n ====== いいい ====== \nううう\n{{aimai}}" );
+			$result_ref = $article->LintText( $titlelist );
+			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(見出しレベル6,無効:警告数)' );
+
+			$article->SetTitle( '標準' );
+			$article->SetText( "あああ\n== いいい ==\n=== ううう ===\n==== えええ ====\n===== おおお =====\n====== かかか ======\n======= ききき =======\n{{aimai}}" );
+			$result_ref = $article->LintText( $titlelist );
+			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(見出しレベル7:警告数)' );
+			is( $result_ref->[0], '見出しレベルは6までです(7)', 'JAWP::Article::LintText(見出しレベル7:警告文)' );
+
+			$article->SetTitle( '標準' );
 			$article->SetText( "あああ\n== いいい =\nううう\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
 			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(見出しレベル左右不一致:警告数)' );
