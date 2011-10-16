@@ -513,11 +513,11 @@ sub LintText {
 	}
 	( $y, $m, $d ) = $self->GetBirthday;
 	if( $y != 0 && $m != 0 && $d != 0 && defined( $生年 ) && $y != $生年 ) {
-		push @result, '(死亡年月日と没年齢)テンプレートと生年のカテゴリが一致しません';
+		push @result, '(生年月日と年齢or死亡年月日と没年齢or没年齢)テンプレートと生年のカテゴリが一致しません';
 	}
 	( $y, $m, $d ) = $self->GetDeathday;
 	if( $y != 0 && $m != 0 && $d != 0 && defined( $没年 ) && $y != $没年 ) {
-		push @result, '(死亡年月日と没年齢)テンプレートと没年のカテゴリが一致しません';
+		push @result, '(死亡年月日と没年齢or没年齢)テンプレートと没年のカテゴリが一致しません';
 	}
 
 	return \@result;
