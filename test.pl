@@ -1234,6 +1234,7 @@ sub TestJAWPData {
 
 	# GetArticleテスト
 	{
+		# 空XMLファイル
 		{
 			WriteTestXMLFile( '' );
 			my $data = new JAWP::DataFile( $testxmlfile );
@@ -1241,6 +1242,8 @@ sub TestJAWPData {
 
 			ok( !defined( $article ), 'JAWP::DataFile::GetArticle(空XMLファイル)' );
 		}
+
+		# xml要素のみXMLファイル
 		{
 			WriteTestXMLFile( '<xml></xml>' );
 			my $data = new JAWP::DataFile( $testxmlfile );
@@ -1248,6 +1251,8 @@ sub TestJAWPData {
 
 			ok( !defined( $article ), 'JAWP::DataFile::GetArticle(xml要素のみXMLファイル)' );
 		}
+
+		# 破損XMLファイル,title無し
 		{
 			my $str = <<'STR';
 <xml>
@@ -1261,6 +1266,8 @@ STR
 
 			ok( !defined( $article ), 'JAWP::DataFile::GetArticle(破損XMLファイル,title無し)' );
 		}
+
+		# 破損XMLファイル,timestamp無し
 		{
 			my $str = <<'STR';
 <xml>
@@ -1274,6 +1281,8 @@ STR
 
 			ok( !defined( $article ), 'JAWP::DataFile::GetArticle(破損XMLファイル,timestamp無し)' );
 		}
+
+		# 破損XMLファイル,text無し
 		{
 			my $str = <<'STR';
 <xml>
@@ -1287,6 +1296,8 @@ STR
 
 			ok( !defined( $article ), 'JAWP::DataFile::GetArticle(破損XMLファイル,text無し)' );
 		}
+
+		# 要素重複XMLファイル
 		{
 			my $str = <<'STR';
 <xml>
@@ -1306,6 +1317,8 @@ STR
 			is( $article->{'timestamp'}, '2011-01-01T00:00:00Z', 'JAWP::DataFile::GetArticle(要素重複XMLファイル,timestamp)' );
 			is( $article->{'text'}, '本文', 'JAWP::DataFile::GetArticle(要素重複XMLファイル,text)' );
 		}
+
+		# 要素逆順XMLファイル
 		{
 			my $str = <<'STR';
 <xml>
@@ -1323,6 +1336,8 @@ STR
 			is( $article->{'timestamp'}, '2011-01-01T00:00:00Z', 'JAWP::DataFile::GetArticle(要素逆順XMLファイル,timestamp)' );
 			is( $article->{'text'}, '本文', 'JAWP::DataFile::GetArticle(要素逆順XMLファイル,text)' );
 		}
+
+		# 2周読み込み
 		{
 			my $str = <<'STR';
 <xml>
@@ -1353,6 +1368,8 @@ STR
 			$article = $data->GetArticle;
 			ok( !defined( $article ), 'JAWP::DataFile::GetArticle(2周読み込み,2周目2記事目取得)' );
 		}
+
+		# 本文複数行
 		{
 			my $str = <<'STR';
 <xml>
@@ -1374,6 +1391,8 @@ STR
 			is( $article->{'timestamp'}, '2011-01-01T00:00:00Z', 'JAWP::DataFile::GetArticle(本文複数行,timestamp)' );
 			is( $article->{'text'}, "\n本文1\n本文2\n本文3\n", 'JAWP::DataFile::GetArticle(本文複数行,text)' );
 		}
+
+		# コメント除去
 		{
 			my $str = <<'STR';
 <xml>
@@ -1397,30 +1416,67 @@ STR
 			is( $article->{'timestamp'}, '2011-01-01T00:00:00Z', 'JAWP::DataFile::GetArticle(コメント除去,timestamp)' );
 			is( $article->{'text'}, "\n本文1\n\n\n\n真本文3\n", 'JAWP::DataFile::GetArticle(コメント除去,text)' );
 		}
+
+		# 2記事読み込み
+		{
+			my $str = <<'STR';
+<xml>
+	<title>記事名1</title>
+	<timestamp>2011-01-01T00:00:01Z</timestamp>
+	<text xml:space="preserve">本文1</text>
+	<title>記事名2</title>
+	<timestamp>2011-01-01T00:00:02Z</timestamp>
+	<text xml:space="preserve">本文2</text>
+</xml>
+STR
+			WriteTestXMLFile( $str );
+			my $data = new JAWP::DataFile( $testxmlfile );
+			my $article = $data->GetArticle;
+
+			ok( defined( $article ), 'JAWP::DataFile::GetArticle(2記事読み込み,1記事目取得)' );
+			is( $article->{'title'}, '記事名1', 'JAWP::DataFile::GetArticle(2記事読み込み,1記事目,title)' );
+			is( $article->{'timestamp'}, '2011-01-01T00:00:01Z', 'JAWP::DataFile::GetArticle(2記事読み込み,1記事目,timestamp)' );
+			is( $article->{'text'}, '本文1', 'JAWP::DataFile::GetArticle(2記事読み込み,1記事目,text)' );
+
+			$article = $data->GetArticle;
+
+			ok( defined( $article ), 'JAWP::DataFile::GetArticle(2記事読み込み,2記事目取得)' );
+			is( $article->{'title'}, '記事名2', 'JAWP::DataFile::GetArticle(2記事読み込み,2記事目,title)' );
+			is( $article->{'timestamp'}, '2011-01-01T00:00:02Z', 'JAWP::DataFile::GetArticle(2記事読み込み,2記事目,timestamp)' );
+			is( $article->{'text'}, '本文2', 'JAWP::DataFile::GetArticle(2記事読み込み,2記事目,text)' );
+
+			$article = $data->GetArticle;
+			ok( !defined( $article ), 'JAWP::DataFile::GetArticle(2記事読み込み,3記事目取得)' );
+		}
 	}
 
 	# GetTitleListテスト
 	{
+		# 空XMLファイル
 		{
 			WriteTestXMLFile( '' );
 			my $data = new JAWP::DataFile( $testxmlfile );
 			my $titlelist = $data->GetTitleList;
 
-			ok( defined( $titlelist ), 'JAWP::DataFile::GetTitleList(空XMLファイル,' );
+			ok( defined( $titlelist ), 'JAWP::DataFile::GetTitleList(空XMLファイル' );
 			foreach my $namespace ( '標準', '標準_曖昧', '標準_リダイレクト', '利用者', 'Wikipedia', 'ファイル', 'MediaWiki', 'Template', 'Help', 'Category', 'Portal', 'プロジェクト', 'ノート', '利用者‐会話', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki‐ノート', 'Template‐ノート', 'Help‐ノート', 'Category‐ノート', 'Portal‐ノート', 'プロジェクト‐ノート' ) {
 				ok( defined( $titlelist->{$namespace} ), "JAWP::DataFile::GetTitleList(空XMLファイル,$namespace)" );
 			}
 		}
+
+		# xml要素のみXMLファイル
 		{
 			WriteTestXMLFile( '<xml></xml>' );
 			my $data = new JAWP::DataFile( $testxmlfile );
 			my $titlelist = $data->GetTitleList;
 
-			ok( defined( $titlelist ), '無意味XMLファイル' );
+			ok( defined( $titlelist ), 'xml要素のみXMLファイル' );
 			foreach my $namespace ( '標準', '標準_曖昧', '標準_リダイレクト', '利用者', 'Wikipedia', 'ファイル', 'MediaWiki', 'Template', 'Help', 'Category', 'Portal', 'プロジェクト', 'ノート', '利用者‐会話', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki‐ノート', 'Template‐ノート', 'Help‐ノート', 'Category‐ノート', 'Portal‐ノート', 'プロジェクト‐ノート' ) {
 				ok( defined( $titlelist->{$namespace} ), "JAWP::DataFile::GetTitleList(xml要素のみXMLファイル,$namespace)" );
 			}
 		}
+
+		# 標準XMLファイル
 		{
 			my $str = <<'STR';
 <xml>
@@ -1565,6 +1621,24 @@ sub TestJAWPReport {
 		is( ref $report->{'fh'}, 'GLOB', 'JAWP::ReportFile(メンバ変数リファレンス種別,fh)' );
 	}
 
+	# OutputWikiテスト(空テキスト)
+	{
+		{
+			my $report = new JAWP::ReportFile( $testreportfile );
+			my @datalist;
+
+			$report->OutputWiki( 'title', \( '' ) );
+		}
+		{
+			my $str = <<'STR';
+== title ==
+
+
+STR
+			is( ReadReportFile(), $str, 'JAWP::ReportFile::OutputWiki(空テキスト)' );
+		}
+	}
+
 	# OutputWikiテスト(テキスト)
 	{
 		{
@@ -1581,6 +1655,30 @@ text2
 
 STR
 			is( ReadReportFile(), $str, 'JAWP::ReportFile::OutputWiki(テキスト)' );
+		}
+	}
+
+	# OutputWikiテスト(テキスト複数回)
+	{
+		{
+			my $report = new JAWP::ReportFile( $testreportfile );
+			my @datalist;
+
+			$report->OutputWiki( 'title1', \( "text1\ntext2" ) );
+			$report->OutputWiki( 'title2', \( "text3\ntext4" ) );
+		}
+		{
+			my $str = <<'STR';
+== title1 ==
+text1
+text2
+
+== title2 ==
+text3
+text4
+
+STR
+			is( ReadReportFile(), $str, 'JAWP::ReportFile::OutputWiki(テキスト複数回)' );
 		}
 	}
 
@@ -1751,23 +1849,10 @@ sub TestJAWPUtil {
 	{
 		my @result;
 
-		@result = JAWP::Util::GetLinkwordList( '' );
-		is( @result + 0 , 0, 'JAWP::Util::GetLinkwordList(空文字列,リンクワード数)' );
-
-		@result = JAWP::Util::GetLinkwordList( 'あああ' );
-		is( @result + 0 , 0, 'JAWP::Util::GetLinkwordList(あああ,リンクワード数)' );
-
-		@result = JAWP::Util::GetLinkwordList( '[あああ]' );
-		is( @result + 0 , 0, 'JAWP::Util::GetLinkwordList([あああ],リンクワード数)' );
-
-		@result = JAWP::Util::GetLinkwordList( '[[あああ' );
-		is( @result + 0 , 0, 'JAWP::Util::GetLinkwordList([[あああ,リンクワード数)' );
-
-		@result = JAWP::Util::GetLinkwordList( '[[]]' );
-		is( @result + 0 , 0, 'JAWP::Util::GetLinkwordList([[]],リンクワード数)' );
-
-		@result = JAWP::Util::GetLinkwordList( '[[#abc]]' );
-		is( @result + 0 , 0, 'JAWP::Util::GetLinkwordList([[#abc]],リンクワード数)' );
+		foreach my $str ( '', 'あああ', '[あああ]', '[[あああ', '[[]]', '[[#abc]]' ) {
+			@result = JAWP::Util::GetLinkwordList( $str );
+			is( @result + 0 , 0, "JAWP::Util::GetLinkwordList($str,リンクワード数)" );
+		}
 
 		@result = JAWP::Util::GetLinkwordList( '[[あああ]]' );
 		is( @result + 0 , 1, 'JAWP::Util::GetLinkwordList([[あああ]],リンクワード数)' );
@@ -1796,26 +1881,10 @@ sub TestJAWPUtil {
 	{
 		my @result;
 
-		@result = JAWP::Util::GetTemplatewordList( '' );
-		is( @result + 0 , 0, 'JAWP::Util::GetTemplatewordList(空文字列:テンプレートワード数)' );
-
-		@result = JAWP::Util::GetTemplatewordList( 'あああ' );
-		is( @result + 0 , 0, 'JAWP::Util::GetTemplatewordList(あああ:テンプレートワード数)' );
-
-		@result = JAWP::Util::GetTemplatewordList( '{あああ}' );
-		is( @result + 0 , 0, 'JAWP::Util::GetTemplatewordList({あああ}:テンプレートワード数)' );
-
-		@result = JAWP::Util::GetTemplatewordList( '{{あああ' );
-		is( @result + 0 , 0, 'JAWP::Util::GetTemplatewordList({{あああ:テンプレートワード数)' );
-
-		@result = JAWP::Util::GetTemplatewordList( '{{デフォルトソート:あああ}}' );
-		is( @result + 0 , 0, 'JAWP::Util::GetTemplatewordList({{デフォルトソート:あああ}}:テンプレートワード数)' );
-
-		@result = JAWP::Util::GetTemplatewordList( '{{DEFAULTSORT:あああ}}' );
-		is( @result + 0 , 0, 'JAWP::Util::GetTemplatewordList({{DEFAULTSORT:あああ}}:テンプレートワード数)' );
-
-		@result = JAWP::Util::GetTemplatewordList( '{{}}' );
-		is( @result + 0 , 0, 'JAWP::Util::GetTemplatewordList({{}}:テンプレートワード数)' );
+		foreach my $str ( '', 'あああ', '{あああ}', '{{あああ', '{{デフォルトソート:あああ}}', '{{DEFAULTSORT:あああ}}', '{{}}' ) {
+			@result = JAWP::Util::GetTemplatewordList( $str );
+			is( @result + 0 , 0, "JAWP::Util::GetTemplatewordList($str:テンプレートワード数)" );
+		}
 
 		@result = JAWP::Util::GetTemplatewordList( '{{あああ}}' );
 		is( @result + 0 , 1, 'JAWP::Util::GetTemplatewordList({{あああ}}:テンプレートワード数)' );
@@ -1864,14 +1933,10 @@ sub TestJAWPUtil {
 	{
 		my $host;
 
-		$host = JAWP::Util::GetHost( 'http://www.yahoo.co.jp' );
-		is( $host, 'www.yahoo.co.jp', 'JAWP::Util::GetHost(http://www.yahoo.co.jp)' );
-
-		$host = JAWP::Util::GetHost( 'http://www.yahoo.co.jp/' );
-		is( $host, 'www.yahoo.co.jp', 'JAWP::Util::GetHost(http://www.yahoo.co.jp/)' );
-
-		$host = JAWP::Util::GetHost( 'http://www.yahoo.co.jp/aaa/bbb' );
-		is( $host, 'www.yahoo.co.jp', 'JAWP::Util::GetHost(http://www.yahoo.co.jp/aaa/bbb)' );
+		foreach my $url ( 'http://www.yahoo.co.jp', 'http://www.yahoo.co.jp/', 'http://www.yahoo.co.jp/aaa/bbb', 'https://www.yahoo.co.jp', 'https://www.yahoo.co.jp/', 'https://www.yahoo.co.jp/aaa/bbb' ) {
+			$host = JAWP::Util::GetHost( $url );
+			is( $host, 'www.yahoo.co.jp', "JAWP::Util::GetHost($url)" );
+		}
 	}
 
 	# GetLinkTypeテスト
