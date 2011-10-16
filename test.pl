@@ -313,11 +313,26 @@ sub TestJAWPArticle {
 		}
 
 		# リダイレクト記事は無視確認
-		$article->SetText( '#redirect[[転送先]]' );
-		foreach my $title ( '株式会社あいうえお', 'あいうえお株式会社', @{GetNotJIS_X_0208_KANJI()} ) {
-			$article->SetTitle( $title );
-			$result_ref = $article->LintTitle;
-			is( @$result_ref + 0, 0, "JAWP::Article::LintTitle(リダイレクト無視,$title:警告数)" );
+		{
+			$article->SetText( '#redirect[[転送先]]' );
+			foreach my $type ( '株式会社', '有限会社', '合名会社', '合資会社', '合同会社' ) {
+				my $title;
+
+				$title = "あいうえお" . $type;
+				$article->SetTitle( $title );
+				$result_ref = $article->LintTitle;
+				is( @$result_ref + 0, 0, "JAWP::Article::LintTitle(リダイレクト無視,$title:警告数)" );
+
+				$title = $type . "あいうえお";
+				$article->SetTitle( $title );
+				$result_ref = $article->LintTitle;
+				is( @$result_ref + 0, 0, "JAWP::Article::LintTitle(リダイレクト無視,$title:警告数)" );
+			}
+			foreach my $title ( @{GetNotJIS_X_0208_KANJI()} ) {
+				$article->SetTitle( $title );
+				$result_ref = $article->LintTitle;
+				is( @$result_ref + 0, 0, "JAWP::Article::LintTitle(リダイレクト無視,$title:警告数)" );
+			}
 		}
 
 		# 曖昧さ回避テスト
@@ -341,7 +356,16 @@ sub TestJAWPArticle {
 		# 記事名に使用できる文字・文言テスト
 		{
 			$article->SetText( '' );
-			foreach my $title ( '株式会社あいうえお', 'あいうえお株式会社', '有限会社あいうえお', 'あいうえお有限会社', '合名会社あいうえお', 'あいうえお合名会社', '合資会社あいうえお', 'あいうえお合資会社', '合同会社あいうえお', 'あいうえお合同会社' ) {
+			foreach my $type ( '株式会社', '有限会社', '合名会社', '合資会社', '合同会社' ) {
+				my $title;
+
+				$title = "あいうえお" . $type;
+				$article->SetTitle( $title );
+				$result_ref = $article->LintTitle;
+				is( @$result_ref + 0, 1, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
+				is( $result_ref->[0], '会社の記事であれば法的地位を示す語句を含むことは推奨されません', "JAWP::Article::LintTitle(文字・文言,$title:警告文)" );
+
+				$title = $type . "あいうえお";
 				$article->SetTitle( $title );
 				$result_ref = $article->LintTitle;
 				is( @$result_ref + 0, 1, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
