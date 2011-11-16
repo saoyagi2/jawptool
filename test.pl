@@ -391,6 +391,11 @@ sub TestJAWPArticle {
 			foreach my $type ( '株式会社', '有限会社', '合名会社', '合資会社', '合同会社' ) {
 				my $title;
 
+				$title = $type;
+				$article->SetTitle( $title );
+				$result_ref = $article->LintTitle;
+				is( @$result_ref + 0, 0, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
+
 				$title = "あいうえお" . $type;
 				$article->SetTitle( $title );
 				$result_ref = $article->LintTitle;
