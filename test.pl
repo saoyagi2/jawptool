@@ -206,16 +206,16 @@ sub TestJAWPArticle {
 		is( $d, 0, 'JAWP::Article::GetDeathday(空文字列,日)' );
 
 		$article->SetText( '{{死亡年月日と没年齢|2001|1|11|2011|12|31}}' );
-		( $y, $m, $d ) = $article->GetBirthday;
-		is( $y, 2001, 'JAWP::Article::GetDeathday(死亡年月日と没年齢テンプレート,2001年)' );
-		is( $m, 1, 'JAWP::Article::GetDeathday(死亡年月日と没年齢テンプレート,1月)' );
-		is( $d, 11, 'JAWP::Article::GetDeathday(死亡年月日と没年齢テンプレート,11日)' );
+		( $y, $m, $d ) = $article->GetDeathday;
+		is( $y, 2011, 'JAWP::Article::GetDeathday(死亡年月日と没年齢テンプレート,2001年)' );
+		is( $m, 12, 'JAWP::Article::GetDeathday(死亡年月日と没年齢テンプレート,1月)' );
+		is( $d, 31, 'JAWP::Article::GetDeathday(死亡年月日と没年齢テンプレート,11日)' );
 
 		$article->SetText( '{{没年齢|2001|1|11|2011|12|31}}' );
-		( $y, $m, $d ) = $article->GetBirthday;
-		is( $y, 2001, 'JAWP::Article::GetDeathday(没年齢テンプレート,2001年)' );
-		is( $m, 1, 'JAWP::Article::GetDeathday(没年齢テンプレート,1月)' );
-		is( $d, 11, 'JAWP::Article::GetDeathday(没年齢テンプレート,11日)' );
+		( $y, $m, $d ) = $article->GetDeathday;
+		is( $y, 2011, 'JAWP::Article::GetDeathday(没年齢テンプレート,2001年)' );
+		is( $m, 12, 'JAWP::Article::GetDeathday(没年齢テンプレート,1月)' );
+		is( $d, 31, 'JAWP::Article::GetDeathday(没年齢テンプレート,11日)' );
 	}
 
 	# IsSeibotsuDoujitsuテスト
