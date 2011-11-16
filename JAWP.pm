@@ -271,6 +271,9 @@ sub LintTitle {
 		if( $self->{'title'} =~ /^(株式会社|有限会社|合名会社|合資会社|合同会社)./ || $self->{'title'} =~ /.(株式会社|有限会社|合名会社|合資会社|合同会社)$/ ) {
 			push @result, '会社の記事であれば法的地位を示す語句を含むことは推奨されません';
 		}
+		if( $self->{'title'} =~ /～/ ) {
+			push @result, '波記号は〜(U+301C)を使用しましょう';
+		}
 		for( $n = 0; $n < length( $self->{'title'} ); $n++ ) {
 			$c = substr( $self->{'title'}, $n, 1 );
 			$code = ord( $c );

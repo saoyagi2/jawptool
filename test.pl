@@ -360,6 +360,12 @@ sub TestJAWPArticle {
 				$result_ref = $article->LintTitle;
 				is( @$result_ref + 0, 0, "JAWP::Article::LintTitle(リダイレクト無視,$title:警告数)" );
 			}
+			{
+				my $title = '～';
+				$article->SetTitle( $title );
+				$result_ref = $article->LintTitle;
+				is( @$result_ref + 0, 0, "JAWP::Article::LintTitle(リダイレクト無視,$title:警告数)" );
+			}
 			foreach my $title ( @{GetNotJIS_X_0208_KANJI()} ) {
 				$article->SetTitle( $title );
 				$result_ref = $article->LintTitle;
@@ -449,6 +455,13 @@ sub TestJAWPArticle {
 				$result_ref = $article->LintTitle;
 				is( @$result_ref + 0, 1, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
 				is( $result_ref->[0], '括弧の使用は推奨されません', "JAWP::Article::LintTitle(文字・文言,$title:警告文)" );
+			}
+			{
+				my $title = '～';
+				$article->SetTitle( $title );
+				$result_ref = $article->LintTitle;
+				is( @$result_ref + 0, 1, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
+				is( $result_ref->[0], '波記号は〜(U+301C)を使用しましょう', "JAWP::Article::LintTitle(文字・文言,$title:警告文)" );
 			}
 			{
 				my $title;
