@@ -263,6 +263,9 @@ sub LintTitle {
 	if( $self->{'title'} =~ /[「」『』〔〕〈〉《》【】]/ ) {
 		push @result, '括弧の使用は推奨されません';
 	}
+	if( $self->{'title'} =~ /[ぁ-ゔ]/ && $self->{'title'} =~ /[ァ-ヺ]/ ) {
+		push @result, '平仮名と片仮名が混在しています';
+	}
 
 	if( !( $self->IsRedirect ) ) {
 		if( $self->{'title'} =~ /^(株式会社|有限会社|合名会社|合資会社|合同会社)./ || $self->{'title'} =~ /.(株式会社|有限会社|合名会社|合資会社|合同会社)$/ ) {

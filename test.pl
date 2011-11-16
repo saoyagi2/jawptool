@@ -450,6 +450,25 @@ sub TestJAWPArticle {
 				is( @$result_ref + 0, 1, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
 				is( $result_ref->[0], '括弧の使用は推奨されません', "JAWP::Article::LintTitle(文字・文言,$title:警告文)" );
 			}
+			{
+				my $title;
+
+				$title = 'ああ';
+				$article->SetTitle( $title );
+				$result_ref = $article->LintTitle;
+				is( @$result_ref + 0, 0, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
+
+				$title = 'アア';
+				$article->SetTitle( $title );
+				$result_ref = $article->LintTitle;
+				is( @$result_ref + 0, 0, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
+
+				$title = 'あア';
+				$article->SetTitle( $title );
+				$result_ref = $article->LintTitle;
+				is( @$result_ref + 0, 1, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
+				is( $result_ref->[0], '平仮名と片仮名が混在しています', "JAWP::Article::LintTitle(文字・文言,$title:警告文)" );
+			}
 			$article->SetText( '' );
 			foreach my $title ( @{GetJIS_X_0208_KANJI()} ) {
 				$article->SetTitle( $title );
