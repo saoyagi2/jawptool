@@ -192,6 +192,24 @@ sub TestJAWPArticle {
 		is( $y, 2001, 'JAWP::Article::GetBirthday(没年齢テンプレート,2001年)' );
 		is( $m, 1, 'JAWP::Article::GetBirthday(没年齢テンプレート,1月)' );
 		is( $d, 11, 'JAWP::Article::GetBirthday(没年齢テンプレート,11日)' );
+
+		$article->SetText( '{{生年月日と年齢|２００１|１|１１}}' );
+		( $y, $m, $d ) = $article->GetBirthday;
+		is( $y, 0, 'JAWP::Article::GetBirthday(生年月日と年齢テンプレート,全角数字,年)' );
+		is( $m, 0, 'JAWP::Article::GetBirthday(生年月日と年齢テンプレート,全角数字,月)' );
+		is( $d, 0, 'JAWP::Article::GetBirthday(生年月日と年齢テンプレート,全角数字,日)' );
+
+		$article->SetText( '{{死亡年月日と没年齢|２００１|１|１１|２００１|１２|３１}}' );
+		( $y, $m, $d ) = $article->GetBirthday;
+		is( $y, 0, 'JAWP::Article::GetBirthday(死亡年月日と没年齢テンプレート,全角数字,年)' );
+		is( $m, 0, 'JAWP::Article::GetBirthday(死亡年月日と没年齢テンプレート,全角数字,月)' );
+		is( $d, 0, 'JAWP::Article::GetBirthday(死亡年月日と没年齢テンプレート,全角数字,日)' );
+
+		$article->SetText( '{{没年齢|２００１|１|１１|２００１|１２|３１}}' );
+		( $y, $m, $d ) = $article->GetBirthday;
+		is( $y, 0, 'JAWP::Article::GetBirthday(没年齢テンプレート,全角数字,年)' );
+		is( $m, 0, 'JAWP::Article::GetBirthday(没年齢テンプレート,全角数字,月)' );
+		is( $d, 0, 'JAWP::Article::GetBirthday(没年齢テンプレート,全角数字,日)' );
 	}
 
 	# GetDeathdayテスト
@@ -216,6 +234,17 @@ sub TestJAWPArticle {
 		is( $y, 2011, 'JAWP::Article::GetDeathday(没年齢テンプレート,2001年)' );
 		is( $m, 12, 'JAWP::Article::GetDeathday(没年齢テンプレート,1月)' );
 		is( $d, 31, 'JAWP::Article::GetDeathday(没年齢テンプレート,11日)' );
+
+		$article->SetText( '{{死亡年月日と没年齢|２００１|１|１１|２００１|１２|３１}}' );
+		( $y, $m, $d ) = $article->GetDeathday;
+		is( $y, 0, 'JAWP::Article::GetDeathday(死亡年月日と没年齢テンプレート,全角数字,年)' );
+		is( $m, 0, 'JAWP::Article::GetDeathday(死亡年月日と没年齢テンプレート,全角数字,月)' );
+		is( $d, 0, 'JAWP::Article::GetDeathday(死亡年月日と没年齢テンプレート,全角数字,日)' );
+
+		$article->SetText( '{{没年齢|２００１|１|１１|２００１|１２|３１}}' );
+		is( $y, 0, 'JAWP::Article::GetDeathday(没年齢テンプレート,全角数字,年)' );
+		is( $m, 0, 'JAWP::Article::GetDeathday(没年齢テンプレート,全角数字,月)' );
+		is( $d, 0, 'JAWP::Article::GetDeathday(没年齢テンプレート,全角数字,日)' );
 	}
 
 	# IsSeibotsuDoujitsuテスト
@@ -231,11 +260,17 @@ sub TestJAWPArticle {
 		$article->SetText( '{{死亡年月日と没年齢|2001|1|1|2011|1|1}}' );
 		ok( $article->IsSeibotsuDoujitsu, 'JAWP::Article::IsSeibotsuDoujitsu(死亡年月日と没年齢テンプレート,2001年1月1日生-2011年1月1日没)' );
 
+		$article->SetText( '{{死亡年月日と没年齢|２００１|１|１１|２０１１|１|１}}' );
+		ok( !$article->IsSeibotsuDoujitsu, 'JAWP::Article::IsSeibotsuDoujitsu(死亡年月日と没年齢テンプレート,2001年1月1日生-2011年1月1日没,全角数字)' );
+
 		$article->SetText( '{{没年齢|2001|1|1|2011|12|31}}' );
 		ok( !$article->IsSeibotsuDoujitsu, 'JAWP::Article::IsSeibotsuDoujitsu(没年齢テンプレート,2001年1月1日生-2011年12月31日没)' );
 
 		$article->SetText( '{{没年齢|2001|1|1|2011|1|1}}' );
 		ok( $article->IsSeibotsuDoujitsu, 'JAWP::Article::IsSeibotsuDoujitsu(没年齢テンプレート,2001年1月1日生-2011年1月1日没)' );
+
+		$article->SetText( '{{没年齢|２００１|１|１１|２０１１|１|１}}' );
+		ok( !$article->IsSeibotsuDoujitsu, 'JAWP::Article::IsSeibotsuDoujitsu(没年齢テンプレート,2001年1月1日生-2011年1月1日没,全角数字)' );
 	}
 
 	# IsIndexテスト
@@ -2061,6 +2096,9 @@ sub TestJAWPUtil {
 		@result = JAWP::Util::GetTalkTimestampList( '2011年8月2日 (火) 14:14 (UTC)' );
 		is( @result + 0 , 1, 'JAWP::Util::GetTalkTimestampList(2011年8月2日 (火) 14:14 (UTC):発言日時数)' );
 		is( $result[0], '2011-08-02T14:14:00Z', 'JAWP::Util::GetTalkTimestampList(2011年8月2日 (火) 14:14 (UTC):発言日時)' );
+
+		@result = JAWP::Util::GetTalkTimestampList( '２０１１年８月２日 (火) １４:１４ (UTC)' );
+		is( @result + 0 , 0, 'JAWP::Util::GetTalkTimestampList(２０１１年８月２日 (火) １４:１４ (UTC):発言日時数,全角数字)' );
 
 		@result = JAWP::Util::GetTalkTimestampList( '2011年8月2日 (火) 14:14 (UTC)あああ2011年8月7日 (日) 14:55 (UTC)' );
 		is( @result + 0 , 2, 'JAWP::Util::GetTalkTimestampList(2011年8月2日 (火) 14:14 (UTC)あああ2011年8月7日 (日) 14:55 (UTC):発言日時数)' );
