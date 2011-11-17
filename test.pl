@@ -11,11 +11,9 @@ binmode Test::More->builder->failure_output, ':utf8';
 binmode Test::More->builder->todo_output, ':utf8';
 
 use Test::More 'no_plan';
+use File::Temp;
 
-
-my $testdir = 'jawptool_test_directory';
-my $testxmlfile = "$testdir/test.xml";
-my $testreportfile = "$testdir/report.txt";
+my $fnametemp = 'jawptoolXXXX';
 
 
 ################################################################################
@@ -1291,37 +1289,43 @@ sub TestJAWPData {
 
 	# メンバー変数確認
 	{
-		WriteTestXMLFile( '' );
-		my $data = new JAWP::DataFile( $testxmlfile );
+		my $fname = WriteTestXMLFile( '' );
+		my $data = new JAWP::DataFile( $fname );
 
 		ok( defined( $data ), 'JAWP::DataFile(ファイル名指定)' );
 		cmp_ok( keys( %$data ),  '==', 2, 'JAWP::DataFile(メンバ変数個数)' );
 
 		ok( defined( $data->{'filename'} ), 'JAWP::DataFile(メンバ変数宣言,filename)' );
-		is( $data->{'filename'}, $testxmlfile, 'JAWP::DataFile(メンバ変数値,filename)' );
+		is( $data->{'filename'}, $fname, 'JAWP::DataFile(メンバ変数値,filename)' );
 
 		ok( defined( $data->{'fh'} ), 'JAWP::DataFile(メンバ変数宣言,fh)' );
 		is( ref $data->{'fh'}, 'GLOB', 'JAWP::DataFile(メンバ変数リファレンス種別,fh)' );
+
+		unlink( $fname ) or die $!;
 	}
 
 	# GetArticleテスト
 	{
 		# 空XMLファイル
 		{
-			WriteTestXMLFile( '' );
-			my $data = new JAWP::DataFile( $testxmlfile );
+			my $fname = WriteTestXMLFile( '' );
+			my $data = new JAWP::DataFile( $fname );
 			my $article = $data->GetArticle;
 
 			ok( !defined( $article ), 'JAWP::DataFile::GetArticle(空XMLファイル)' );
+
+			unlink( $fname ) or die $!;
 		}
 
 		# xml要素のみXMLファイル
 		{
-			WriteTestXMLFile( '<xml></xml>' );
-			my $data = new JAWP::DataFile( $testxmlfile );
+			my $fname = WriteTestXMLFile( '<xml></xml>' );
+			my $data = new JAWP::DataFile( $fname );
 			my $article = $data->GetArticle;
 
 			ok( !defined( $article ), 'JAWP::DataFile::GetArticle(xml要素のみXMLファイル)' );
+
+			unlink( $fname ) or die $!;
 		}
 
 		# 破損XMLファイル,title無し
@@ -1332,11 +1336,13 @@ sub TestJAWPData {
 	<text xml:space="preserve">本文</text>
 </xml>
 STR
-			WriteTestXMLFile( $str );
-			my $data = new JAWP::DataFile( $testxmlfile );
+			my $fname = WriteTestXMLFile( $str );
+			my $data = new JAWP::DataFile( $fname );
 			my $article = $data->GetArticle;
 
 			ok( !defined( $article ), 'JAWP::DataFile::GetArticle(破損XMLファイル,title無し)' );
+
+			unlink( $fname ) or die $!;
 		}
 
 		# 破損XMLファイル,timestamp無し
@@ -1347,11 +1353,13 @@ STR
 	<text xml:space="preserve">本文</text>
 </xml>
 STR
-			WriteTestXMLFile( $str );
-			my $data = new JAWP::DataFile( $testxmlfile );
+			my $fname = WriteTestXMLFile( $str );
+			my $data = new JAWP::DataFile( $fname );
 			my $article = $data->GetArticle;
 
 			ok( !defined( $article ), 'JAWP::DataFile::GetArticle(破損XMLファイル,timestamp無し)' );
+
+			unlink( $fname ) or die $!;
 		}
 
 		# 破損XMLファイル,text無し
@@ -1362,11 +1370,13 @@ STR
 	<timestamp>2011-01-01T00:00:00Z</timestamp>
 </xml>
 STR
-			WriteTestXMLFile( $str );
-			my $data = new JAWP::DataFile( $testxmlfile );
+			my $fname = WriteTestXMLFile( $str );
+			my $data = new JAWP::DataFile( $fname );
 			my $article = $data->GetArticle;
 
 			ok( !defined( $article ), 'JAWP::DataFile::GetArticle(破損XMLファイル,text無し)' );
+
+			unlink( $fname ) or die $!;
 		}
 
 		# 要素重複XMLファイル
@@ -1380,14 +1390,16 @@ STR
 	<text xml:space="preserve">本文</text>
 </xml>
 STR
-			WriteTestXMLFile( $str );
-			my $data = new JAWP::DataFile( $testxmlfile );
+			my $fname = WriteTestXMLFile( $str );
+			my $data = new JAWP::DataFile( $fname );
 			my $article = $data->GetArticle;
 
 			ok( defined( $article ), 'JAWP::DataFile::GetArticle(要素重複XMLファイル,記事取得)' );
 			is( $article->{'title'}, '真記事名', 'JAWP::DataFile::GetArticle(要素重複XMLファイル,title)' );
 			is( $article->{'timestamp'}, '2011-01-01T00:00:00Z', 'JAWP::DataFile::GetArticle(要素重複XMLファイル,timestamp)' );
 			is( $article->{'text'}, '本文', 'JAWP::DataFile::GetArticle(要素重複XMLファイル,text)' );
+
+			unlink( $fname ) or die $!;
 		}
 
 		# 要素逆順XMLファイル
@@ -1399,14 +1411,16 @@ STR
 	<title>記事名</title>
 </xml>
 STR
-			WriteTestXMLFile( $str );
-			my $data = new JAWP::DataFile( $testxmlfile );
+			my $fname = WriteTestXMLFile( $str );
+			my $data = new JAWP::DataFile( $fname );
 			my $article = $data->GetArticle;
 
 			ok( defined( $article ), 'JAWP::DataFile::GetArticle(要素逆順XMLファイル,記事取得)' );
 			is( $article->{'title'}, '記事名', 'JAWP::DataFile::GetArticle(要素逆順XMLファイル,title)' );
 			is( $article->{'timestamp'}, '2011-01-01T00:00:00Z', 'JAWP::DataFile::GetArticle(要素逆順XMLファイル,timestamp)' );
 			is( $article->{'text'}, '本文', 'JAWP::DataFile::GetArticle(要素逆順XMLファイル,text)' );
+
+			unlink( $fname ) or die $!;
 		}
 
 		# 2周読み込み
@@ -1418,8 +1432,8 @@ STR
 	<text xml:space="preserve">本文</text>
 </xml>
 STR
-			WriteTestXMLFile( $str );
-			my $data = new JAWP::DataFile( $testxmlfile );
+			my $fname = WriteTestXMLFile( $str );
+			my $data = new JAWP::DataFile( $fname );
 			my $article = $data->GetArticle;
 
 			ok( defined( $article ), 'JAWP::DataFile::GetArticle(2周読み込み,1周目1記事目取得)' );
@@ -1439,6 +1453,8 @@ STR
 
 			$article = $data->GetArticle;
 			ok( !defined( $article ), 'JAWP::DataFile::GetArticle(2周読み込み,2周目2記事目取得)' );
+
+			unlink( $fname ) or die $!;
 		}
 
 		# 本文複数行
@@ -1454,14 +1470,16 @@ STR
 </text>
 </xml>
 STR
-			WriteTestXMLFile( $str );
-			my $data = new JAWP::DataFile( $testxmlfile );
+			my $fname = WriteTestXMLFile( $str );
+			my $data = new JAWP::DataFile( $fname );
 			my $article = $data->GetArticle;
 
 			ok( defined( $article ), 'JAWP::DataFile::GetArticle(本文複数行,記事取得)' );
 			is( $article->{'title'}, '記事名', 'JAWP::DataFile::GetArticle(本文複数行,title)' );
 			is( $article->{'timestamp'}, '2011-01-01T00:00:00Z', 'JAWP::DataFile::GetArticle(本文複数行,timestamp)' );
 			is( $article->{'text'}, "\n本文1\n本文2\n本文3\n", 'JAWP::DataFile::GetArticle(本文複数行,text)' );
+
+			unlink( $fname ) or die $!;
 		}
 
 		# コメント除去
@@ -1479,14 +1497,16 @@ STR
 </text>
 </xml>
 STR
-			WriteTestXMLFile( $str );
-			my $data = new JAWP::DataFile( $testxmlfile );
+			my $fname = WriteTestXMLFile( $str );
+			my $data = new JAWP::DataFile( $fname );
 			my $article = $data->GetArticle;
 
 			ok( defined( $article ), 'JAWP::DataFile::GetArticle(コメント除去,記事取得)' );
 			is( $article->{'title'}, '記事名', 'JAWP::DataFile::GetArticle(コメント除去,title)' );
 			is( $article->{'timestamp'}, '2011-01-01T00:00:00Z', 'JAWP::DataFile::GetArticle(コメント除去,timestamp)' );
 			is( $article->{'text'}, "\n本文1\n\n\n\n真本文3\n", 'JAWP::DataFile::GetArticle(コメント除去,text)' );
+
+			unlink( $fname ) or die $!;
 		}
 
 		# 2記事読み込み
@@ -1501,8 +1521,8 @@ STR
 	<text xml:space="preserve">本文2</text>
 </xml>
 STR
-			WriteTestXMLFile( $str );
-			my $data = new JAWP::DataFile( $testxmlfile );
+			my $fname = WriteTestXMLFile( $str );
+			my $data = new JAWP::DataFile( $fname );
 			my $article = $data->GetArticle;
 
 			ok( defined( $article ), 'JAWP::DataFile::GetArticle(2記事読み込み,1記事目取得)' );
@@ -1519,6 +1539,8 @@ STR
 
 			$article = $data->GetArticle;
 			ok( !defined( $article ), 'JAWP::DataFile::GetArticle(2記事読み込み,3記事目取得)' );
+
+			unlink( $fname ) or die $!;
 		}
 	}
 
@@ -1526,26 +1548,30 @@ STR
 	{
 		# 空XMLファイル
 		{
-			WriteTestXMLFile( '' );
-			my $data = new JAWP::DataFile( $testxmlfile );
+			my $fname = WriteTestXMLFile( '' );
+			my $data = new JAWP::DataFile( $fname );
 			my $titlelist = $data->GetTitleList;
 
 			ok( defined( $titlelist ), 'JAWP::DataFile::GetTitleList(空XMLファイル' );
 			foreach my $namespace ( '標準', '標準_曖昧', '標準_リダイレクト', '利用者', 'Wikipedia', 'ファイル', 'MediaWiki', 'Template', 'Help', 'Category', 'Portal', 'プロジェクト', 'ノート', '利用者‐会話', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki‐ノート', 'Template‐ノート', 'Help‐ノート', 'Category‐ノート', 'Portal‐ノート', 'プロジェクト‐ノート' ) {
 				ok( defined( $titlelist->{$namespace} ), "JAWP::DataFile::GetTitleList(空XMLファイル,$namespace)" );
 			}
+
+			unlink( $fname ) or die $!;
 		}
 
 		# xml要素のみXMLファイル
 		{
-			WriteTestXMLFile( '<xml></xml>' );
-			my $data = new JAWP::DataFile( $testxmlfile );
+			my $fname = WriteTestXMLFile( '<xml></xml>' );
+			my $data = new JAWP::DataFile( $fname );
 			my $titlelist = $data->GetTitleList;
 
 			ok( defined( $titlelist ), 'xml要素のみXMLファイル' );
 			foreach my $namespace ( '標準', '標準_曖昧', '標準_リダイレクト', '利用者', 'Wikipedia', 'ファイル', 'MediaWiki', 'Template', 'Help', 'Category', 'Portal', 'プロジェクト', 'ノート', '利用者‐会話', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki‐ノート', 'Template‐ノート', 'Help‐ノート', 'Category‐ノート', 'Portal‐ノート', 'プロジェクト‐ノート' ) {
 				ok( defined( $titlelist->{$namespace} ), "JAWP::DataFile::GetTitleList(xml要素のみXMLファイル,$namespace)" );
 			}
+
+			unlink( $fname ) or die $!;
 		}
 
 		# 標準XMLファイル
@@ -1641,8 +1667,8 @@ STR
 	<text xml:space="preserve"></text>
 </xml>
 STR
-			WriteTestXMLFile( $str );
-			my $data = new JAWP::DataFile( $testxmlfile );
+			my $fname = WriteTestXMLFile( $str );
+			my $data = new JAWP::DataFile( $fname );
 			my $titlelist = $data->GetTitleList;
 
 			ok( defined( $titlelist ), 'JAWP::DataFile::GetTitleList(標準XMLファイル)' );
@@ -1655,6 +1681,8 @@ STR
 				is( keys %{$titlelist->{$namespace}}, 1, "JAWP::DataFile::GetTitleList(標準XMLファイル,$namespace,記事数)" );
 				ok( defined( $titlelist->{$namespace}->{'A'} ), "JAWP::DataFile::GetTitleList(標準XMLファイル,$namespace,A)" );
 			}
+
+			unlink( $fname ) or die $!;
 		}
 	}
 }
@@ -1681,22 +1709,27 @@ sub TestJAWPReport {
 
 	# メンバー変数確認
 	{
-		my $report = new JAWP::ReportFile( $testreportfile );
+		my $fname = GetTempFilename();
+		{
+			my $report = new JAWP::ReportFile( $fname );
 
-		ok( defined( $report ), 'JAWP::ReportFile(ファイル名指定)' );
-		cmp_ok( keys( %$report ),  '==', 2, 'JAWP::ReportFile(メンバ変数個数)' );
+			ok( defined( $report ), 'JAWP::ReportFile(ファイル名指定)' );
+			cmp_ok( keys( %$report ),  '==', 2, 'JAWP::ReportFile(メンバ変数個数)' );
 
-		ok( defined( $report->{'filename'} ), 'JAWP::ReportFile(メンバ変数宣言,filename)' );
-		is( $report->{'filename'}, $testreportfile, 'JAWP::ReportFile(メンバ変数値,filename)' );
+			ok( defined( $report->{'filename'} ), 'JAWP::ReportFile(メンバ変数宣言,filename)' );
+			is( $report->{'filename'}, $fname, 'JAWP::ReportFile(メンバ変数値,filename)' );
 
-		ok( defined( $report->{'fh'} ), 'JAWP::ReportFile(メンバ変数宣言,fh)' );
-		is( ref $report->{'fh'}, 'GLOB', 'JAWP::ReportFile(メンバ変数リファレンス種別,fh)' );
+			ok( defined( $report->{'fh'} ), 'JAWP::ReportFile(メンバ変数宣言,fh)' );
+			is( ref $report->{'fh'}, 'GLOB', 'JAWP::ReportFile(メンバ変数リファレンス種別,fh)' );
+		}
+		unlink( $fname ) or die $!;
 	}
 
 	# OutputWikiテスト(空テキスト)
 	{
+		my $fname = GetTempFilename();
 		{
-			my $report = new JAWP::ReportFile( $testreportfile );
+			my $report = new JAWP::ReportFile( $fname );
 			my @datalist;
 
 			$report->OutputWiki( 'title', \( '' ) );
@@ -1707,14 +1740,16 @@ sub TestJAWPReport {
 
 
 STR
-			is( ReadReportFile(), $str, 'JAWP::ReportFile::OutputWiki(空テキスト)' );
+			is( ReadReportFile( $fname ), $str, 'JAWP::ReportFile::OutputWiki(空テキスト)' );
 		}
+		unlink( $fname ) or die $!;
 	}
 
 	# OutputWikiテスト(テキスト)
 	{
+		my $fname = GetTempFilename();
 		{
-			my $report = new JAWP::ReportFile( $testreportfile );
+			my $report = new JAWP::ReportFile( $fname );
 			my @datalist;
 
 			$report->OutputWiki( 'title', \( "text1\ntext2" ) );
@@ -1726,14 +1761,16 @@ text1
 text2
 
 STR
-			is( ReadReportFile(), $str, 'JAWP::ReportFile::OutputWiki(テキスト)' );
+			is( ReadReportFile( $fname ), $str, 'JAWP::ReportFile::OutputWiki(テキスト)' );
 		}
+		unlink( $fname ) or die $!;
 	}
 
 	# OutputWikiテスト(テキスト複数回)
 	{
+		my $fname = GetTempFilename();
 		{
-			my $report = new JAWP::ReportFile( $testreportfile );
+			my $report = new JAWP::ReportFile( $fname );
 			my @datalist;
 
 			$report->OutputWiki( 'title1', \( "text1\ntext2" ) );
@@ -1750,14 +1787,16 @@ text3
 text4
 
 STR
-			is( ReadReportFile(), $str, 'JAWP::ReportFile::OutputWiki(テキスト複数回)' );
+			is( ReadReportFile( $fname ), $str, 'JAWP::ReportFile::OutputWiki(テキスト複数回)' );
 		}
+		unlink( $fname ) or die $!;
 	}
 
 	# OutputWikiListテスト(空配列データ)
 	{
+		my $fname = GetTempFilename();
 		{
-			my $report = new JAWP::ReportFile( $testreportfile );
+			my $report = new JAWP::ReportFile( $fname );
 			my @datalist;
 
 			$report->OutputWikiList( 'title', \@datalist );
@@ -1767,14 +1806,16 @@ STR
 == title ==
 
 STR
-			is( ReadReportFile(), $str, 'JAWP::ReportFile::OutputWikiList(空配列データ)' );
+			is( ReadReportFile( $fname ), $str, 'JAWP::ReportFile::OutputWikiList(空配列データ)' );
 		}
+		unlink( $fname ) or die $!;
 	}
 
 	# OutputWikiListテスト(配列データ)
 	{
+		my $fname = GetTempFilename();
 		{
-			my $report = new JAWP::ReportFile( $testreportfile );
+			my $report = new JAWP::ReportFile( $fname );
 			my @datalist = ( 'あいうえお', 'かきくけこ', 'さしすせそ' );
 
 			$report->OutputWikiList( 'title', \@datalist );
@@ -1787,14 +1828,16 @@ STR
 *さしすせそ
 
 STR
-			is( ReadReportFile(), $str, 'JAWP::ReportFile::OutputWikiList(配列データ)' );
+			is( ReadReportFile( $fname ), $str, 'JAWP::ReportFile::OutputWikiList(配列データ)' );
 		}
+		unlink( $fname ) or die $!;
 	}
 
 	# OutputWikiListテスト(配列データ複数回)
 	{
+		my $fname = GetTempFilename();
 		{
-			my $report = new JAWP::ReportFile( $testreportfile );
+			my $report = new JAWP::ReportFile( $fname );
 			my @datalist1 = ( 'あいうえお', 'かきくけこ', 'さしすせそ' );
 			my @datalist2 = ( 'abcde', '01234' );
 
@@ -1813,38 +1856,44 @@ STR
 *01234
 
 STR
-			is( ReadReportFile(), $str, 'JAWP::ReportFile::OutputWikiList(配列データ複数回)' );
+			is( ReadReportFile( $fname ), $str, 'JAWP::ReportFile::OutputWikiList(配列データ複数回)' );
 		}
+		unlink( $fname ) or die $!;
 	}
 
 	# OutputDirectテスト(空データ)
 	{
+		my $fname = GetTempFilename();
 		{
-			my $report = new JAWP::ReportFile( $testreportfile );
+			my $report = new JAWP::ReportFile( $fname );
 
 			$report->OutputDirect( '' );
 		}
 		{
-			is( ReadReportFile(), '', 'JAWP::ReportFile::OutputDirect(空データ)' );
+			is( ReadReportFile( $fname ), '', 'JAWP::ReportFile::OutputDirect(空データ)' );
 		}
+		unlink( $fname ) or die $!;
 	}
 
 	# OutputDirectテスト(文字列)
 	{
+		my $fname = GetTempFilename();
 		{
-			my $report = new JAWP::ReportFile( $testreportfile );
+			my $report = new JAWP::ReportFile( $fname );
 
 			$report->OutputDirect( '隣の客はよく柿食う客だ' );
 		}
 		{
-			is( ReadReportFile(), '隣の客はよく柿食う客だ', 'JAWP::ReportFile::OutputDirect(文字列)' );
+			is( ReadReportFile( $fname ), '隣の客はよく柿食う客だ', 'JAWP::ReportFile::OutputDirect(文字列)' );
 		}
+		unlink( $fname ) or die $!;
 	}
 
 	# OutputDirectテスト(文字列複数回)
 	{
+		my $fname = GetTempFilename();
 		{
-			my $report = new JAWP::ReportFile( $testreportfile );
+			my $report = new JAWP::ReportFile( $fname );
 
 			$report->OutputDirect( "赤巻紙青巻紙黄巻紙\n" );
 			$report->OutputDirect( "坊主が屏風に上手に坊主の絵を書いた\n" );
@@ -1854,8 +1903,9 @@ STR
 赤巻紙青巻紙黄巻紙
 坊主が屏風に上手に坊主の絵を書いた
 STR
-			is( ReadReportFile(), $str, 'JAWP::ReportFile::OutputDirect(文字列複数回)' );
+			is( ReadReportFile( $fname ), $str, 'JAWP::ReportFile::OutputDirect(文字列複数回)' );
 		}
+		unlink( $fname ) or die $!;
 	}
 }
 
@@ -2182,43 +2232,47 @@ sub TestJAWPCGIApp {
 
 # スタートアップ
 sub Startup {
-	if( !( -d $testdir ) ) {
-		mkdir( $testdir ) or die "failed to create test directory($!)";
-	}
 }
 
 
 # クリーンナップ
 sub Cleanup {
-	if( -e $testxmlfile ) {
-		unlink( $testxmlfile ) or die "failed to remove $testxmlfile($!)";
-	}
-	if( -e $testreportfile ) {
-		unlink( $testreportfile ) or die "failed to remove $testreportfile($!)";
-	}
-	rmdir( $testdir ) or die "failed to remove test directory($!)";
 }
 
 
 # テストXMLファイル作成
 sub WriteTestXMLFile {
 	my $text = shift;
+	my $fname = GetTempFilename();
 
-	open F, '>', $testxmlfile or die "failed to open $testxmlfile($!)";
-	print F $text or die "failed to write $testxmlfile($!)";
-	close F or die "failed to close $testxmlfile($!)";
+	open F, '>', $fname or die $!;
+	print F $text or die $!;
+	close F or die $!;
+
+	return( $fname );
 }
 
 
 # レポートファイル読み込み
 sub ReadReportFile {
+	my $fname = shift;
 	my $text;
 
-	open F, '<', $testreportfile or die "failed to open $testreportfile($!)";
+	open F, '<', $fname or die $!;
 	$text = join( '', <F> );
-	close F or die "failed to close $testreportfile($!)";
+	close F or die $!;
 
-	return $text;
+	return( $text );
+}
+
+
+# テスト用ファイル名取得
+sub GetTempFilename {
+	my( $fh, $fname ) = mkstemp( $fnametemp );
+
+	close $fh or die $!;
+
+	return( $fname );
 }
 
 
