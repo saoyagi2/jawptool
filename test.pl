@@ -1730,7 +1730,6 @@ sub TestJAWPReport {
 		my $fname = GetTempFilename();
 		{
 			my $report = new JAWP::ReportFile( $fname );
-			my @datalist;
 
 			$report->OutputWiki( 'title', \( '' ) );
 		}
@@ -1750,7 +1749,6 @@ STR
 		my $fname = GetTempFilename();
 		{
 			my $report = new JAWP::ReportFile( $fname );
-			my @datalist;
 
 			$report->OutputWiki( 'title', \( "text1\ntext2" ) );
 		}
@@ -1771,7 +1769,6 @@ STR
 		my $fname = GetTempFilename();
 		{
 			my $report = new JAWP::ReportFile( $fname );
-			my @datalist;
 
 			$report->OutputWiki( 'title1', \( "text1\ntext2" ) );
 			$report->OutputWiki( 'title2', \( "text3\ntext4" ) );
@@ -1797,9 +1794,8 @@ STR
 		my $fname = GetTempFilename();
 		{
 			my $report = new JAWP::ReportFile( $fname );
-			my @datalist;
 
-			$report->OutputWikiList( 'title', \@datalist );
+			$report->OutputWikiList( 'title', [] );
 		}
 		{
 			my $str = <<'STR';
@@ -1816,9 +1812,8 @@ STR
 		my $fname = GetTempFilename();
 		{
 			my $report = new JAWP::ReportFile( $fname );
-			my @datalist = ( 'あいうえお', 'かきくけこ', 'さしすせそ' );
 
-			$report->OutputWikiList( 'title', \@datalist );
+			$report->OutputWikiList( 'title', [ 'あいうえお', 'かきくけこ', 'さしすせそ' ] );
 		}
 		{
 			my $str = <<'STR';
@@ -1838,11 +1833,9 @@ STR
 		my $fname = GetTempFilename();
 		{
 			my $report = new JAWP::ReportFile( $fname );
-			my @datalist1 = ( 'あいうえお', 'かきくけこ', 'さしすせそ' );
-			my @datalist2 = ( 'abcde', '01234' );
 
-			$report->OutputWikiList( 'title1', \@datalist1 );
-			$report->OutputWikiList( 'title2', \@datalist2 );
+			$report->OutputWikiList( 'title1', [ 'あいうえお', 'かきくけこ', 'さしすせそ' ] );
+			$report->OutputWikiList( 'title2', [ 'abcde', '01234' ] );
 		}
 		{
 			my $str = <<'STR';
