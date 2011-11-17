@@ -1236,6 +1236,93 @@ sub TestJAWPArticle {
 		is( @$result_ref + 0, 1, 'JAWP::Article::LintRedirect(ノート:警告数)' );
 		is( $result_ref->[0], 'ノートのリダイレクトは有用ではない可能性があります', 'JAWP::Article::LintRedirect(ノート:警告文)' );
 	}
+
+	# LintIndexテスト
+	{
+		my $article = new JAWP::Article;
+		my $titlelist = new JAWP::TitleList;
+		my $result_ref;
+
+		$titlelist->{'標準'}->{'記事'} = 1;
+
+		$article->SetTitle( '' );
+		$article->SetText( '' );
+		$result_ref = $article->LintIndex( $titlelist );
+		is( ref $result_ref, 'ARRAY', 'JAWP::Article::LintIndex(空文字列:リファレンス種別)' );
+		is( @$result_ref + 0, 0, 'JAWP::Article::LintIndex(空文字列:警告数)' );
+
+		# 索引記事以外は無視確認
+		$article->SetTitle( 'aaa' );
+		$article->SetText( '' );
+		$result_ref = $article->LintIndex( $titlelist );
+		is( @$result_ref + 0, 0, 'JAWP::Article::LintIndex(非索引:警告数)' );
+
+		# 見出しテスト
+		{
+			# 見出し正常
+			$article->SetTitle( 'Wikipedia:索引 あ' );
+			$article->SetText( "==ああ==\n==あい==\n" );
+			$result_ref = $article->LintIndex( $titlelist );
+			is( @$result_ref + 0, 0, 'JAWP::Article::LintIndex(見出し正常:警告数)' );
+
+			# 見出し違反(記事名不一致)
+			$article->SetTitle( 'Wikipedia:索引 あ' );
+			$article->SetText( "==い==\n" );
+			$result_ref = $article->LintIndex( $titlelist );
+			is( @$result_ref + 0, 1, 'JAWP::Article::LintIndex(見出し違反(記事名不一致):警告数)' );
+			is( $result_ref->[0], '見出しが記事名に一致しません(1,い,あ)', 'JAWP::Article::LintIndex(見出し違反(記事名不一致):警告文)' );
+
+			# 見出し違反(順序違反)
+			$article->SetTitle( 'Wikipedia:索引 あ' );
+			$article->SetText( "==あい==\n==ああ==\n" );
+			$result_ref = $article->LintIndex( $titlelist );
+			is( @$result_ref + 0, 1, 'JAWP::Article::LintIndex(見出し違反(順序違反):警告数)' );
+			is( $result_ref->[0], '見出しがあいうえお順ではありません(2,あい,ああ)', 'JAWP::Article::LintIndex(見出し違反(順序違反):警告文)' );
+		}
+
+		# 項目テスト
+		{
+			# 項目正常
+			$article->SetTitle( 'Wikipedia:索引 あ' );
+			$article->SetText( "*[[記事]]（きじ）【分野】\n" );
+			$result_ref = $article->LintIndex( $titlelist );
+			is( @$result_ref + 0, 0, 'JAWP::Article::LintIndex(項目正常:警告数)' );
+
+			# リダイレクト正常
+			$article->SetTitle( 'Wikipedia:索引 あ' );
+			$article->SetText( "*[[記事]]（きじ）⇒[[記事]]\n" );
+			$result_ref = $article->LintIndex( $titlelist );
+			is( @$result_ref + 0, 0, 'JAWP::Article::LintIndex(リダイレクト正常:警告数)' );
+
+			# 赤リンク
+			$article->SetTitle( 'Wikipedia:索引 あ' );
+			$article->SetText( "*[[あああ]]【分野】\n" );
+			$result_ref = $article->LintIndex( $titlelist );
+			is( @$result_ref + 0, 1, 'JAWP::Article::LintIndex(赤リンク:警告数)' );
+			is( $result_ref->[0], '(あああ)は赤リンクです(1)', 'JAWP::Article::LintIndex(赤リンク:警告文)' );
+
+			# 読み仮名無し
+			$article->SetTitle( 'Wikipedia:索引 あ' );
+			$article->SetText( "*[[記事]]【分野】\n" );
+			$result_ref = $article->LintIndex( $titlelist );
+			is( @$result_ref + 0, 1, 'JAWP::Article::LintIndex(赤リンク:警告数)' );
+			is( $result_ref->[0], '読み仮名がありません(1)', 'JAWP::Article::LintIndex(赤リンク:警告文)' );
+
+			# '曖昧'使用
+			$article->SetTitle( 'Wikipedia:索引 あ' );
+			$article->SetText( "*[[記事]]（きじ）【曖昧】\n" );
+			$result_ref = $article->LintIndex( $titlelist );
+			is( @$result_ref + 0, 1, "JAWP::Article::LintIndex('曖昧'使用:警告数)" );
+			is( $result_ref->[0], '【曖昧】より【曖昧さ回避】が推奨されます(1)', "JAWP::Article::LintIndex('曖昧'使用:警告文)" );
+
+			# 分野名無し
+			$article->SetTitle( 'Wikipedia:索引 あ' );
+			$article->SetText( "*[[記事]]（きじ）\n" );
+			$result_ref = $article->LintIndex( $titlelist );
+			is( @$result_ref + 0, 1, 'JAWP::Article::LintIndex(分野名無し:警告数)' );
+			is( $result_ref->[0], '分野名がありません(1)', 'JAWP::Article::LintIndex(分野名無:警告文)' );
+		}
+	}
 }
 
 
