@@ -269,7 +269,7 @@ sub LintTitle {
 		if( $self->{'title'} =~ /^(株式会社|有限会社|合名会社|合資会社|合同会社)./ || $self->{'title'} =~ /.(株式会社|有限会社|合名会社|合資会社|合同会社)$/ ) {
 			push @result, '会社の記事であれば法的地位を示す語句を含むことは推奨されません';
 		}
-		if( $self->{'title'} =~ /～/ ) {
+		if( index( $self->{'title'}, '～' ) >= 0 ) {
 			push @result, '波記号は〜(U+301C)を使用しましょう';
 		}
 		for( my $n = 0; $n < length( $self->{'title'} ); $n++ ) {
@@ -495,16 +495,15 @@ sub LintText {
 		}
 	}
 
-	my( $cat存命, $cat生年, $cat没年, $temp生年月日, $temp死亡年月日, $生年, $没年 );
+	my $cat存命 = defined( $category{'存命人物'} );
+	my $cat生年 = defined( $category{'生年不明'} ) || grep { /^\d+年生$/ } keys %category;
+	my $cat没年 = defined( $category{'没年不明'} ) || grep { /^\d+年没$/ } keys %category;
+	my $temp生年月日 = ( index( $text, '{{生年月日と年齢|' ) >= 0 );
+	my $temp死亡年月日 = ( index( $text, '{{死亡年月日と没年齢|' ) >= 0 || index( $text, '{{没年齢|' ) >= 0 );
+	my $生年 = $1 if( $text =~ /\[\[Category:(\d+)年生/i );
+	my $没年 = $1 if( $text =~ /\[\[Category:(\d+)年没/i );
 	my( $y, $m, $d );
 
-	$cat存命 = defined( $category{'存命人物'} );
-	$cat生年 = defined( $category{'生年不明'} ) || grep { /^\d+年生$/ } keys %category;
-	$cat没年 = defined( $category{'没年不明'} ) || grep { /^\d+年没$/ } keys %category;
-	$temp生年月日 = $text =~ /{{生年月日と年齢\|/;
-	$temp死亡年月日 = $text =~ /{{(死亡年月日と没年齢|没年齢)\|/;
-	$生年 = $1 if( $text =~ /\[\[Category:(\d+)年生/i );
-	$没年 = $1 if( $text =~ /\[\[Category:(\d+)年没/i );
 	if( $cat存命 && ( $cat没年 || $temp死亡年月日 ) ) {
 		push @result, '存命人物ではありません';
 	}
@@ -570,7 +569,7 @@ sub LintIndex {
 				$prevhead = $head;
 			}
 		}
-		if( $lines[$n - 1] =~ /^\*/ ) {
+		if( index( $lines[$n - 1], '*' ) == 0 ) {
 			my @words = JAWP::Util::GetLinkwordList( $lines[$n - 1] );
 			if( @words + 0 != 0 ) {
 				foreach( @words ) {
@@ -911,7 +910,7 @@ sub GetTemplatewordList {
 
 	my @wordlist;
 	while( $text =~ /\{\{(.*?)(\||\}\})/g ) {
-		next if( $1 =~ /^(DEFAULTSORT|デフォルトソート)/ || $1 =~ /^Sakujo\// );
+		next if( index( $1, 'DEFAULTSORT' ) == 0 || index( $1, 'デフォルトソート' ) == 0 || index( $1, 'Sakujo/' ) == 0 );
 		my $word = $1;
 		$word =~ s/[_　‎]/ /g;
 		$word =~ s/^( +|)(.*?)( +|)$/$2/;
