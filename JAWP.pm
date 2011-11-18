@@ -855,23 +855,29 @@ sub DecodeURL {
 
 # ハッシュのソート
 # param $hash_ref ハッシュへのリファレンス
+# param $by 比較タイプ。真なら数値、偽なら文字列。未定義なら数値
+# param $order ソート順。真なら昇順、偽なら降順。未定義なら昇順
 # return ソート結果配列へのリファレンス
 sub SortHash {
-	my $hash_ref = shift;
+	my( $hash_ref, $by, $order ) = @_;
 
-	my @result = sort { ( $hash_ref->{$b} <=> $hash_ref->{$a} ) } keys %$hash_ref;
-
-	return( \@result );
-}
-
-
-# ハッシュの文字列によるソート
-# param $hash_ref ハッシュへのリファレンス
-# return ソート結果配列へのリファレンス
-sub SortHashByStr {
-	my $hash_ref = shift;
-
-	my @result = sort { ( $hash_ref->{$a} cmp $hash_ref->{$b} ) } keys %$hash_ref;
+	my @result;
+	if( !defined( $by ) || $by ) {
+		if( !defined( $order ) || $order ) {
+			@result = sort { ( $hash_ref->{$a} <=> $hash_ref->{$b} ) } keys %$hash_ref;
+		}
+		else {
+			@result = sort { ( $hash_ref->{$b} <=> $hash_ref->{$a} ) } keys %$hash_ref;
+		}
+	}
+	else {
+		if( !defined( $order ) || $order ) {
+			@result = sort { ( $hash_ref->{$a} cmp $hash_ref->{$b} ) } keys %$hash_ref;
+		}
+		else {
+			@result = sort { ( $hash_ref->{$b} cmp $hash_ref->{$a} ) } keys %$hash_ref;
+		}
+	}
 
 	return( \@result );
 }
@@ -1578,7 +1584,7 @@ sub StatisticReportSub2 {
 	my( $title, $data_ref, $prefix, $report, $innerlink ) = @_;
 
 	delete $data_ref->{''};
-	my $data2_ref = JAWP::Util::SortHash( $data_ref );
+	my $data2_ref = JAWP::Util::SortHash( $data_ref, 1, 0 );
 	my $text = '';
 	if( @$data2_ref > 0 ) {
 		$text .= "{{columns-list|2|\n";
@@ -1855,7 +1861,7 @@ STR
 		}
 	}
 
-	my @datalist = map { "[[$_]]" } @{ JAWP::Util::SortHashByStr( \%titlelist ) };
+	my @datalist = map { "[[$_]]" } @{ JAWP::Util::SortHash( \%titlelist, 0, 1 ) };
 	$report->OutputWikiList( '一覧', \@datalist );
 	$report->OutputDirect( sprintf( "記事数 %d\n", @datalist + 0 ) );
 }
@@ -1889,7 +1895,7 @@ STR
 	}
 	print "\n";
 
-	my @datalist = map { "[[$_]]($indexlist{$_})" } @{ JAWP::Util::SortHash( \%indexlist ) };
+	my @datalist = map { "[[$_]]($indexlist{$_})" } @{ JAWP::Util::SortHash( \%indexlist, 1, 0 ) };
 	$report->OutputWikiList( '一覧', \@datalist );
 	$report->OutputDirect( sprintf( "索引数 %d\n", @datalist + 0 ) );
 }

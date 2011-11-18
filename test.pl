@@ -2083,24 +2083,29 @@ sub TestJAWPUtil {
 
 	# SortHashテスト
 	{
-		my %hash = ( 'a'=>2, 'b'=>1, 'c'=>3 );
-		my $sorted = JAWP::Util::SortHash( \%hash );
-		is( ref $sorted, 'ARRAY', 'JAWP::Util::SortHash(リファレンス種別)' );
-		is( @$sorted + 0, 3, 'JAWP::Util::SortHash(配列要素数)' );
-		is( $sorted->[0], 'c', 'JAWP::Util::SortHash(配列要素1)' );
-		is( $sorted->[1], 'a', 'JAWP::Util::SortHash(配列要素2)' );
-		is( $sorted->[2], 'b', 'JAWP::Util::SortHash(配列要素3)' );
-	}
+		my %numhash = ( 'a'=>2, 'b'=>1, 'c'=>3 );
+		my %strhash = ( 'a'=>'う', 'b'=>'あ', 'c'=>'い' );
 
-	# SortHashByStrテスト
-	{
-		my %hash = ( 'a'=>'い', 'b'=>'あ', 'c'=>'う' );
-		my $sorted = JAWP::Util::SortHashByStr( \%hash );
-		is( ref $sorted, 'ARRAY', 'JAWP::Util::SortHashByStr(リファレンス種別)' );
-		is( @$sorted + 0, 3, 'JAWP::Util::SortHashByStr(配列要素数)' );
-		is( $sorted->[0], 'b', 'JAWP::Util::SortHashByStr(配列要素1)' );
-		is( $sorted->[1], 'a', 'JAWP::Util::SortHashByStr(配列要素2)' );
-		is( $sorted->[2], 'c', 'JAWP::Util::SortHashByStr(配列要素3)' );
+		my $sorted = JAWP::Util::SortHash( \%numhash );
+		is_deeply( $sorted, [ 'b', 'a', 'c' ], 'JAWP::Util::SortHash(配列要素,デフォルト(bynum,昇順))' );
+
+		$sorted = JAWP::Util::SortHash( \%numhash, 1 );
+		is_deeply( $sorted, [ 'b', 'a', 'c' ], 'JAWP::Util::SortHash(配列要素,デフォルト(bynum,昇順))' );
+
+		$sorted = JAWP::Util::SortHash( \%numhash, 1, 1 );
+		is_deeply( $sorted, [ 'b', 'a', 'c' ], 'JAWP::Util::SortHash(配列要素,デフォルト(bynum,昇順))' );
+
+		$sorted = JAWP::Util::SortHash( \%numhash, 1, 0 );
+		is_deeply( $sorted, [ 'c', 'a', 'b' ], 'JAWP::Util::SortHash(配列要素,デフォルト(bynum,降順))' );
+
+		$sorted = JAWP::Util::SortHash( \%strhash, 0 );
+		is_deeply( $sorted, [ 'b', 'c', 'a' ], 'JAWP::Util::SortHash(配列要素,デフォルト(bystr,昇順))' );
+
+		$sorted = JAWP::Util::SortHash( \%strhash, 0, 1 );
+		is_deeply( $sorted, [ 'b', 'c', 'a' ], 'JAWP::Util::SortHash(配列要素,デフォルト(bystr,昇順))' );
+
+		$sorted = JAWP::Util::SortHash( \%strhash, 0, 0 );
+		is_deeply( $sorted, [ 'a', 'c', 'b' ], 'JAWP::Util::SortHash(配列要素,デフォルト(bystr,降順))' );
 	}
 
 	# GetLinkwordListテスト
