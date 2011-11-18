@@ -21,9 +21,8 @@ package JAWP::Article;
 # コンストラクタ
 sub new {
 	my $class = shift;
-	my $self;
 
-	$self = bless( { 'title'=>'', 'timestamp'=>'', 'text'=>'' }, $class );
+	my $self = bless( { 'title'=>'', 'timestamp'=>'', 'text'=>'' }, $class );
 
 	return( $self );
 }
@@ -178,11 +177,10 @@ sub Namespace {
 # return 経過時間(YYYY-MM-DDTHH:MM:SSZ形式)
 sub GetPassTime {
 	my( $self, $time ) = @_;
-	my $passtime;
-	my @time;
 
-	@time = gmtime( $time );
-	if( $self->{'timestamp'} =~ /(\d{4})\-(\d{2})\-(\d{2})T(\d{2}):(\d{2}):(\d{2})Z/ ) {
+	my @time = gmtime( $time );
+	my $passtime = '0000-00-00T00:00:00Z';
+	if( $self->{'timestamp'} =~ /([0-9]{4})\-([0-9]{2})\-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z/ ) {
 		$time[0] = $time[0] - $6;
 		if( $time[0] < 0 ) {
 			$time[0] += 60;
@@ -213,12 +211,6 @@ sub GetPassTime {
 		if( $time[5] >= 0 ) {
 			$passtime = sprintf( "%04d-%02d-%02dT%02d:%02d:%02dZ", $time[5], $time[4], $time[3], $time[2], $time[1], $time[0] );
 		}
-		else {
-			$passtime = '0000-00-00T00:00:00Z';
-		}
-	}
-	else {
-		$passtime = '0000-00-00T00:00:00Z';
 	}
 
 	return( $passtime );
@@ -231,7 +223,7 @@ sub GetPassTime {
 # return $datalist_ref 結果配列へのリファレンス
 sub LintTitle {
 	my $self = shift;
-	my( @result, $n, $c, $code, $str );
+	my @result;
 
 	if( $self->Namespace ne '標準' ) {
 		return( \@result );
@@ -280,12 +272,12 @@ sub LintTitle {
 		if( $self->{'title'} =~ /～/ ) {
 			push @result, '波記号は〜(U+301C)を使用しましょう';
 		}
-		for( $n = 0; $n < length( $self->{'title'} ); $n++ ) {
-			$c = substr( $self->{'title'}, $n, 1 );
-			$code = ord( $c );
+		for( my $n = 0; $n < length( $self->{'title'} ); $n++ ) {
+			my $c = substr( $self->{'title'}, $n, 1 );
+			my $code = ord( $c );
 			if( ( $code >= 0x4e00 && $code <= 0x9FFF ) || ( $code >= 0x3400 && $code <= 0x4DB5 )
 				|| ( $code >= 0xF900 && $code <= 0xFAFF ) ) {
-				$str = Encode::encode( 'jis0208-raw', $c, Encode::FB_XMLCREF );
+				my $str = Encode::encode( 'jis0208-raw', $c, Encode::FB_XMLCREF );
 				if( index( $str, '&#x' ) >= 0 ) {
 					push @result, sprintf( "%s(U+%04X) はJIS X 0208外の文字です", $c, $code );
 				}
@@ -293,8 +285,8 @@ sub LintTitle {
 		}
 	}
 
-	for( $n = 0; $n < length( $self->{'title'} ); $n++ ) {
-		$c = substr( $self->{'title'}, $n, 1 );
+	for( my $n = 0; $n < length( $self->{'title'} ); $n++ ) {
+		my $c = substr( $self->{'title'}, $n, 1 );
 		if( ord( $c ) >= 65536 ) {
 			push @result, "$c は基本多言語面外の文字です";
 		}
@@ -310,7 +302,7 @@ sub LintTitle {
 # return $datalist_ref 結果配列へのリファレンス
 sub LintText {
 	my( $self, $titlelist ) = @_;
-	my( $text, $checktimestamp, @time, @result, $text2, $n, @lines, @lines2, $headlevel, $prevheadlevel, $code, $defaultsort, %category, %interlink, $previnterlink, $mode, $prevmode );
+	my( $text, $checktimestamp, @time, @result, @lines, @lines2, $code, %category, %interlink, $previnterlink );
 
 	if( $self->Namespace ne '標準' || $self->IsRedirect ) {
 		return( \@result );
@@ -322,34 +314,32 @@ sub LintText {
 		$tmp =~ s/[^\n]//g;
 		$text =~ s/<(math|code|pre|nowiki)(.*?)(\/math|\/code|\/pre|\/nowiki)>/$tmp/is;
 	}
-
 	@lines = split( /\n/, $text );
-	$text2 = $text;
-	while( $text2 =~ s/\[([^[]+?)\]/ $1 /sg ){}
-	while( $text2 =~ s/\{([^{]+?)\}/ $1 /sg ){}
-	@lines2 = split( /\n/, $text2 );
-	if( @lines != @lines2 ) {
-		push @result, '行数不一致(プログラムの問題)';
-		return( \@result );
+
+	{
+		my $text2 = $text;
+		while( $text2 =~ s/\[([^[]+?)\]/ $1 /sg ){}
+		while( $text2 =~ s/\{([^{]+?)\}/ $1 /sg ){}
+		@lines2 = split( /\n/, $text2 );
+		if( @lines != @lines2 ) {
+			push @result, '行数不一致(プログラムの問題)';
+			return( \@result );
+		}
 	}
 
-	$headlevel = $prevheadlevel = 1;
-	$defaultsort = '';
-	$prevmode = 'text';
-	for( $n = 1; $n < @lines + 1; $n++ ) {
-		if( $lines[$n - 1] eq '' || $lines[$n - 1] =~ /^\s*\{\{.*\}\}\s*$/ ) {
-			$mode = '';
-		}
-		else {
-			$mode = 'text';
-		}
+	my $prevheadlevel = 1;
+	my $defaultsort = '';
+	my $prevmode = 'text';
+	my $mode;
+	for( my $n = 1; $n < @lines + 1; $n++ ) {
+		my $mode = ( $lines[$n - 1] eq '' || $lines[$n - 1] =~ /^\s*\{\{.*\}\}\s*$/ ) ? '' : 'text';
 
 		if( $lines[$n - 1] =~ /^(=+)[^=]+(=+)$/ ) {
 			if( length( $1 ) != length( $2 ) ) {
 				push @result, "見出し記法の左右の=の数が一致しません($n)";
 			}
 			else {
-				$headlevel = length( $1 );
+				my $headlevel = length( $1 );
 				if( $headlevel == 1 ) {
 					push @result, "レベル1の見出しがあります($n)";
 				}
@@ -549,7 +539,7 @@ sub LintText {
 # return $datalist_ref 結果配列へのリファレンス
 sub LintRedirect {
 	my $self = shift;
-	my( @result, $n, $c, $code, $str );
+	my @result;
 
 	if( !$self->IsRedirect ) {
 		return( \@result );
@@ -572,42 +562,42 @@ sub LintRedirect {
 # return $datalist_ref 結果配列へのリファレンス
 sub LintIndex {
 	my( $self, $titlelist ) = @_;
-	my( @result, $word, $linktype );
-	my( $head, $head2, $title, $text, @words, $n, @lines );
+	my @result;
 
 	return( \@result ) if( !$self->IsIndex || $self->{'title'} eq 'Wikipedia:索引' );
 
+	my $title;
 	if( $self->{'title'} =~ /Wikipedia:索引 ([あ-ん]+)$/ ) {
 		$title = $1;
 	}
 
-	$text = $self->{'text'};
+	my $text = $self->{'text'};
 	while( $text =~ /<(math|code|pre|nowiki)(.*?)(\/math|\/code|\/pre|\/nowiki)>/is ) {
 		my $tmp = $2;
 		$tmp =~ s/[^\n]//g;
 		$text =~ s/<(math|code|pre|nowiki)(.*?)(\/math|\/code|\/pre|\/nowiki)>/$tmp/is;
 	}
 
-	@lines = split( /\n/, $text );
-	$head = '';
-	for( $n = 1; $n < @lines + 1; $n++ ) {
+	my @lines = split( /\n/, $text );
+	my $prevhead = '';
+	for( my $n = 1; $n < @lines + 1; $n++ ) {
 		if( defined( $title ) && $lines[$n - 1] =~ /^=+ *([^=]+) *=+$/ ) {
-			$head2 = $1;
-			if( $head2 =~ /^[あ-ん]+$/ ) {
-				if( index( $head2, $title ) != 0 ) {
-					push @result, "見出しが記事名に一致しません($n,$head2,$title)";
+			my $head = $1;
+			if( $head =~ /^[あ-ん]+$/ ) {
+				if( index( $head, $title ) != 0 ) {
+					push @result, "見出しが記事名に一致しません($n,$head,$title)";
 				}
-				if( $head gt $head2 ) {
-					push @result, "見出しがあいうえお順ではありません($n,$head,$head2)";
+				if( $prevhead gt $head ) {
+					push @result, "見出しがあいうえお順ではありません($n,$prevhead,$head)";
 				}
-				$head = $head2;
+				$prevhead = $head;
 			}
 		}
 		if( $lines[$n - 1] =~ /^\*/ ) {
-			@words = JAWP::Util::GetLinkwordList( $lines[$n - 1] );
+			my @words = JAWP::Util::GetLinkwordList( $lines[$n - 1] );
 			if( @words + 0 != 0 ) {
 				foreach( @words ) {
-					( $linktype, $word ) = JAWP::Util::GetLinkType( $_, $titlelist );
+					my ( $linktype, $word ) = JAWP::Util::GetLinkType( $_, $titlelist );
 					if( $linktype eq 'redlink' ) {
 						push @result, "($word)は赤リンクです($n)";
 					}
@@ -644,9 +634,8 @@ package JAWP::TitleList;
 # コンストラクタ
 sub new {
 	my $class = shift;
-	my $self;
 
-	$self = bless( { 'allcount'=>0,
+	my $self = bless( { 'allcount'=>0,
 
 		'標準'=>{}, '標準_曖昧'=>{}, '標準_リダイレクト'=>{},
 		'利用者'=>{}, 'Wikipedia'=>{}, 'ファイル'=>{}, 'MediaWiki'=>{},
@@ -671,11 +660,11 @@ package JAWP::DataFile;
 # コンストラクタ
 sub new {
 	my( $class, $filename ) = @_;
-	my( $self, $fh );
 
+	my $fh;
 	open $fh, '<', $filename or die $!;
 
-	$self = bless( { 'filename'=>$filename, 'fh'=>$fh }, $class );
+	my $self = bless( { 'filename'=>$filename, 'fh'=>$fh }, $class );
 
 	return( $self );
 }
@@ -685,11 +674,10 @@ sub new {
 # return 取得成功時はJAWP::Article、失敗時はundef
 sub GetArticle {
 	my $self = shift;
+
 	my $article = new JAWP::Article;
 	my $fh = $self->{'fh'};
-	my( $text, $flag );
-
-	$flag = 0;
+	my $flag = 0;
 	while( <$fh> ) {
 		if( /<title>(.*)<\/title>/ ) {
 			$article->SetTitle( $1 );
@@ -704,7 +692,7 @@ sub GetArticle {
 			$flag |= 4;
 		}
 		elsif( /<text xml:space="preserve">(.*)/ ) {
-			$text = "$1\n";
+			my $text = "$1\n";
 			while( <$fh> ) {
 				if( /(.*)<\/text>/ ) {
 					$text .= $1;
@@ -733,16 +721,16 @@ sub GetArticle {
 # return TitleList
 sub GetTitleList {
 	my( $self, $withsection ) = @_;
-	my $titlelist = new JAWP::TitleList;
-	my( $n, $article, $title, $namespace );
 
-	$n = 1;
-	while( $article = $self->GetArticle ) {
+	my $titlelist = new JAWP::TitleList;
+	my $n = 1;
+	while( my $article = $self->GetArticle ) {
 		print "$n\r";$n++;
 
 		$titlelist->{'allcount'}++;
 
-		$namespace = $article->Namespace;
+		my $namespace = $article->Namespace;
+		my $title;
 		if( $namespace eq '標準' ) {
 			$title = $article->{'title'};
 			if( $article->IsRedirect ) {
@@ -777,11 +765,10 @@ sub GetTitleList {
 # return TitleList
 sub GetRawTitleList {
 	my $self = shift;
-	my %rawtitlelist;
-	my( $n, $article, $namespace );
 
-	$n = 1;
-	while( $article = $self->GetArticle ) {
+	my %rawtitlelist;
+	my $n = 1;
+	while( my $article = $self->GetArticle ) {
 		print "$n\r";$n++;
 
 		$rawtitlelist{$article->{'title'}} = 1;
@@ -803,11 +790,11 @@ package JAWP::ReportFile;
 # param $filename レポートファイル名
 sub new {
 	my( $class, $filename ) = @_;
-	my( $self, $fh );
 
+	my $fh;
 	open $fh, '>', $filename or die $!;
 
-	$self = bless(
+	my $self = bless(
 		{ 'filename'=>$filename, 'fh'=>$fh }, $class );
 
 	return( $self );
@@ -819,9 +806,8 @@ sub new {
 # param $data_ref レポートデータへのリファレンス
 sub OutputWiki {
 	my( $self, $title, $data_ref ) = @_;
-	my $fh;
 
-	$fh = $self->{'fh'};
+	my $fh = $self->{'fh'};
 	print $fh "== $title ==\n" or die $!;
 	print $fh "$$data_ref\n" or die $!;
 	print $fh "\n" or die $!;
@@ -833,11 +819,10 @@ sub OutputWiki {
 # param $datalist_ref レポートデータ配列へのリファレンス
 sub OutputWikiList {
 	my( $self, $title, $datalist_ref ) = @_;
-	my( $data, $fh );
 
-	$fh = $self->{'fh'};
+	my $fh = $self->{'fh'};
 	print $fh "== $title ==\n" or die $!;
-	foreach $data ( @$datalist_ref ) {
+	foreach my $data ( @$datalist_ref ) {
 		print $fh "*$data\n" or die $!;
 	}
 	print $fh "\n" or die $!;
@@ -848,9 +833,8 @@ sub OutputWikiList {
 # param $text 文字列
 sub OutputDirect {
 	my( $self, $text ) = @_;
-	my $fh;
 
-	$fh = $self->{'fh'};
+	my $fh = $self->{'fh'};
 	print $fh $text or die $!;
 }
 
@@ -916,9 +900,8 @@ sub DecodeURL {
 # return ソート結果配列へのリファレンス
 sub SortHash {
 	my $hash_ref = shift;
-	my @result;
 
-	@result = sort { ( $hash_ref->{$b} <=> $hash_ref->{$a} ) } keys %$hash_ref;
+	my @result = sort { ( $hash_ref->{$b} <=> $hash_ref->{$a} ) } keys %$hash_ref;
 
 	return( \@result );
 }
@@ -929,9 +912,8 @@ sub SortHash {
 # return ソート結果配列へのリファレンス
 sub SortHashByStr {
 	my $hash_ref = shift;
-	my @result;
 
-	@result = sort { ( $hash_ref->{$a} cmp $hash_ref->{$b} ) } keys %$hash_ref;
+	my @result = sort { ( $hash_ref->{$a} cmp $hash_ref->{$b} ) } keys %$hash_ref;
 
 	return( \@result );
 }
@@ -943,11 +925,11 @@ sub SortHashByStr {
 # return リンク語リスト
 sub GetLinkwordList {
 	my( $text, $withsection ) = @_;
-	my( $word, @wordlist );
 
+	my @wordlist;
 	while( $text =~ /\[\[(.*?)(\||\]\])/g ) {
 		next if( $1 =~ /[\[\{\}]/ );
-		$word = $1;
+		my $word = $1;
 		$word =~ s/#.*?$// if( !$withsection );
 		$word =~ s/[_　‎]/ /g;
 		$word =~ s/^( +|)(.*?)( +|)$/$2/;
@@ -967,11 +949,11 @@ sub GetLinkwordList {
 # return リンク語リスト
 sub GetTemplatewordList {
 	my $text = shift;
-	my( $word, @wordlist );
 
+	my @wordlist;
 	while( $text =~ /\{\{(.*?)(\||\}\})/g ) {
 		next if( $1 =~ /^(DEFAULTSORT|デフォルトソート)/ || $1 =~ /^Sakujo\// );
-		$word = $1;
+		my $word = $1;
 		$word =~ s/[_　‎]/ /g;
 		$word =~ s/^( +|)(.*?)( +|)$/$2/;
 		$word = ucfirst $word;
@@ -990,9 +972,8 @@ sub GetTemplatewordList {
 # return 外部リンクリスト
 sub GetExternallinkList {
 	my $text = shift;
-	my( @linklist );
 
-	@linklist = $text =~ /s?https?:\/\/[-_.!~*'()a-zA-Z0-9;\/?:\@&=+\$,%#]+/g;
+	my @linklist = $text =~ /s?https?:\/\/[-_.!~*'()a-zA-Z0-9;\/?:\@&=+\$,%#]+/g;
 
 	return( @linklist );
 }
@@ -1064,8 +1045,8 @@ sub GetLinkType {
 # return 見出し語リスト
 sub GetHeadnameList {
 	my $text = shift;
-	my( @headnamelist );
 
+	my @headnamelist;
 	while( $text =~ /^=+([^=]+?)=+$/mg ) {
         my $tmp = $1;
         $tmp =~ s/^ *//;
@@ -1084,8 +1065,8 @@ sub GetHeadnameList {
 # return 発言タイムスタンプリスト
 sub GetTalkTimestampList {
 	my $text = shift;
-	my( @timestamplist );
 
+	my @timestamplist;
 	while( $text =~ /([0-9]{4})年([0-9]{1,2})月([0-9]{1,2})日.{5}([0-9]{2}):([0-9]{2}) \(UTC\)/g ) {
 		push @timestamplist, sprintf( "%04d-%02d-%02dT%02d:%02d:00Z", $1, $2, $3, $4, $5 );
 	}
@@ -1185,7 +1166,6 @@ sub LintTitle {
 	my( $xmlfile, $reportfile ) = @_;
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
 	my $report = new JAWP::ReportFile( $reportfile );
-	my( $n, $article, $result_ref );
 
 	$report->OutputDirect( <<"STR"
 = 記事名lint =
@@ -1198,11 +1178,11 @@ sub LintTitle {
 STR
 	);
 
-	$n = 1;
-	while( $article = $jawpdata->GetArticle ) {
+	my $n = 1;
+	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
-		$result_ref = $article->LintTitle;
+		my $result_ref = $article->LintTitle;
 		if( @$result_ref != 0 ) {
 			$report->OutputWikiList( "[[$article->{'title'}]]", $result_ref );
 		}
@@ -1219,7 +1199,6 @@ sub LintText {
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
 	my $titlelist = $jawpdata->GetTitleList( 1 );
 	my $report = new JAWP::ReportFile( $reportfile );
-	my( $n, $article, $result_ref, $lintcount );
 
 	foreach my $namespace ( '標準', '利用者', '利用者‐会話', 'Wikipedia', 'Wikipedia‐ノート', 'ファイル', 'ファイル‐ノート', 'MediaWiki', 'MediaWiki‐ノート', 'Template‐ノート', 'Help', 'Help‐ノート', 'Category‐ノート', 'Portal', 'Portal‐ノート', 'プロジェクト', 'プロジェクト‐ノート' ) {
 		$titlelist->{$namespace} = {};
@@ -1236,12 +1215,12 @@ sub LintText {
 STR
 	);
 
-	$lintcount = 0;
-	$n = 1;
-	while( $article = $jawpdata->GetArticle ) {
+	my $lintcount = 0;
+	my $n = 1;
+	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
-		$result_ref = $article->LintText( $titlelist );
+		my $result_ref = $article->LintText( $titlelist );
 		if( @$result_ref != 0 ) {
 			$report->OutputWikiList( "[[$article->{'title'}]]", $result_ref );
 			$lintcount++;
@@ -1263,7 +1242,6 @@ sub LintRedirect {
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
 	my $titlelist = $jawpdata->GetTitleList( 1 );
 	my $report = new JAWP::ReportFile( $reportfile );
-	my( $n, $article, $word, @wordlist, $linktype, %result );
 
 	$report->OutputDirect( <<"STR"
 = リダイレクトlint =
@@ -1276,11 +1254,9 @@ sub LintRedirect {
 STR
 	);
 
-	$result{'aimai'} = [];
-	$result{'note'} = [];
-	$result{'redlink'} = [];
-	$n = 1;
-	while( $article = $jawpdata->GetArticle ) {
+	my %result = ( 'aimai'=>[], 'note'=>[], 'redlink'=>[] );
+	my $n = 1;
+	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
 		next if( !$article->IsRedirect );
@@ -1291,9 +1267,9 @@ STR
 		if( $article->Namespace eq 'ノート' ) {
 			push @{$result{'note'}}, "[[$article->{'title'}]]";
 		}
-		@wordlist = JAWP::Util::GetLinkwordList( $article->{'text'}, 1 );
+		my @wordlist = JAWP::Util::GetLinkwordList( $article->{'text'}, 1 );
 		if( @wordlist + 0 > 0 ) {
-			( $linktype, $word ) = JAWP::Util::GetLinkType( $wordlist[0], $titlelist );
+			my ( $linktype, $word ) = JAWP::Util::GetLinkType( $wordlist[0], $titlelist );
 			if( $linktype eq 'redlink' ) {
 				push @{$result{'redlink'}}, "[[$article->{'title'}]]($word)";
 			}
@@ -1316,7 +1292,6 @@ sub LintIndex {
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
 	my $titlelist = $jawpdata->GetTitleList;
 	my $report = new JAWP::ReportFile( $reportfile );
-	my( %titlelist, $article, $n, $result_ref );
 
 	$report->OutputDirect( <<"STR"
 = 索引文法lint =
@@ -1331,11 +1306,11 @@ STR
 		$titlelist->{$namespace} = {};
 	}
 
-	$n = 1;
-	while( $article = $jawpdata->GetArticle ) {
+	my $n = 1;
+	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
-		$result_ref = $article->LintIndex( $titlelist );
+		my $result_ref = $article->LintIndex( $titlelist );
 		if( @$result_ref != 0 ) {
 			$report->OutputWikiList( "[[$article->{'title'}]]", $result_ref );
 		}
@@ -1352,8 +1327,6 @@ sub Statistic {
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
 	my $titlelist = $jawpdata->GetTitleList;
 	my $report = new JAWP::ReportFile( $reportfile );
-	my( $n, $article, $text, $result_ref, $word, %count, @linkwordlist );
-	my( %linkcount, $linktype, %headnamecount );
 
 	$report->OutputDirect( <<"STR"
 = 統計 =
@@ -1367,17 +1340,16 @@ STR
 	);
 
 	StatisticReportSub1( $titlelist, $report );
-
 	foreach my $namespace ( '利用者', '利用者‐会話', 'Wikipedia', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki', 'MediaWiki‐ノート', 'Template‐ノート', 'Help', 'Help‐ノート', 'Category‐ノート', 'Portal', 'Portal‐ノート', 'プロジェクト', 'プロジェクト‐ノート' ) {
 		$titlelist->{$namespace} = {};
 	}
 
-	$n = 1;
+	my( %linkcount, %headnamecount );
 	foreach my $linktype ( '発リンク', '標準', 'aimai', 'redirect', 'category', 'file', 'template', 'redlink', 'externalhost' ) {
 		$linkcount{$linktype} = {};
 	}
-	%headnamecount = ();
-	while( $article = $jawpdata->GetArticle ) {
+	my $n = 1;
+	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
 		$article->{'text'} =~ s/<math.*?<\/math>//sg;
@@ -1385,31 +1357,31 @@ STR
 		$article->{'text'} =~ s/<code.*?<\/code>//sg;
 		$article->{'text'} =~ s/{{{.*?}}}//sg;
 
-		%count = ();
-
-		@linkwordlist = JAWP::Util::GetLinkwordList( $article->{'text'} );
+		my %count = ();
+		my $linktype;
+		my @linkwordlist = JAWP::Util::GetLinkwordList( $article->{'text'} );
 		if( $article->Namespace eq '標準' ) {
 			$linkcount{'発リンク'}->{$article->{'title'}} = @linkwordlist + 0;
 		}
-		foreach $word ( @linkwordlist ) {
+		foreach my $word ( @linkwordlist ) {
 			next if( ++$count{$word} > 1 );
 
 			( $linktype, $word ) = JAWP::Util::GetLinkType( $word, $titlelist );
 			$linkcount{$linktype}->{$word}++ if( $linktype ne 'none' );
 		}
 
-		foreach $word ( JAWP::Util::GetTemplatewordList( $article->{'text'} ) ) {
+		foreach my $word ( JAWP::Util::GetTemplatewordList( $article->{'text'} ) ) {
 			next if( ++$count{$word} > 1 );
 
 			$linkcount{template}->{$word}++ if( defined( $titlelist->{'Template'}->{$word} ) );
 		}
 
-		foreach $word ( JAWP::Util::GetExternallinkList( $article->{'text'} ) ) {
+		foreach my $word ( JAWP::Util::GetExternallinkList( $article->{'text'} ) ) {
 			$word = JAWP::Util::GetHost( $word );
 			$linkcount{'externalhost'}->{$word}++ if( defined( $word ) );
 		}
 
-		foreach $word ( JAWP::Util::GetHeadnameList( $article->{'text'} ) ) {
+		foreach my $word ( JAWP::Util::GetHeadnameList( $article->{'text'} ) ) {
 			$headnamecount{$word}++;
 		}
 	}
@@ -1448,7 +1420,7 @@ STR
 	my( %commentcount, %commentspeakcount );
 	my( %sadokucount, %sadokuspeakcount );
 	$n = 1;
-	while( $article = $jawpdata->GetArticle ) {
+	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
 		if( index( $article->{'title'}, 'Wikipedia:井戸端/subj/' ) == 0 ) {
@@ -1503,7 +1475,7 @@ STR
 	}
 	print "\n";
 
-	$text = <<'TEXT';
+	my $text = <<'TEXT';
 {| class="wikitable" style="text-align:right"
 ! 年月 !! サブページ数 !! 発言数 !! 発言数/サブページ数
 TEXT
@@ -1587,9 +1559,8 @@ TEXT
 # param $report JAWP::Reportオブジェクト
 sub StatisticReportSub1 {
 	my( $titlelist, $report ) = @_;
-	my $text;
 
-	$text = sprintf( <<"TEXT"
+	my $text = sprintf( <<"TEXT"
 {| class="wikitable" style="text-align:right"
 ! colspan="2" | 本体 !! colspan="2" | ノート
 |-
@@ -1647,10 +1618,10 @@ TEXT
 # param $innerlink 内部リンク化フラグ
 sub StatisticReportSub2 {
 	my( $title, $data_ref, $prefix, $report, $innerlink ) = @_;
-	my( $data2_ref, $text );
 
 	delete $data_ref->{''};
-	$data2_ref = JAWP::Util::SortHash( $data_ref );
+	my $data2_ref = JAWP::Util::SortHash( $data_ref );
+	my $text = '';
 	if( @$data2_ref > 0 ) {
 		$text .= "{{columns-list|2|\n";
 		for my $i( 0..99 ) {
@@ -1676,8 +1647,6 @@ sub TitleList {
 	my( $xmlfile, $reportfile ) = @_;
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
 	my $titlelist = $jawpdata->GetTitleList;
-	my $report;
-	my $namespace;
 	my %varname = (
 		'標準'=>'article', '標準_曖昧'=>'aimai', '標準_リダイレクト'=>'redirect',
 		'利用者'=>'user', 'Wikipedia'=>'wikipedia', 'ファイル'=>'file', 'MediaWiki'=>'mediawiki',
@@ -1687,8 +1656,8 @@ sub TitleList {
 		'MediaWiki‐ノート'=>'mediawiki_note', 'Template‐ノート'=>'template_note', 'Help‐ノート'=>'help_note',
 		'Category‐ノート'=>'category_note', 'Portal‐ノート'=>'portal_note', 'プロジェクト‐ノート'=>'project_note' );
 
-	foreach $namespace ( keys %varname ) {
-		$report = new JAWP::ReportFile( sprintf( "%s_%s.pl", $reportfile, $varname{$namespace} ) );
+	foreach my $namespace ( keys %varname ) {
+		my $report = new JAWP::ReportFile( sprintf( "%s_%s.pl", $reportfile, $varname{$namespace} ) );
 		$report->OutputDirect( "use utf8;\n" );
 		$report->OutputDirect( "\$xmlfile = '$xmlfile';\n" );
 		$report->OutputDirect( sprintf( "\$%s = {\n", $varname{$namespace} ) );
@@ -1709,8 +1678,6 @@ sub LivingNoref {
 	my( $xmlfile, $reportfile ) = @_;
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
 	my $report = new JAWP::ReportFile( $reportfile );
-	my( $n, $article );
-	my( $livingcount, $livingnorefcount, @livingnoreflist );
 
 	$report->OutputDirect( <<"STR"
 = 出典の無い存命人物一覧 =
@@ -1721,9 +1688,11 @@ sub LivingNoref {
 STR
 	);
 
-	$livingcount = $livingnorefcount = 0;
-	$n = 1;
-	while( $article = $jawpdata->GetArticle ) {
+	my $livingcount = 0;
+	my $livingnorefcount = 0;
+	my @livingnoreflist;
+	my $n = 1;
+	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
 		if( $article->IsLiving ) {
@@ -1749,7 +1718,6 @@ sub PassedSakujo {
 	my( $xmlfile, $reportfile ) = @_;
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
 	my $report = new JAWP::ReportFile( $reportfile );
-	my( $n, $article, $time, @datalist );
 
 	$report->OutputDirect( <<"STR"
 = 長期間経過した削除依頼 =
@@ -1760,9 +1728,10 @@ sub PassedSakujo {
 STR
 	);
 
-	$time = time();
-	$n = 1;
-	while( $article = $jawpdata->GetArticle ) {
+	my $time = time();
+	my @datalist;
+	my $n = 1;
+	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
 		next if( $article->Namespace ne '標準' );
@@ -1784,9 +1753,6 @@ sub Person {
 	my( $xmlfile, $reportfile ) = @_;
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
 	my $report = new JAWP::ReportFile( $reportfile );
-	my( $n, $article, @datalist );
-	my( %birth, %death, %pref, @seibotsudoujitu, %text );
-	my( $y, $m, $d, $key );
 
 	$report->OutputDirect( <<"STR"
 = 人物一覧 =
@@ -1797,13 +1763,15 @@ sub Person {
 STR
 	);
 
-	$n = 1;
-	while( $article = $jawpdata->GetArticle ) {
+	my( %birth, %death, @seibotsudoujitu, %pref, %text );
+	my $n = 1;
+	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
 		next if( $article->Namespace ne '標準' );
 
-		( $y, $m, $d ) = $article->GetBirthday;
+		my $key;
+		my( $y, $m, $d ) = $article->GetBirthday;
 		if( $y != 0 && $m != 0 && $d != 0 ) {
 			$key = sprintf( "%d年", $y );
 			if( !defined( $birth{$key} ) ) {
@@ -1851,7 +1819,8 @@ STR
 	}
 	print "\n";
 
-	foreach $key ( sort grep { /^(\d+)年$/ } keys %text ) {
+	my @datalist;
+	foreach my $key ( sort grep { /^(\d+)年$/ } keys %text ) {
 		@datalist = map { "[[$_]]" } grep { index( $text{$key},$_ ) < 0 } @{$birth{$key}};
 		if( @datalist + 0 != 0 ) {
 			$report->OutputWikiList( "[[$key]](誕生)", \@datalist );
@@ -1861,7 +1830,7 @@ STR
 			$report->OutputWikiList( "[[$key]](死去)", \@datalist );
 		}
 	}
-	foreach $key ( sort grep { /^(\d+)月(\d+)日$/ } keys %text ) {
+	foreach my $key ( sort grep { /^(\d+)月(\d+)日$/ } keys %text ) {
 		@datalist = map { "[[$_]]" } grep { index( $text{$key},$_ ) < 0 } @{$birth{$key}};
 		if( @datalist + 0 != 0 ) {
 			$report->OutputWikiList( "[[$key]](誕生)", \@datalist );
@@ -1875,7 +1844,7 @@ STR
 	if( @datalist + 0 != 0 ) {
 		$report->OutputWikiList( '[[生没同日]]', \@datalist );
 	}
-	foreach $key ( sort grep { /^.*(都|道|府|県)$/ } keys %text ) {
+	foreach my $key ( sort grep { /^.*(都|道|府|県)$/ } keys %text ) {
 		@datalist = map { sprintf( "[[%s出身の人物一覧]]", $_ ) } grep { index( $text{$key},$_ ) < 0 } @{$pref{$key}};
 		if( @datalist + 0 != 0 ) {
 			$report->OutputWikiList( "[[$key]]", \@datalist );
@@ -1891,7 +1860,6 @@ sub NoIndex {
 	my( $xmlfile, $reportfile ) = @_;
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
 	my $report = new JAWP::ReportFile( $reportfile );
-	my( %titlelist, $n, $article, %indextext, @datalist );
 
 	$report->OutputDirect( <<"STR"
 = 索引未登録記事一覧 =
@@ -1902,8 +1870,9 @@ sub NoIndex {
 STR
 	);
 
-	$n = 1;
-	while( $article = $jawpdata->GetArticle ) {
+	my( %titlelist, %indextext );
+	my $n = 1;
+	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
 		if( $article->Namespace eq '標準' && !$article->IsRedirect ) {
@@ -1928,7 +1897,7 @@ STR
 		}
 	}
 
-	@datalist = map { "[[$_]]" } @{ JAWP::Util::SortHashByStr( \%titlelist ) };
+	my @datalist = map { "[[$_]]" } @{ JAWP::Util::SortHashByStr( \%titlelist ) };
 	$report->OutputWikiList( '一覧', \@datalist );
 	$report->OutputDirect( sprintf( "記事数 %d\n", @datalist + 0 ) );
 }
@@ -1941,7 +1910,6 @@ sub IndexList {
 	my( $xmlfile, $reportfile ) = @_;
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
 	my $report = new JAWP::ReportFile( $reportfile );
-	my( $n, $article, %indexlist, @datalist );
 
 	$report->OutputDirect( <<"STR"
 = 索引一覧 =
@@ -1952,8 +1920,9 @@ sub IndexList {
 STR
 	);
 
-	$n = 1;
-	while( $article = $jawpdata->GetArticle ) {
+	my %indexlist;
+	my $n = 1;
+	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
 		next if( !$article->IsIndex );
@@ -1962,7 +1931,7 @@ STR
 	}
 	print "\n";
 
-	@datalist = map { "[[$_]]($indexlist{$_})" } @{ JAWP::Util::SortHash( \%indexlist ) };
+	my @datalist = map { "[[$_]]($indexlist{$_})" } @{ JAWP::Util::SortHash( \%indexlist ) };
 	$report->OutputWikiList( '一覧', \@datalist );
 	$report->OutputDirect( sprintf( "索引数 %d\n", @datalist + 0 ) );
 }
@@ -1975,7 +1944,6 @@ sub Aimai {
 	my( $xmlfile, $reportfile ) = @_;
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
 	my $report = new JAWP::ReportFile( $reportfile );
-	my( $n, $article, $title, $title2, %aimailist, %aimaitext, @datalist );
 
 	$report->OutputDirect( <<"STR"
 = 曖昧さ回避 =
@@ -1988,13 +1956,14 @@ sub Aimai {
 STR
 	);
 
-	$n = 1;
-	while( $article = $jawpdata->GetArticle ) {
+	my( %aimailist, %aimaitext );
+	my $n = 1;
+	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
 		next if( $article->Namespace ne '標準' );
 
-		$title = $article->{'title'};
+		my $title = $article->{'title'};
 		$title =~ s/ \(.*\)$//;
 		if( $title =~ /立(.*)(高等学校|中学校|小学校)$/ ) {
 			$title = "$1$2";
@@ -2012,10 +1981,10 @@ STR
 	}
 	print "\n";
 
-	foreach $title ( keys %aimaitext ) {
-		$title2 = $title;
+	foreach my $title ( keys %aimaitext ) {
+		my $title2 = $title;
 		$title2 =~ s/ \(.*\)$//;
-		@datalist = ();
+		my @datalist;
 		foreach( @{$aimailist{$title2}} ) {
 			if( index( $aimaitext{$title}, $_ ) < 0 && $title ne $_ ) {
 				push @datalist, $_;
@@ -2038,12 +2007,12 @@ package JAWP::CGIApp;
 # CGIアプリ実行
 sub Run {
 	my $cgi = new CGI;
-	my( $body, $wikitext, $titlelist, $article, $result_ref );
 
-	$wikitext = Encode::decode( 'utf-8', $cgi->param( 'wikitext' ) );
+	my $wikitext = Encode::decode( 'utf-8', $cgi->param( 'wikitext' ) );
+	my $body;
 	if( $wikitext ) {
 		$wikitext =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
-		$titlelist = new JAWP::TitleList;
+		my $titlelist = new JAWP::TitleList;
 		if( -f 'titlelist_aimai.pl' ) {
 			our $aimai;
 			require 'titlelist_aimai.pl';
@@ -2059,9 +2028,9 @@ sub Run {
 			require 'titlelist_template.pl';
 			$titlelist->{'Template'} = $template;
 		}
-		$article = new JAWP::Article;
+		my $article = new JAWP::Article;
 		$article->SetText( $wikitext );
-		$result_ref = $article->LintText( $titlelist );
+		my $result_ref = $article->LintText( $titlelist );
 
 		$body = '<p>■チェック結果</p><ul>';
 		foreach( @$result_ref ) {
