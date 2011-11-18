@@ -25,7 +25,7 @@ sub new {
 
 	$self = bless( { 'title'=>'', 'timestamp'=>'', 'text'=>'' }, $class );
 
-	return $self;
+	return( $self );
 }
 
 
@@ -69,7 +69,7 @@ sub SetText {
 sub IsRedirect {
 	my $self = shift;
 
-	return $self->{'text'} =~ /^(#|＃)(REDIRECT|転送)/i;
+	return( $self->{'text'} =~ /^(#|＃)(REDIRECT|転送)/i );
 }
 
 
@@ -78,7 +78,7 @@ sub IsRedirect {
 sub IsAimai {
 	my $self = shift;
 
-	return $self->{'text'} =~ /\{\{(aimai|Aimai|曖昧さ回避|人名の曖昧さ回避|地名の曖昧さ回避|山の曖昧さ回避)/;
+	return( $self->{'text'} =~ /\{\{(aimai|Aimai|曖昧さ回避|人名の曖昧さ回避|地名の曖昧さ回避|山の曖昧さ回避)/ );
 }
 
 
@@ -88,7 +88,7 @@ sub IsAimai {
 sub IsLiving {
 	my $self = shift;
 
-	return $self->{'text'} =~ /\[\[Category:存命人物/i || $self->{'text'} =~ /\{\{(blp|Blp)/;
+	return( $self->{'text'} =~ /\[\[Category:存命人物/i || $self->{'text'} =~ /\{\{(blp|Blp)/ );
 }
 
 
@@ -98,7 +98,7 @@ sub IsLiving {
 sub IsNoref {
 	my $self = shift;
 
-	return !( $self->{'text'} =~ /^==+.*(参考|文献|資料|書籍|図書|注|註|出典|典拠|出所|原典|ソース|情報源|引用元|論拠|参照).*==+$/m || $self->{'text'} =~ /<ref/ );
+	return( !( $self->{'text'} =~ /^==+.*(参考|文献|資料|書籍|図書|注|註|出典|典拠|出所|原典|ソース|情報源|引用元|論拠|参照).*==+$/m || $self->{'text'} =~ /<ref/ ) );
 }
 
 
@@ -141,11 +141,11 @@ sub IsSeibotsuDoujitsu {
 
 	if( $self->{'text'} =~ /\{\{(死亡年月日と没年齢|没年齢)\|([0-9]+)\|([0-9]+)\|([0-9]+)\|([0-9]+)\|([0-9]+)\|([0-9]+)\}\}/ ) {
 		if( $3 == $6 && $4 == $7 ) {
-			return 1;
+			return( 1 );
 		}
 	}
 
-	return 0;
+	return( 0 );
 }
 
 
@@ -155,7 +155,7 @@ sub IsSeibotsuDoujitsu {
 sub IsIndex {
 	my $self = shift;
 
-	return index( $self->{'title'}, 'Wikipedia:索引' ) == 0;
+	return( index( $self->{'title'}, 'Wikipedia:索引' ) == 0 );
 }
 
 
@@ -165,10 +165,10 @@ sub Namespace {
 	my $self = shift;
 
 	if( $self->{'title'} =~ /^(利用者|Wikipedia|ファイル|MediaWiki|Template|Help|Category|Portal|プロジェクト|ノート|利用者‐会話|Wikipedia‐ノート|ファイル‐ノート|MediaWiki‐ノート|Template‐ノート|Help‐ノート|Category‐ノート|Portal‐ノート|プロジェクト‐ノート):/ ) {
-		return $1;
+		return( $1 );
 	}
 	else {
-		return '標準';
+		return( '標準' );
 	}
 }
 
@@ -221,7 +221,7 @@ sub GetPassTime {
 		$passtime = '0000-00-00T00:00:00Z';
 	}
 
-	return $passtime;
+	return( $passtime );
 }
 
 
@@ -234,7 +234,7 @@ sub LintTitle {
 	my( @result, $n, $c, $code, $str );
 
 	if( $self->Namespace ne '標準' ) {
-		return \@result;
+		return( \@result );
 	}
 
 	if( $self->{'title'} =~ /（[^（]+）$/ ) {
@@ -300,7 +300,7 @@ sub LintTitle {
 		}
 	}
 
-	return \@result;
+	return( \@result );
 }
 
 
@@ -313,7 +313,7 @@ sub LintText {
 	my( $text, $checktimestamp, @time, @result, $text2, $n, @lines, @lines2, $headlevel, $prevheadlevel, $code, $defaultsort, %category, %interlink, $previnterlink, $mode, $prevmode );
 
 	if( $self->Namespace ne '標準' || $self->IsRedirect ) {
-		return \@result;
+		return( \@result );
 	}
 
 	$text = $self->{'text'};
@@ -330,7 +330,7 @@ sub LintText {
 	@lines2 = split( /\n/, $text2 );
 	if( @lines != @lines2 ) {
 		push @result, '行数不一致(プログラムの問題)';
-		return \@result;
+		return( \@result );
 	}
 
 	$headlevel = $prevheadlevel = 1;
@@ -539,7 +539,7 @@ sub LintText {
 		push @result, '(死亡年月日と没年齢or没年齢)テンプレートと没年のカテゴリが一致しません';
 	}
 
-	return \@result;
+	return( \@result );
 }
 
 
@@ -552,7 +552,7 @@ sub LintRedirect {
 	my( @result, $n, $c, $code, $str );
 
 	if( !$self->IsRedirect ) {
-		return \@result;
+		return( \@result );
 	}
 
 	if( $self->{'title'} =~ /\([^\(]+\)$/ ) {
@@ -562,7 +562,7 @@ sub LintRedirect {
 		push @result, 'ノートのリダイレクトは有用ではない可能性があります';
 	}
 
-	return \@result;
+	return( \@result );
 }
 
 
@@ -575,7 +575,7 @@ sub LintIndex {
 	my( @result, $word, $linktype );
 	my( $head, $head2, $title, $text, @words, $n, @lines );
 
-	return \@result if( !$self->IsIndex || $self->{'title'} eq 'Wikipedia:索引' );
+	return( \@result ) if( !$self->IsIndex || $self->{'title'} eq 'Wikipedia:索引' );
 
 	if( $self->{'title'} =~ /Wikipedia:索引 ([あ-ん]+)$/ ) {
 		$title = $1;
@@ -630,7 +630,7 @@ sub LintIndex {
 		}
 	}
 
-	return \@result;
+	return( \@result );
 }
 
 
@@ -657,7 +657,7 @@ sub new {
 		'Category‐ノート'=>{}, 'Portal‐ノート'=>{}, 'プロジェクト‐ノート'=>{}
 		}, $class );
 
-	return $self;
+	return( $self );
 }
 
 
@@ -677,7 +677,7 @@ sub new {
 
 	$self = bless( { 'filename'=>$filename, 'fh'=>$fh }, $class );
 
-	return $self;
+	return( $self );
 }
 
 
@@ -718,7 +718,7 @@ sub GetArticle {
 			$flag |= 4;
 		}
 
-		return $article if( $flag == 7 );
+		return( $article ) if( $flag == 7 );
 	}
 
 	close( $self->{'fh'} ) or return;
@@ -769,7 +769,7 @@ sub GetTitleList {
 	}
 	print "\n";
 
-	return $titlelist;
+	return( $titlelist );
 }
 
 
@@ -788,7 +788,7 @@ sub GetRawTitleList {
 	}
 	print "\n";
 
-	return \%rawtitlelist;
+	return( \%rawtitlelist );
 }
 
 
@@ -810,7 +810,7 @@ sub new {
 	$self = bless(
 		{ 'filename'=>$filename, 'fh'=>$fh }, $class );
 
-	return $self;
+	return( $self );
 }
 
 
@@ -892,7 +892,7 @@ sub UnescapeHTML {
 
 	$text =~ s/(&\w+;)/defined($table{$1}) ? $table{$1} : $1/eg;
 
-	return $text;
+	return( $text );
 }
 
 
@@ -907,7 +907,7 @@ sub DecodeURL {
 	$str =~ s/%([0-9a-fA-F][0-9a-fA-F])/pack("C",hex($1))/eg;
 	$str = Encode::decode( 'utf-8', $str );
 
-	return $str;
+	return( $str );
 }
 
 
@@ -920,7 +920,7 @@ sub SortHash {
 
 	@result = sort { ( $hash_ref->{$b} <=> $hash_ref->{$a} ) } keys %$hash_ref;
 
-	return \@result;
+	return( \@result );
 }
 
 
@@ -933,7 +933,7 @@ sub SortHashByStr {
 
 	@result = sort { ( $hash_ref->{$a} cmp $hash_ref->{$b} ) } keys %$hash_ref;
 
-	return \@result;
+	return( \@result );
 }
 
 
@@ -958,7 +958,7 @@ sub GetLinkwordList {
 		}
 	}
 
-	return @wordlist;
+	return( @wordlist );
 }
 
 
@@ -981,7 +981,7 @@ sub GetTemplatewordList {
 		}
 	}
 
-	return @wordlist;
+	return( @wordlist );
 }
 
 
@@ -994,7 +994,7 @@ sub GetExternallinkList {
 
 	@linklist = $text =~ /s?https?:\/\/[-_.!~*'()a-zA-Z0-9;\/?:\@&=+\$,%#]+/g;
 
-	return @linklist;
+	return( @linklist );
 }
 
 
@@ -1005,7 +1005,7 @@ sub GetHost {
 	my $url = shift;
 
 	if( $url =~ /s?https?:\/\/([-_.!~*'()a-zA-Z0-9;?:\@&=+\$,%#]+)/ ) {
-		return $1;
+		return( $1 );
 	}
 	else {
 		return;
@@ -1075,7 +1075,7 @@ sub GetHeadnameList {
         }
 	}
 
-	return @headnamelist;
+	return( @headnamelist );
 }
 
 
@@ -1090,7 +1090,7 @@ sub GetTalkTimestampList {
 		push @timestamplist, sprintf( "%04d-%02d-%02dT%02d:%02d:00Z", $1, $2, $3, $4, $5 );
 	}
 
-	return sort @timestamplist;
+	return( sort @timestamplist );
 }
 
 
