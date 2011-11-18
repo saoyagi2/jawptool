@@ -24,7 +24,7 @@ my $fnametemp = 'jawptoolXXXX';
 	Startup();
 
 	TestJAWP();
-#	TestJAWPArticle();
+	TestJAWPArticle();
 	TestJAWPTitleList();
 	TestJAWPData();
 	TestJAWPUtil();
