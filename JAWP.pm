@@ -1511,7 +1511,7 @@ TEXT
 		$text .= "|-\n";
 		$text .= sprintf( "|%s || %d || %d || %2.1f\n", $_, $idobatacount{$_}, $idobataspeakcount{$_}, $idobataspeakcount{$_} / $idobatacount{$_} );
 	}
-	$text .= "|}";
+	$text .= '|}';
 	$report->OutputWiki( '井戸端統計', \$text );
 
 	$text = <<'TEXT';
@@ -1522,7 +1522,7 @@ TEXT
 		$text .= "|-\n";
 		$text .= sprintf( "|%s || %d || %d || %2.1f\n", $_, $afdcount{$_}, $afdspeakcount{$_}, $afdspeakcount{$_} / $afdcount{$_} );
 	}
-	$text .= "|}";
+	$text .= '|}';
 	$report->OutputWiki( '削除依頼統計', \$text );
 
 	$text = <<'TEXT';
@@ -1533,7 +1533,7 @@ TEXT
 		$text .= "|-\n";
 		$text .= sprintf( "|%s || %d || %d || %2.1f\n", $_, $checkusercount{$_}, $checkuserspeakcount{$_}, $checkuserspeakcount{$_} / $checkusercount{$_} );
 	}
-	$text .= "|}";
+	$text .= '|}';
 	$report->OutputWiki( 'CheckUser依頼統計', \$text );
 
 	$text = <<'TEXT';
@@ -1544,7 +1544,7 @@ TEXT
 		$text .= "|-\n";
 		$text .= sprintf( "|%s || %d || %d || %2.1f\n", $_, $blockcount{$_}, $blockspeakcount{$_}, $blockspeakcount{$_} / $blockcount{$_} );
 	}
-	$text .= "|}";
+	$text .= '|}';
 	$report->OutputWiki( '投稿ブロック依頼統計', \$text );
 
 	$text = <<'TEXT';
@@ -1555,7 +1555,7 @@ TEXT
 		$text .= "|-\n";
 		$text .= sprintf( "|%s || %d || %d || %2.1f\n", $_, $rfacount{$_}, $rfaspeakcount{$_}, $rfaspeakcount{$_} / $rfacount{$_} );
 	}
-	$text .= "|}";
+	$text .= '|}';
 	$report->OutputWiki( '管理者への立候補統計', \$text );
 
 	$text = <<'TEXT';
@@ -1566,7 +1566,7 @@ TEXT
 		$text .= "|-\n";
 		$text .= sprintf( "|%s || %d || %d || %2.1f\n", $_, $commentcount{$_}, $commentspeakcount{$_}, $commentspeakcount{$_} / $commentcount{$_} );
 	}
-	$text .= "|}";
+	$text .= '|}';
 	$report->OutputWiki( 'コメント依頼統計', \$text );
 
 	$text = <<'TEXT';
@@ -1577,7 +1577,7 @@ TEXT
 		$text .= "|-\n";
 		$text .= sprintf( "|%s || %d || %d || %2.1f\n", $_, $commentcount{$_}, $commentspeakcount{$_}, $commentspeakcount{$_} / $commentcount{$_} );
 	}
-	$text .= "|}";
+	$text .= '|}';
 	$report->OutputWiki( '査読依頼統計', \$text );
 }
 
@@ -1590,8 +1590,8 @@ sub StatisticReportSub1 {
 	my $text;
 
 	$text = sprintf( <<"TEXT"
-{| class=\"wikitable\" style=\"text-align:right\"
-! colspan=\"2\" | 本体 !! colspan=\"2\" | ノート
+{| class="wikitable" style="text-align:right"
+! colspan="2" | 本体 !! colspan="2" | ノート
 |-
 ! 名前 !! ファイル数 !! 名前 !! ファイル数
 |-
