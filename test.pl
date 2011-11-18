@@ -1213,38 +1213,6 @@ sub TestJAWPArticle {
 		}
 	}
 
-	# LintRedirectテスト
-	{
-		my $article = new JAWP::Article;
-		my $result_ref;
-
-		$article->SetTitle( '' );
-		$article->SetText( '' );
-		$result_ref = $article->LintRedirect;
-		is( ref $result_ref, 'ARRAY', 'JAWP::Article::LintRedirect(空文字列:リファレンス種別)' );
-		is( @$result_ref + 0, 0, 'JAWP::Article::LintRedirect(空文字列:警告数)' );
-
-		# リダイレクト以外は無視確認
-		$article->SetTitle( 'aaa (aaa)' );
-		$article->SetText( '' );
-		$result_ref = $article->LintRedirect;
-		is( @$result_ref + 0, 0, 'JAWP::Article::LintRedirect(非リダイレクト:警告数)' );
-
-		# カッコ付き記事
-		$article->SetTitle( 'aaa (aaa)' );
-		$article->SetText( '#REDIRECT[[aaa]]' );
-		$result_ref = $article->LintRedirect;
-		is( @$result_ref + 0, 1, 'JAWP::Article::LintRedirect(カッコ付き記事:警告数)' );
-		is( $result_ref->[0], 'カッコ付きのリダイレクトは有用ではない可能性があります', 'JAWP::Article::LintRedirect(カッコ付き記事:警告文)' );
-
-		# ノート
-		$article->SetTitle( 'ノート:aaa' );
-		$article->SetText( '#REDIRECT[[aaa]]' );
-		$result_ref = $article->LintRedirect;
-		is( @$result_ref + 0, 1, 'JAWP::Article::LintRedirect(ノート:警告数)' );
-		is( $result_ref->[0], 'ノートのリダイレクトは有用ではない可能性があります', 'JAWP::Article::LintRedirect(ノート:警告文)' );
-	}
-
 	# LintIndexテスト
 	{
 		my $article = new JAWP::Article;

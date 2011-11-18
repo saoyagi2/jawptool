@@ -533,29 +533,6 @@ sub LintText {
 }
 
 
-# リダイレクト文法チェック
-# param $article 記事データ
-# param $titlelist タイトルリスト
-# return $datalist_ref 結果配列へのリファレンス
-sub LintRedirect {
-	my $self = shift;
-	my @result;
-
-	if( !$self->IsRedirect ) {
-		return( \@result );
-	}
-
-	if( $self->{'title'} =~ /\([^\(]+\)$/ ) {
-		push @result, 'カッコ付きのリダイレクトは有用ではない可能性があります';
-	}
-	if( $self->Namespace eq 'ノート' ) {
-		push @result, 'ノートのリダイレクトは有用ではない可能性があります';
-	}
-
-	return( \@result );
-}
-
-
 # 索引文法チェック
 # param $article 記事データ
 # param $titlelist タイトルリスト
@@ -758,24 +735,6 @@ sub GetTitleList {
 	print "\n";
 
 	return( $titlelist );
-}
-
-
-# RawTitleList取得
-# return TitleList
-sub GetRawTitleList {
-	my $self = shift;
-
-	my %rawtitlelist;
-	my $n = 1;
-	while( my $article = $self->GetArticle ) {
-		print "$n\r";$n++;
-
-		$rawtitlelist{$article->{'title'}} = 1;
-	}
-	print "\n";
-
-	return( \%rawtitlelist );
 }
 
 
