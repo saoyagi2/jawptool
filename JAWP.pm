@@ -673,9 +673,7 @@ sub new {
 	my( $class, $filename ) = @_;
 	my( $self, $fh );
 
-	return if( !$filename );
-
-	open $fh, '<', $filename or return;
+	open $fh, '<', $filename or die $!;
 
 	$self = bless( { 'filename'=>$filename, 'fh'=>$fh }, $class );
 

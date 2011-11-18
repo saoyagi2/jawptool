@@ -1378,8 +1378,27 @@ sub TestJAWPData {
 
 	# 空new失敗確認テスト
 	{
-		my $data = new JAWP::DataFile;
+		my $data;
+		eval {
+			$data = new JAWP::DataFile;
+		};
+
 		ok( !defined( $data ), 'JAWP::DataFile(空new)' );
+		like( $@, qr/No such file or directory at JAWP\.pm/, 'JAWP::DataFile(空new)' );
+	}
+
+	# open失敗確認テスト
+	{
+		my $fname = GetTempFilename();
+		unlink( $fname ) or die;
+
+		my $data;
+		eval {
+			$data = new JAWP::DataFile( $fname );
+		};
+
+		ok( !defined( $data ), 'JAWP::DataFile(open失敗)' );
+		like( $@, qr/No such file or directory at JAWP\.pm/, 'JAWP::DataFile(open失敗)' );
 	}
 
 	# メンバー変数確認
