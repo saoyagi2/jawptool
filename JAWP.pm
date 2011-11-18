@@ -807,8 +807,7 @@ sub new {
 	my( $class, $filename ) = @_;
 	my( $self, $fh );
 
-	return if( !defined( $filename ) );
-	open $fh, '>', $filename or return;
+	open $fh, '>', $filename or die $!;
 
 	$self = bless(
 		{ 'filename'=>$filename, 'fh'=>$fh }, $class );
@@ -820,56 +819,41 @@ sub new {
 # Wiki形式レポート出力
 # param $title レポート見出し
 # param $data_ref レポートデータへのリファレンス
-# return 成功なら1、失敗なら0
 sub OutputWiki {
 	my( $self, $title, $data_ref ) = @_;
 	my $fh;
 
-	return 0 if( !$title || !$data_ref || ref( $data_ref) ne 'SCALAR' );
-
 	$fh = $self->{'fh'};
-	print $fh "== $title ==\n" or return 0;
-	print $fh "$$data_ref\n" or return 0;
-	print $fh "\n" or return 0;
-
-	return 1;
+	print $fh "== $title ==\n" or die $!;
+	print $fh "$$data_ref\n" or die $!;
+	print $fh "\n" or die $!;
 }
 
 
 # Wiki形式リストレポート出力
 # param $title レポート見出し
 # param $datalist_ref レポートデータ配列へのリファレンス
-# return 成功なら1、失敗なら0
 sub OutputWikiList {
 	my( $self, $title, $datalist_ref ) = @_;
 	my( $data, $fh );
 
-	return 0 if( !$title || !$datalist_ref || ref( $datalist_ref) ne 'ARRAY' );
-
 	$fh = $self->{'fh'};
-	print $fh "== $title ==\n" or return 0;
+	print $fh "== $title ==\n" or die $!;
 	foreach $data ( @$datalist_ref ) {
-		print $fh "*$data\n" or return 0;
+		print $fh "*$data\n" or die $!;
 	}
-	print $fh "\n" or return 0;
-
-	return 1;
+	print $fh "\n" or die $!;
 }
 
 
 # レポート直接出力
 # param $text 文字列
-# return 成功なら1、失敗なら0
 sub OutputDirect {
 	my( $self, $text ) = @_;
 	my $fh;
 
-	return 0 if( !$text );
-
 	$fh = $self->{'fh'};
-	print $fh $text or return 0;
-
-	return 1;
+	print $fh $text or die $!;
 }
 
 
