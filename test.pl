@@ -464,21 +464,29 @@ sub TestJAWPArticle {
 			{
 				my $title;
 
-				$title = 'ああ';
-				$article->SetTitle( $title );
-				$result_ref = $article->LintTitle;
-				is( @$result_ref + 0, 0, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
-
-				$title = 'アア';
-				$article->SetTitle( $title );
-				$result_ref = $article->LintTitle;
-				is( @$result_ref + 0, 0, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
-
-				$title = 'あア';
-				$article->SetTitle( $title );
-				$result_ref = $article->LintTitle;
-				is( @$result_ref + 0, 1, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
-				is( $result_ref->[0], '平仮名と片仮名が混在しています', "JAWP::Article::LintTitle(文字・文言,$title:警告文)" );
+				foreach $title ( 'あへ', 'あべ', 'あぺ', 'アヘ', 'アベ', 'アペ', 'あ・ヘ', 'あ・ベ', 'あ・ペ', 'ヘ・あ', 'ベ・あ', 'ペ・あ', 'ア・へ', 'ア・べ', 'ア・ぺ', 'へ・ア', 'べ・ア', 'ぺ・ア', 'ア・力', 'ア・工', 'ア・口', 'ア・二', '力・ア', '工・ア', '口・ア', '二・ア' ) {
+					$article->SetTitle( $title );
+					$result_ref = $article->LintTitle;
+					is( @$result_ref + 0, 0, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
+				}
+				foreach $title ( 'あヘ', 'あベ', 'あペ', 'ヘあ', 'ベあ', 'ペあ' ) {
+					$article->SetTitle( $title );
+					$result_ref = $article->LintTitle;
+					is( @$result_ref + 0, 1, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
+					is( $result_ref->[0], '平仮名と「へ/ベ/ペ(片仮名)」が隣接しています', "JAWP::Article::LintTitle(文字・文言,$title:警告文)" );
+				}
+				foreach $title ( 'アへ', 'アべ', 'アぺ', 'へア', 'べア', 'ぺア' ) {
+					$article->SetTitle( $title );
+					$result_ref = $article->LintTitle;
+					is( @$result_ref + 0, 1, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
+					is( $result_ref->[0], '片仮名と「へ/べ/ぺ(平仮名)」が隣接しています', "JAWP::Article::LintTitle(文字・文言,$title:警告文)" );
+				}
+				foreach $title ( 'ア力', 'ア工', 'ア口', 'ア二', '力ア', '工ア', '口ア', '二ア' ) {
+					$article->SetTitle( $title );
+					$result_ref = $article->LintTitle;
+					is( @$result_ref + 0, 1, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
+					is( $result_ref->[0], '片仮名と「力/工/口/二(漢字)」が隣接しています', "JAWP::Article::LintTitle(文字・文言,$title:警告文)" );
+				}
 			}
 			$article->SetText( '' );
 			foreach my $title ( @{GetJIS_X_0208_KANJI()} ) {

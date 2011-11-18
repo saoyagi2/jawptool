@@ -263,8 +263,14 @@ sub LintTitle {
 	if( $self->{'title'} =~ /[「」『』〔〕〈〉《》【】]/ ) {
 		push @result, '括弧の使用は推奨されません';
 	}
-	if( $self->{'title'} =~ /[ぁ-ゔ]/ && $self->{'title'} =~ /[ァ-ヺ]/ ) {
-		push @result, '平仮名と片仮名が混在しています';
+	if( $self->{'title'} =~ /[ぁ-ゔ][ヘベペ]/ || $self->{'title'} =~ /[ヘベペ][ぁ-ゔ]/ ) {
+		push @result, '平仮名と「へ/ベ/ペ(片仮名)」が隣接しています';
+	}
+	if( $self->{'title'} =~ /[ァ-ヺ][へべぺ]/ || $self->{'title'} =~ /[へべぺ][ァ-ヺ]/ ) {
+		push @result, '片仮名と「へ/べ/ぺ(平仮名)」が隣接しています';
+	}
+	if( $self->{'title'} =~ /[ァ-ヺ][力工口二]/ || $self->{'title'} =~ /[力工口二][ァ-ヺ]/ ) {
+		push @result, '片仮名と「力/工/口/二(漢字)」が隣接しています';
 	}
 
 	if( !( $self->IsRedirect ) ) {
