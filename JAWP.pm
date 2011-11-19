@@ -58,7 +58,6 @@ sub SetText {
 		$tmp =~ s/[^\n]//g;
 		$text =~ s/<!--(.*?)-->/$tmp/s;
 	}
-
 	$self->{'text'} = $text;
 }
 
@@ -611,7 +610,8 @@ package JAWP::TitleList;
 sub new {
 	my $class = shift;
 
-	my $self = bless( { 'allcount'=>0,
+	my $self = bless( {
+		'allcount'=>0,
 
 		'標準'=>{}, '標準_曖昧'=>{}, '標準_リダイレクト'=>{},
 		'利用者'=>{}, 'Wikipedia'=>{}, 'ファイル'=>{}, 'MediaWiki'=>{},
@@ -752,8 +752,7 @@ sub new {
 	my $fh;
 	open $fh, '>', $filename or die $!;
 
-	my $self = bless(
-		{ 'filename'=>$filename, 'fh'=>$fh }, $class );
+	my $self = bless( { 'filename'=>$filename, 'fh'=>$fh }, $class );
 
 	return( $self );
 }
