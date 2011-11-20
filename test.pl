@@ -1975,7 +1975,7 @@ sub TestJAWPUtil {
 	{
 		foreach my $method ( 'UnescapeHTML', 'DecodeURL', 'SortHash',
 			'GetLinkwordList', 'GetTemplatewordList', 'GetExternallinkList',
-			'GetHost', 'GetLinkType', 'GetHeadnameList', 'GetTalkTimestampList' ) {
+			'GetHost', 'GetLinkType', 'GetHeadList', 'GetTalkTimestampList' ) {
 			ok( JAWP::Util->can($method), "JAWP::Util(メソッド呼び出し,$method)" );
 		}
 	}
@@ -2187,27 +2187,27 @@ sub TestJAWPUtil {
 		is( $word, ':es:test', "JAWP::Util::GetLinkType(':es:test':word)" );
 	}
 
-	# GetHeadnameListテスト
+	# GetHeadListテスト
 	{
 		my $result_ref;
 
-		$result_ref = JAWP::Util::GetHeadnameList( '' );
-		is_deeply( $result_ref, [], 'JAWP::Util::GetHeadnameList(空文字列)' );
+		$result_ref = JAWP::Util::GetHeadList( '' );
+		is_deeply( $result_ref, [], 'JAWP::Util::GetHeadList(空文字列)' );
 
-		$result_ref = JAWP::Util::GetHeadnameList( 'あああ' );
-		is_deeply( $result_ref, [], 'JAWP::Util::GetHeadnameList(あああ)' );
+		$result_ref = JAWP::Util::GetHeadList( 'あああ' );
+		is_deeply( $result_ref, [], 'JAWP::Util::GetHeadList(あああ)' );
 
-		$result_ref = JAWP::Util::GetHeadnameList( '= =' );
-		is_deeply( $result_ref, [], 'JAWP::Util::GetHeadnameList(= =)' );
+		$result_ref = JAWP::Util::GetHeadList( '= =' );
+		is_deeply( $result_ref, [], 'JAWP::Util::GetHeadList(= =)' );
 
-		$result_ref = JAWP::Util::GetHeadnameList( "あああ\n==見出し==\nいいい" );
-		is_deeply( $result_ref, [ '見出し' ], 'JAWP::Util::GetHeadnameList(あああ\n==見出し==\nいいい)' );
+		$result_ref = JAWP::Util::GetHeadList( "あああ\n==見出し==\nいいい" );
+		is_deeply( $result_ref, [ '見出し' ], 'JAWP::Util::GetHeadList(あああ\n==見出し==\nいいい)' );
 
-		$result_ref = JAWP::Util::GetHeadnameList( "あああ\n==見出し==\n== 見出し2 ==\nいいい" );
-		is_deeply( $result_ref, [ '見出し', '見出し2' ], 'JAWP::Util::GetHeadnameList(あああ\n==見出し==\n== 見出し2 ==\nいいい)' );
+		$result_ref = JAWP::Util::GetHeadList( "あああ\n==見出し==\n== 見出し2 ==\nいいい" );
+		is_deeply( $result_ref, [ '見出し', '見出し2' ], 'JAWP::Util::GetHeadList(あああ\n==見出し==\n== 見出し2 ==\nいいい)' );
 
-		$result_ref = JAWP::Util::GetHeadnameList( "あああ\n==見 出 し==\nいいい" );
-		is_deeply( $result_ref, [ '見 出 し' ], 'JAWP::Util::GetHeadnameList(あああ\n==見 出 し==\nいいい)' );
+		$result_ref = JAWP::Util::GetHeadList( "あああ\n==見 出 し==\nいいい" );
+		is_deeply( $result_ref, [ '見 出 し' ], 'JAWP::Util::GetHeadList(あああ\n==見 出 し==\nいいい)' );
 	}
 
 	# GetTalkTimestampListテスト

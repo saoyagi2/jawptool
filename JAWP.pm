@@ -726,7 +726,7 @@ sub GetTitleList {
 			$titlelist->{$namespace}->{$title} = 1;
 		}
 		if( $withsection ) {
-			foreach my $section ( @{ JAWP::Util::GetHeadnameList( $article->{'text'} ) } ) {
+			foreach my $section ( @{ JAWP::Util::GetHeadList( $article->{'text'} ) } ) {
 				$titlelist->{$namespace}->{"$title#$section"} = 1;
 			}
 		}
@@ -1006,20 +1006,20 @@ sub GetLinkType {
 # 見出し語リストの取得
 # param $text 元テキスト
 # return 見出し語リスト
-sub GetHeadnameList {
+sub GetHeadList {
 	my $text = shift;
 
-	my @headnamelist;
+	my @headlist;
 	while( $text =~ /^=+([^=]+?)=+$/mg ) {
         my $tmp = $1;
         $tmp =~ s/^ *//;
         $tmp =~ s/ *$//;
         if( $tmp ne '' ) {
-			push @headnamelist, $tmp;
+			push @headlist, $tmp;
         }
 	}
 
-	return( \@headnamelist );
+	return( \@headlist );
 }
 
 
@@ -1313,7 +1313,7 @@ STR
 		$titlelist->{$namespace} = {};
 	}
 
-	my( %linkcount, %headnamecount );
+	my( %linkcount, %headcount );
 	foreach my $linktype ( '発リンク', '標準', 'aimai', 'redirect', 'category', 'file', 'template', 'redlink', 'externalhost' ) {
 		$linkcount{$linktype} = {};
 	}
@@ -1350,8 +1350,8 @@ STR
 			$linkcount{'externalhost'}->{$word}++ if( defined( $word ) );
 		}
 
-		foreach my $word ( @{ JAWP::Util::GetHeadnameList( $article->{'text'} ) } ) {
-			$headnamecount{$word}++;
+		foreach my $word ( @{ JAWP::Util::GetHeadList( $article->{'text'} ) } ) {
+			$headcount{$word}++;
 		}
 	}
 	print "\n";
@@ -1376,8 +1376,8 @@ STR
 	$linkcount{'template'} = {};
 	StatisticReportSub2( '外部リンクホストランキング', $linkcount{'externalhost'}, '', $report, 0 );
 	$linkcount{'externalhost'} = {};
-	StatisticReportSub2( '見出し語ランキング', \%headnamecount, '', $report, 0 );
-	%headnamecount = ();
+	StatisticReportSub2( '見出し語ランキング', \%headcount, '', $report, 0 );
+	%headcount = ();
 
 
 	my $timestamplist_ref;
