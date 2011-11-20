@@ -1544,6 +1544,20 @@ STR
 
 			unlink( $fname ) or die $!;
 		}
+
+		# エラー(途中close)
+		{
+			my $fname = WriteTestXMLFile( '' );
+			my $data = new JAWP::DataFile( $fname );
+			close $data->{'fh'};
+			eval {
+				my $article = $data->GetArticle;
+			};
+			like( $@, qr/Bad file descriptor at JAWP\.pm/, 'JAWP::GetArticle(途中close)' );
+
+			unlink( $fname ) or die $!;
+		}
+
 	}
 
 	# GetTitleListテスト

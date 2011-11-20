@@ -685,10 +685,10 @@ sub GetArticle {
 		return( $article ) if( $flag == 7 );
 	}
 
-	close( $self->{'fh'} ) or return;
-	open $self->{'fh'}, '<', $self->{'filename'} or return;
+	close( $self->{'fh'} ) or die $!;
+	open $self->{'fh'}, '<', $self->{'filename'} or die $!;
 
-	return;
+	return( undef );
 }
 
 
