@@ -952,7 +952,7 @@ sub GetHost {
 		return( $1 );
 	}
 	else {
-		return;
+		return( undef );
 	}
 }
 
