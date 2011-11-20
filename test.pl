@@ -339,7 +339,7 @@ sub TestJAWPArticle {
 		foreach my $namespace ( '利用者', 'Wikipedia', 'ファイル', 'MediaWiki', 'Template', 'Help', 'Category', 'Portal', 'プロジェクト', 'ノート', '利用者‐会話', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki‐ノート', 'Template‐ノート', 'Help‐ノート', 'Category‐ノート', 'Portal‐ノート', 'プロジェクト‐ノート' ) {
 			$article->SetTitle( "$namespace:①" );
 			$result_ref = $article->LintTitle;
-			is( @$result_ref + 0, 0, "JAWP::Article::LintTitle(標準記事空間以外無視,$namespace:警告数)" );
+			is_deeply( $result_ref, [], "JAWP::Article::LintTitle(標準記事空間以外無視,$namespace)" );
 		}
 
 		# リダイレクト記事は無視確認
@@ -351,23 +351,23 @@ sub TestJAWPArticle {
 				$title = "あいうえお" . $type;
 				$article->SetTitle( $title );
 				$result_ref = $article->LintTitle;
-				is( @$result_ref + 0, 0, "JAWP::Article::LintTitle(リダイレクト無視,$title:警告数)" );
+				is_deeply( $result_ref, [], "JAWP::Article::LintTitle(リダイレクト無視,$title)" );
 
 				$title = $type . "あいうえお";
 				$article->SetTitle( $title );
 				$result_ref = $article->LintTitle;
-				is( @$result_ref + 0, 0, "JAWP::Article::LintTitle(リダイレクト無視,$title:警告数)" );
+				is_deeply( $result_ref, [], "JAWP::Article::LintTitle(リダイレクト無視,$title)" );
 			}
 			{
 				my $title = '～';
 				$article->SetTitle( $title );
 				$result_ref = $article->LintTitle;
-				is( @$result_ref + 0, 0, "JAWP::Article::LintTitle(リダイレクト無視,$title:警告数)" );
+				is_deeply( $result_ref, [], "JAWP::Article::LintTitle(リダイレクト無視,$title)" );
 			}
 			foreach my $title ( @{GetNotJIS_X_0208_KANJI()} ) {
 				$article->SetTitle( $title );
 				$result_ref = $article->LintTitle;
-				is( @$result_ref + 0, 0, "JAWP::Article::LintTitle(リダイレクト無視,$title:警告数)" );
+				is_deeply( $result_ref, [], "JAWP::Article::LintTitle(リダイレクト無視,$title)" );
 			}
 		}
 
@@ -377,15 +377,13 @@ sub TestJAWPArticle {
 			foreach my $title ( '記事名（曖昧さ回避）' ) {
 				$article->SetTitle( $title );
 				$result_ref = $article->LintTitle;
-				is( @$result_ref + 0, 1, "JAWP::Article::LintTitle(曖昧さ回避,$title:警告数)" );
-				is( $result_ref->[0], '曖昧さ回避の記事であればカッコは半角でないといけません', "JAWP::Article::LintTitle(曖昧さ回避,$title:警告文)" );
+				is_deeply( $result_ref, [ '曖昧さ回避の記事であればカッコは半角でないといけません' ], "JAWP::Article::LintTitle(曖昧さ回避,$title)" );
 			}
 			$article->SetText( '' );
 			foreach my $title ( '記事名(曖昧さ回避)', '記事名  (曖昧さ回避)' ) {
 				$article->SetTitle( $title );
 				$result_ref = $article->LintTitle;
-				is( @$result_ref + 0, 1, "JAWP::Article::LintTitle(曖昧さ回避,$title:警告数)" );
-				is( $result_ref->[0], '曖昧さ回避の記事であればカッコの前のスペースはひとつでないといけません', "JAWP::Article::LintTitle(曖昧さ回避,$title:警告文)" );
+				is_deeply( $result_ref, [ '曖昧さ回避の記事であればカッコの前のスペースはひとつでないといけません' ], "JAWP::Article::LintTitle(曖昧さ回避,$title)" );
 			}
 		}
 
@@ -398,68 +396,59 @@ sub TestJAWPArticle {
 				$title = $type;
 				$article->SetTitle( $title );
 				$result_ref = $article->LintTitle;
-				is( @$result_ref + 0, 0, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
+				is_deeply( $result_ref, [], "JAWP::Article::LintTitle(文字・文言,$title)" );
 
 				$title = "あいうえお" . $type;
 				$article->SetTitle( $title );
 				$result_ref = $article->LintTitle;
-				is( @$result_ref + 0, 1, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
-				is( $result_ref->[0], '会社の記事であれば法的地位を示す語句を含むことは推奨されません', "JAWP::Article::LintTitle(文字・文言,$title:警告文)" );
+				is_deeply( $result_ref, [ '会社の記事であれば法的地位を示す語句を含むことは推奨されません' ], "JAWP::Article::LintTitle(文字・文言,$title)" );
 
 				$title = $type . "あいうえお";
 				$article->SetTitle( $title );
 				$result_ref = $article->LintTitle;
-				is( @$result_ref + 0, 1, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
-				is( $result_ref->[0], '会社の記事であれば法的地位を示す語句を含むことは推奨されません', "JAWP::Article::LintTitle(文字・文言,$title:警告文)" );
+				is_deeply( $result_ref, [ '会社の記事であれば法的地位を示す語句を含むことは推奨されません' ], "JAWP::Article::LintTitle(文字・文言,$title)" );
 			}
 			$article->SetText( '' );
 			foreach my $title ( '　', '，', '．', '！', '？', '＆', '＠' ) {
 				$article->SetTitle( $title );
 				$result_ref = $article->LintTitle;
-				is( @$result_ref + 0, 1, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
-				is( $result_ref->[0], '全角スペース、全角記号の使用は推奨されません', "JAWP::Article::LintTitle(文字・文言,$title:警告文)" );
+				is_deeply( $result_ref, [ '全角スペース、全角記号の使用は推奨されません' ], "JAWP::Article::LintTitle(文字・文言,$title)" );
 			}
 			$article->SetText( '' );
 			foreach my $title ( 'Ａ', 'Ｚ', 'ａ', 'ｚ', '０', '９' ) {
 				$article->SetTitle( $title );
 				$result_ref = $article->LintTitle;
-				is( @$result_ref + 0, 1, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
-				is( $result_ref->[0], '全角英数字の使用は推奨されません', "JAWP::Article::LintTitle(文字・文言,$title:警告文)" );
+				is_deeply( $result_ref, [ '全角英数字の使用は推奨されません' ], "JAWP::Article::LintTitle(文字・文言,$title)" );
 			}
 			$article->SetText( '' );
 			foreach my $title ( 'ｱ', 'ﾝ', 'ﾞ', 'ﾟ', 'ｧ', 'ｫ', 'ｬ', 'ｮ', '｡', '｢', '｣', '､' ) {
 				$article->SetTitle( $title );
 				$result_ref = $article->LintTitle;
-				is( @$result_ref + 0, 1, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
-				is( $result_ref->[0], '半角カタカナの使用は推奨されません', "JAWP::Article::LintTitle(文字・文言,$title:警告文)" );
+				is_deeply( $result_ref, [ '半角カタカナの使用は推奨されません' ], "JAWP::Article::LintTitle(文字・文言,$title)" );
 			}
 			$article->SetText( '' );
 			foreach my $title ( 'Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ', 'Ⅵ', 'Ⅶ', 'Ⅷ', 'Ⅸ', 'Ⅹ' ) {
 				$article->SetTitle( $title );
 				$result_ref = $article->LintTitle;
-				is( @$result_ref + 0, 1, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
-				is( $result_ref->[0], 'ローマ数字はアルファベットを組み合わせましょう', "JAWP::Article::LintTitle(文字・文言,$title:警告文)" );
+				is_deeply( $result_ref, [ 'ローマ数字はアルファベットを組み合わせましょう' ], "JAWP::Article::LintTitle(文字・文言,$title)" );
 			}
 			$article->SetText( '' );
 			foreach my $title ( '①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩', '⑪', '⑫', '⑬', '⑭', '⑮', '⑯', '⑰', '⑱', '⑲', '⑳' ) {
 				$article->SetTitle( $title );
 				$result_ref = $article->LintTitle;
-				is( @$result_ref + 0, 1, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
-				is( $result_ref->[0], '丸付き数字の使用は推奨されません', "JAWP::Article::LintTitle(文字・文言,$title:警告文)" );
+				is_deeply( $result_ref, [ '丸付き数字の使用は推奨されません' ], "JAWP::Article::LintTitle(文字・文言,$title)" );
 			}
 			$article->SetText( '' );
 			foreach my $title ( '「', '」', '『', '』', '〔', '〕', '〈', '〉', '《', '》', '【', '】' ) {
 				$article->SetTitle( $title );
 				$result_ref = $article->LintTitle;
-				is( @$result_ref + 0, 1, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
-				is( $result_ref->[0], '括弧の使用は推奨されません', "JAWP::Article::LintTitle(文字・文言,$title:警告文)" );
+				is_deeply( $result_ref, [ '括弧の使用は推奨されません' ], "JAWP::Article::LintTitle(文字・文言,$title)" );
 			}
 			{
 				my $title = '～';
 				$article->SetTitle( $title );
 				$result_ref = $article->LintTitle;
-				is( @$result_ref + 0, 1, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
-				is( $result_ref->[0], '波記号は〜(U+301C)を使用しましょう', "JAWP::Article::LintTitle(文字・文言,$title:警告文)" );
+				is_deeply( $result_ref, [ '波記号は〜(U+301C)を使用しましょう' ], "JAWP::Article::LintTitle(文字・文言,$title)" );
 			}
 			{
 				my $title;
@@ -467,39 +456,35 @@ sub TestJAWPArticle {
 				foreach $title ( 'あへ', 'あべ', 'あぺ', 'アヘ', 'アベ', 'アペ', 'あ・ヘ', 'あ・ベ', 'あ・ペ', 'ヘ・あ', 'ベ・あ', 'ペ・あ', 'ア・へ', 'ア・べ', 'ア・ぺ', 'へ・ア', 'べ・ア', 'ぺ・ア', 'ア・力', 'ア・工', 'ア・口', 'ア・二', '力・ア', '工・ア', '口・ア', '二・ア' ) {
 					$article->SetTitle( $title );
 					$result_ref = $article->LintTitle;
-					is( @$result_ref + 0, 0, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
+					is_deeply( $result_ref, [], "JAWP::Article::LintTitle(文字・文言,$title)" );
 				}
 				foreach $title ( 'あヘ', 'あベ', 'あペ', 'ヘあ', 'ベあ', 'ペあ' ) {
 					$article->SetTitle( $title );
 					$result_ref = $article->LintTitle;
-					is( @$result_ref + 0, 1, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
-					is( $result_ref->[0], '平仮名と「へ/ベ/ペ(片仮名)」が隣接しています', "JAWP::Article::LintTitle(文字・文言,$title:警告文)" );
+					is_deeply( $result_ref, [ '平仮名と「へ/ベ/ペ(片仮名)」が隣接しています' ], "JAWP::Article::LintTitle(文字・文言,$title)" );
 				}
 				foreach $title ( 'アへ', 'アべ', 'アぺ', 'へア', 'べア', 'ぺア' ) {
 					$article->SetTitle( $title );
 					$result_ref = $article->LintTitle;
-					is( @$result_ref + 0, 1, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
-					is( $result_ref->[0], '片仮名と「へ/べ/ぺ(平仮名)」が隣接しています', "JAWP::Article::LintTitle(文字・文言,$title:警告文)" );
+					is_deeply( $result_ref, [ '片仮名と「へ/べ/ぺ(平仮名)」が隣接しています' ], "JAWP::Article::LintTitle(文字・文言,$title)" );
 				}
 				foreach $title ( 'ア力', 'ア工', 'ア口', 'ア二', '力ア', '工ア', '口ア', '二ア' ) {
 					$article->SetTitle( $title );
 					$result_ref = $article->LintTitle;
-					is( @$result_ref + 0, 1, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
-					is( $result_ref->[0], '片仮名と「力/工/口/二(漢字)」が隣接しています', "JAWP::Article::LintTitle(文字・文言,$title:警告文)" );
+					is_deeply( $result_ref, [ '片仮名と「力/工/口/二(漢字)」が隣接しています' ], "JAWP::Article::LintTitle(文字・文言,$title)" );
 				}
 			}
 			$article->SetText( '' );
 			foreach my $title ( @{GetJIS_X_0208_KANJI()} ) {
 				$article->SetTitle( $title );
 				$result_ref = $article->LintTitle;
-				is( @$result_ref + 0, 0, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
+				is_deeply( $result_ref, [], "JAWP::Article::LintTitle(文字・文言,$title)" );
 			}
 			$article->SetText( '' );
 			foreach my $title ( @{GetNotJIS_X_0208_KANJI()} ) {
 				$article->SetTitle( $title );
 				$result_ref = $article->LintTitle;
-				is( @$result_ref + 0, 1, "JAWP::Article::LintTitle(文字・文言,$title:警告数)" );
-				is( $result_ref->[0], sprintf( "%s(U+%04X) はJIS X 0208外の文字です", $title, ord( $title ) ), "JAWP::Article::LintTitle(文字・文言,$title:警告文)" );
+				is_deeply( $result_ref, [ sprintf( "%s(U+%04X) はJIS X 0208外の文字です", $title, ord( $title ) ) ], "JAWP::Article::LintTitle(文字・文言,$title)" );
 			}
 		}
 	}
@@ -539,14 +524,14 @@ sub TestJAWPArticle {
 			$article->SetTitle( "$namespace:TEST" );
 			$article->SetText( '' );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, "JAWP::Article::LintText(標準記事空間以外無視,$namespace:警告数)" );
+			is_deeply( $result_ref, [], "JAWP::Article::LintText(標準記事空間以外無視,$namespace)" );
 		}
 
 		# リダイレクト記事は無視確認
 		$article->SetTitle( '標準' );
 		$article->SetText( '#redirect[[転送先]]' );
 		$result_ref = $article->LintText( $titlelist );
-		is( @$result_ref + 0, 0, 'JAWP::Article::LintText(リダイレクト無視:警告数)' );
+		is_deeply( $result_ref, [], 'JAWP::Article::LintText(リダイレクト無視)' );
 
 		# 特定タグ内は無視確認
 		{
@@ -554,19 +539,17 @@ sub TestJAWPArticle {
 				$article->SetTitle( '標準' );
 				$article->SetText( "<$tag>\n= あああ =\n</$tag>\n{{aimai}}" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 0, "JAWP::Article::LintText($tag 内無視:警告数)" );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText($tag 内無視)" );
 
 				$article->SetTitle( '標準' );
 				$article->SetText( "<$tag>\nあああ\n</$tag>\n= いいい =\n{{aimai}}" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 1, "JAWP::Article::LintText($tag 内無視,行数の不動:警告数)" );
-				is( $result_ref->[0], 'レベル1の見出しがあります(4)', "JAWP::Article::LintText($tag 内無視,行数の不動:警告文)" );
+				is_deeply( $result_ref, [ 'レベル1の見出しがあります(4)' ], "JAWP::Article::LintText($tag 内無視,行数の不動)" );
 
 				$article->SetTitle( '標準' );
 				$article->SetText( "<$tag>\nあああ\n</$tag>\n= いいい =\n<$tag>\nううう\n</$tag>{{aimai}}" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 1, "JAWP::Article::LintText($tag 内無視,タグ複数:警告数)" );
-				is( $result_ref->[0], 'レベル1の見出しがあります(4)', "JAWP::Article::LintText($tag 内無視,タグ複数:警告文)" );
+				is_deeply( $result_ref, [ 'レベル1の見出しがあります(4)' ], "JAWP::Article::LintText($tag 内無視,タグ複数)" );
 			}
 		}
 
@@ -575,117 +558,107 @@ sub TestJAWPArticle {
 			$article->SetTitle( '標準' );
 			$article->SetText( "あああ\n= いいい =\nううう\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(見出しレベル1:警告数)' );
-			is( $result_ref->[0], 'レベル1の見出しがあります(2)', 'JAWP::Article::LintText(見出しレベル1:警告文)' );
+			is_deeply( $result_ref, [ 'レベル1の見出しがあります(2)' ], 'JAWP::Article::LintText(見出しレベル1)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "あああ\n = いいい = \nううう\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(見出しレベル1,無効:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(見出しレベル1,無効)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "あああ\n== いいい ==\nううう\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(見出しレベル2:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(見出しレベル2)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "あああ\n == いいい == \nううう\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(見出しレベル2,無効:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(見出しレベル2,無効)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "あああ\n== いいい ==\n=== ううう ===\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(見出しレベル3:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(見出しレベル3)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "あああ\n=== いいい ===\nううう\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(見出しレベル3,レベル違反(3):警告数)' );
-			is( $result_ref->[0], 'レベル3の見出しの前にレベル2の見出しが必要です(2)', 'JAWP::Article::LintText(見出しレベル3,レベル違反(3):警告文)' );
+			is_deeply( $result_ref, [ 'レベル3の見出しの前にレベル2の見出しが必要です(2)' ], 'JAWP::Article::LintText(見出しレベル3,レベル違反(3))' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "あああ\n === いいい === \nううう\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(見出しレベル3,無効:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(見出しレベル3,無効)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "あああ\n== いいい ==\n=== ううう ===\n==== えええ ====\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(見出しレベル4:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(見出しレベル4)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "あああ\n== いいい ==\n==== えええ ====\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(見出しレベル4,レベル違反(2-4):警告数)' );
-			is( $result_ref->[0], 'レベル4の見出しの前にレベル3の見出しが必要です(3)', 'JAWP::Article::LintText(見出しレベル4,レベル違反(2-4):警告文)' );
+			is_deeply( $result_ref, [ 'レベル4の見出しの前にレベル3の見出しが必要です(3)' ], 'JAWP::Article::LintText(見出しレベル4,レベル違反(2-4))' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "あああ\n==== いいい ====\nううう\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(見出しレベル4,レベル違反(4):警告数)' );
-			is( $result_ref->[0], 'レベル4の見出しの前にレベル3の見出しが必要です(2)', 'JAWP::Article::LintText(見出しレベル4,レベル違反(4):警告文)' );
+			is_deeply( $result_ref, [ 'レベル4の見出しの前にレベル3の見出しが必要です(2)' ], 'JAWP::Article::LintText(見出しレベル4,レベル違反(4))' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "あああ\n ==== いいい ==== \nううう\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(見出しレベル4,無効:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(見出しレベル4,無効)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "あああ\n== いいい ==\n=== ううう ===\n==== えええ ====\n===== おおお =====\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(見出しレベル5:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(見出しレベル5)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "あああ\n== いいい ==\n=== ううう ===\n===== おおお =====\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(見出しレベル5,レベル違反(2-3-5):警告数)' );
-			is( $result_ref->[0], 'レベル5の見出しの前にレベル4の見出しが必要です(4)', 'JAWP::Article::LintText(見出しレベル5,レベル違反(2-3-5):警告文)' );
+			is_deeply( $result_ref, [ 'レベル5の見出しの前にレベル4の見出しが必要です(4)' ], 'JAWP::Article::LintText(見出しレベル5,レベル違反(2-3-5))' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "あああ\n===== いいい =====\nううう\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(見出しレベル5,レベル違反(5):警告数)' );
-			is( $result_ref->[0], 'レベル5の見出しの前にレベル4の見出しが必要です(2)', 'JAWP::Article::LintText(見出しレベル5,レベル違反(5):警告文)' );
+			is_deeply( $result_ref, [ 'レベル5の見出しの前にレベル4の見出しが必要です(2)' ], 'JAWP::Article::LintText(見出しレベル5,レベル違反(5))' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "あああ\n ===== いいい ===== \nううう\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(見出しレベル5,無効:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(見出しレベル5,無効)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "あああ\n== いいい ==\n=== ううう ===\n==== えええ ====\n===== おおお =====\n====== かかか ======\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(見出しレベル6:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(見出しレベル6)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "あああ\n== いいい ==\n=== ううう ===\n==== えええ ====\n====== かかか ======\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(見出しレベル5,レベル違反(2-3-4-6):警告数)' );
-			is( $result_ref->[0], 'レベル6の見出しの前にレベル5の見出しが必要です(5)', 'JAWP::Article::LintText(見出しレベル6,レベル違反(2-3-4-6):警告文)' );
+			is_deeply( $result_ref, [ 'レベル6の見出しの前にレベル5の見出しが必要です(5)' ], 'JAWP::Article::LintText(見出しレベル6,レベル違反(2-3-4-6))' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "あああ\n====== いいい ======\nううう\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(見出しレベル5,レベル違反(6):警告数)' );
-			is( $result_ref->[0], 'レベル6の見出しの前にレベル5の見出しが必要です(2)', 'JAWP::Article::LintText(見出しレベル6,レベル違反(6):警告文)' );
+			is_deeply( $result_ref, [ 'レベル6の見出しの前にレベル5の見出しが必要です(2)' ], 'JAWP::Article::LintText(見出しレベル6,レベル違反(6))' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "あああ\n ====== いいい ====== \nううう\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(見出しレベル6,無効:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(見出しレベル6,無効)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "あああ\n== いいい ==\n=== ううう ===\n==== えええ ====\n===== おおお =====\n====== かかか ======\n======= ききき =======\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(見出しレベル7:警告数)' );
-			is( $result_ref->[0], '見出しレベルは6までです(7)', 'JAWP::Article::LintText(見出しレベル7:警告文)' );
+			is_deeply( $result_ref, [ '見出しレベルは6までです(7)' ], 'JAWP::Article::LintText(見出しレベル7)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "あああ\n== いいい =\nううう\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(見出しレベル左右不一致:警告数)' );
-			is( $result_ref->[0], '見出し記法の左右の=の数が一致しません(2)', 'JAWP::Article::LintText(見出しレベル左右不一致:警告文)' );
+			is_deeply( $result_ref, [ '見出し記法の左右の=の数が一致しません(2)' ], 'JAWP::Article::LintText(見出しレベル左右不一致)' );
 		}
 
 		# ISBN記法テスト
@@ -694,25 +667,23 @@ sub TestJAWPArticle {
 				$article->SetTitle( '標準' );
 				$article->SetText( "ISBN $code\n{{aimai}}" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 0, "JAWP::Article::LintText(ISBN,' ',$code:警告数)" );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText(ISBN,' ',$code)" );
 
 				$article->SetTitle( '標準' );
 				$article->SetText( "ISBN=$code\n{{aimai}}" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 0, "JAWP::Article::LintText(ISBN,'=',$code:警告数)" );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText(ISBN,'=',$code)" );
 
 				$article->SetTitle( '標準' );
 				$article->SetText( "ISBN$code\n{{aimai}}" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 1, "JAWP::Article::LintText(ISBN,半角スペース無し,$code:警告数)" );
-				is( $result_ref->[0], 'ISBN記法では、ISBNと数字の間に半角スペースが必要です(1)', "JAWP::Article::LintText(ISBN,半角スペース無し,$code:警告文)" );
+				is_deeply( $result_ref, [ 'ISBN記法では、ISBNと数字の間に半角スペースが必要です(1)' ], "JAWP::Article::LintText(ISBN,半角スペース無し,$code)" );
 			}
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "ISBN 012345678\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(ISBN,桁数違反:警告数)' );
-			is( $result_ref->[0], 'ISBNは10桁もしくは13桁でないといけません(1)', 'JAWP::Article::LintText(ISBN,桁数違反:警告文)' );
+			is_deeply( $result_ref, [ 'ISBNは10桁もしくは13桁でないといけません(1)' ], 'JAWP::Article::LintText(ISBN,桁数違反)' );
 		}
 
 		# 西暦記述テスト
@@ -720,19 +691,17 @@ sub TestJAWPArticle {
 			$article->SetTitle( '標準' );
 			$article->SetText( "2011年\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(西暦:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(西暦)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "'11年\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(西暦,2桁,半角クォート:警告数)' );
-			is( $result_ref->[0], '西暦は全桁表示が推奨されます(1)', 'JAWP::Article::LintText(西暦,2桁,半角クォート:警告文)' );
+			is_deeply( $result_ref, [ '西暦は全桁表示が推奨されます(1)' ], 'JAWP::Article::LintText(西暦,2桁,半角クォート)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "’11年\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(西暦,2桁,全角クォート:警告数)' );
-			is( $result_ref->[0], '西暦は全桁表示が推奨されます(1)', 'JAWP::Article::LintText(西暦,2桁,全角クォート:警告文)' );
+			is_deeply( $result_ref, [ '西暦は全桁表示が推奨されます(1)' ], 'JAWP::Article::LintText(西暦,2桁,全角クォート)' );
 		}
 
 		# 不正コメントタグテスト
@@ -741,8 +710,7 @@ sub TestJAWPArticle {
 				$article->SetTitle( '標準' );
 				$article->SetText( "$tag\n{{aimai}}" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 1, 'JAWP::Article::LintText(不正コメント:警告数)' );
-				is( $result_ref->[0], '閉じられていないコメントタグがあります(1)', 'JAWP::Article::LintText(不正コメント:警告文)' );
+				is_deeply( $result_ref, [ '閉じられていないコメントタグがあります(1)' ], 'JAWP::Article::LintText(不正コメント)' );
 			}
 		}
 
@@ -751,36 +719,33 @@ sub TestJAWPArticle {
 			$article->SetTitle( '標準' );
 			$article->SetText( "{{DEFAULTSORT:あああ}}\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(ソートキー,DEFAULTSORT:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(ソートキー,DEFAULTSORT)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "{{デフォルトソート:あああ}}\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(ソートキー,デフォルトソート:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(ソートキー,デフォルトソート)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "{{aimai}}\n[[Category:カテゴリ|あああ]]\n" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(ソートキー,Category:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(ソートキー,Category)' );
 
 			foreach my $char ( 'ぁ', 'ぃ', 'ぅ', 'ぇ', 'ぉ', 'っ', 'ゃ', 'ゅ', 'ょ', 'ゎ', 'が', 'ぎ', 'ぐ', 'げ', 'ご', 'ざ', 'じ', 'ず', 'ぜ', 'ぞ', 'だ', 'ぢ', 'づ', 'で', 'ど', 'ば', 'び', 'ぶ', 'べ', 'ぼ', 'ぱ', 'ぴ', 'ぷ', 'ぺ', 'ぽ', 'ー' ) {
 				$article->SetTitle( '標準' );
 				$article->SetText( "{{DEFAULTSORT:あああ$char}}\n{{aimai}}" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 1, "JAWP::Article::LintText(ソートキー,濁音、半濁音、吃音、長音,DEFAULTSORT,$char:警告数)" );
-				is( $result_ref->[0], 'ソートキーには濁音、半濁音、吃音、長音は清音化することが推奨されます(1)', "JAWP::Article::LintText(ソートキー,濁音、半濁音、吃音、長音,DEFAULTSORT,$char:警告文)" );
+				is_deeply( $result_ref, [ 'ソートキーには濁音、半濁音、吃音、長音は清音化することが推奨されます(1)' ], "JAWP::Article::LintText(ソートキー,濁音、半濁音、吃音、長音,DEFAULTSORT,$char)" );
 
 				$article->SetTitle( '標準' );
 				$article->SetText( "{{デフォルトソート:あああ$char}}\n{{aimai}}" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 1, "JAWP::Article::LintText(ソートキー,濁音、半濁音、吃音、長音,デフォルトソート,$char:警告数)" );
-				is( $result_ref->[0], 'ソートキーには濁音、半濁音、吃音、長音は清音化することが推奨されます(1)', "JAWP::Article::LintText(ソートキー,濁音、半濁音、吃音、長音,デフォルトソート,$char:警告文)" );
+				is_deeply( $result_ref, [ 'ソートキーには濁音、半濁音、吃音、長音は清音化することが推奨されます(1)' ], "JAWP::Article::LintText(ソートキー,濁音、半濁音、吃音、長音,デフォルトソート,$char)" );
 
 				$article->SetTitle( '標準' );
 				$article->SetText( "{{aimai}}\n[[Category:カテゴリ|あああ$char]]\n" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 1, "JAWP::Article::LintText(ソートキー,濁音、半濁音、吃音、長音,Category,$char:警告数)" );
-				is( $result_ref->[0], 'ソートキーには濁音、半濁音、吃音、長音は清音化することが推奨されます(2)', "JAWP::Article::LintText(ソートキー,濁音、半濁音、吃音、長音,Category,$char:警告文)" );
+				is_deeply( $result_ref, [ 'ソートキーには濁音、半濁音、吃音、長音は清音化することが推奨されます(2)' ], "JAWP::Article::LintText(ソートキー,濁音、半濁音、吃音、長音,Category,$char)" );
 			}
 		}
 
@@ -789,32 +754,27 @@ sub TestJAWPArticle {
 			$article->SetTitle( '標準' );
 			$article->SetText( "{{DEFAULTSORT:あああ}}\n{{DEFAULTSORT:あああ}}\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(デフォルトソート,複数:警告数)' );
-			is( $result_ref->[0], 'デフォルトソートが複数存在します(2)', 'JAWP::Article::LintText(デフォルトソート,複数:警告文)' );
+			is_deeply( $result_ref, [ 'デフォルトソートが複数存在します(2)' ], 'JAWP::Article::LintText(デフォルトソート,複数)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "{{DEFAULTSORT:あああ}}\n{{デフォルトソート:あああ}}\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(デフォルトソート,複数:警告数)' );
-			is( $result_ref->[0], 'デフォルトソートが複数存在します(2)', 'JAWP::Article::LintText(デフォルトソート,複数:警告文)' );
+			is_deeply( $result_ref, [ 'デフォルトソートが複数存在します(2)' ], 'JAWP::Article::LintText(デフォルトソート,複数)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "{{デフォルトソート:あああ}}\n{{デフォルトソート:あああ}}\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(デフォルトソート,複数:警告数)' );
-			is( $result_ref->[0], 'デフォルトソートが複数存在します(2)', 'JAWP::Article::LintText(デフォルトソート,複数:警告文)' );
+			is_deeply( $result_ref, [ 'デフォルトソートが複数存在します(2)' ], 'JAWP::Article::LintText(デフォルトソート,複数)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "{{DEFAULTSORT:}}\n\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(デフォルトソート,ソートキー無し:警告数)' );
-			is( $result_ref->[0], 'デフォルトソートではソートキーが必須です(1)', 'JAWP::Article::LintText(デフォルトソート,ソートキー無し:警告文)' );
+			is_deeply( $result_ref, [ 'デフォルトソートではソートキーが必須です(1)' ], 'JAWP::Article::LintText(デフォルトソート,ソートキー無し)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "{{デフォルトソート:}}\n\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(デフォルトソート,ソートキー無し:警告数)' );
-			is( $result_ref->[0], 'デフォルトソートではソートキーが必須です(1)', 'JAWP::Article::LintText(デフォルトソート,ソートキー無し:警告文)' );
+			is_deeply( $result_ref, [ 'デフォルトソートではソートキーが必須です(1)' ], 'JAWP::Article::LintText(デフォルトソート,ソートキー無し)' );
 		}
 
 		# カテゴリテスト
@@ -823,30 +783,27 @@ sub TestJAWPArticle {
 				$article->SetTitle( '標準' );
 				$article->SetText( "{{aimai}}\n[[$type:カテゴリ1]]\n[[$type:カテゴリ2]]\n" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 0, "JAWP::Article::LintText($type:警告数)" );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText($type)" );
 
 				$article->SetTitle( '標準' );
 				$article->SetText( "{{aimai}}\n[[$type:カテゴリ1]][[$type:カテゴリ2]]\n" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 0, "JAWP::Article::LintText($type,同一行:警告数)" );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText($type,同一行)" );
 
 				$article->SetTitle( '標準' );
 				$article->SetText( "{{aimai}}\n[[$type:カテゴリ]]\n[[$type:カテゴリ]]\n" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 1, "JAWP::Article::LintText($type,重複指定:警告数)" );
-				is( $result_ref->[0], '既に使用されているカテゴリです(3)', "JAWP::Article::LintText($type,重複指定:警告文)" );
+				is_deeply( $result_ref, [ '既に使用されているカテゴリです(3)' ], "JAWP::Article::LintText($type,重複指定)" );
 
 				$article->SetTitle( '標準' );
 				$article->SetText( "{{aimai}}\n[[$type:カテゴリ]][[$type:カテゴリ]]\n" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 1, "JAWP::Article::LintText($type,重複指定,同一行:警告数)" );
-				is( $result_ref->[0], '既に使用されているカテゴリです(2)', "JAWP::Article::LintText($type,重複指定,同一行:警告文)" );
+				is_deeply( $result_ref, [ '既に使用されているカテゴリです(2)' ], "JAWP::Article::LintText($type,重複指定,同一行)" );
 
 				$article->SetTitle( '標準' );
 				$article->SetText( "{{aimai}}\n[[$type:カテゴリ3]]\n" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 1, "JAWP::Article::LintText($type,不存在:警告数)" );
-				is( $result_ref->[0], '(カテゴリ3)は存在しないカテゴリです(2)', "JAWP::Article::LintText($type,不存在:警告文)" );
+				is_deeply( $result_ref, [ '(カテゴリ3)は存在しないカテゴリです(2)' ], "JAWP::Article::LintText($type,不存在)" );
 			}
 		}
 
@@ -856,13 +813,12 @@ sub TestJAWPArticle {
 				$article->SetTitle( '標準' );
 				$article->SetText( "{{aimai}}\n[[$type:テンプレート]]\n" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 0, "JAWP::Article::LintText($type,リンク呼び出し:警告数)" );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText($type,リンク呼び出し)" );
 
 				$article->SetTitle( '標準' );
 				$article->SetText( "{{aimai}}\n[[$type:テンプレート1]]\n" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 1, "JAWP::Article::LintText($type,リンク呼び出し,不存在:警告数)" );
-				is( $result_ref->[0], '(テンプレート1)は存在しないテンプレートです(2)', "JAWP::Article::LintText($type,リンク呼び出し,不存在:警告文)" );
+				is_deeply( $result_ref, [ '(テンプレート1)は存在しないテンプレートです(2)' ], "JAWP::Article::LintText($type,リンク呼び出し,不存在)" );
 			}
 		}
 
@@ -872,36 +828,31 @@ sub TestJAWPArticle {
 			foreach my $char ( '，', '．', '！', '？', '＆', '＠' ) {
 				$article->SetText( "$char\n{{aimai}}\n" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 1, "JAWP::Article::LintText(全角記号,$char:警告数)" );
-				is( $result_ref->[0], '全角記号の使用は推奨されません(1)', "JAWP::Article::LintText(全角記号,$char:警告文)" );
+				is_deeply( $result_ref, [ '全角記号の使用は推奨されません(1)' ], "JAWP::Article::LintText(全角記号,$char)" );
 			}
 			$article->SetTitle( '標準' );
 			foreach my $char ( 'Ａ', 'Ｚ', 'ａ', 'ｚ', '０', '９' ) {
 				$article->SetText( "$char\n{{aimai}}\n" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 1, "JAWP::Article::LintText(全角英数字,$char:警告数)" );
-				is( $result_ref->[0], '全角英数字の使用は推奨されません(1)', "JAWP::Article::LintText(全角英数字,$char:警告文)" );
+				is_deeply( $result_ref, [ '全角英数字の使用は推奨されません(1)' ], "JAWP::Article::LintText(全角英数字,$char)" );
 			}
 			$article->SetTitle( '標準' );
 			foreach my $char ( 'ｱ', 'ﾝ', 'ﾞ', 'ﾟ', 'ｧ', 'ｫ', 'ｬ', 'ｮ', '｡', '｢', '｣', '､' ) {
 				$article->SetText( "$char\n{{aimai}}\n" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 1, "JAWP::Article::LintText(半角カタカナ,$char:警告数)" );
-				is( $result_ref->[0], '半角カタカナの使用は推奨されません(1)', "JAWP::Article::LintText(半角カタカナ,$char:警告文)" );
+				is_deeply( $result_ref, [ '半角カタカナの使用は推奨されません(1)' ], "JAWP::Article::LintText(半角カタカナ,$char)" );
 			}
 			$article->SetTitle( '標準' );
 			foreach my $char ( 'Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ', 'Ⅵ', 'Ⅶ', 'Ⅷ', 'Ⅸ', 'Ⅹ' ) {
 				$article->SetText( "$char\n{{aimai}}\n" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 1, "JAWP::Article::LintText(ローマ数字,$char:警告数)" );
-				is( $result_ref->[0], 'ローマ数字はアルファベットを組み合わせましょう(1)', "JAWP::Article::LintText(ローマ数字,$char:警告文)" );
+				is_deeply( $result_ref, [ 'ローマ数字はアルファベットを組み合わせましょう(1)' ], "JAWP::Article::LintText(ローマ数字,$char)" );
 			}
 			$article->SetTitle( '標準' );
 			foreach my $char ( '①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩', '⑪', '⑫', '⑬', '⑭', '⑮', '⑯', '⑰', '⑱', '⑲', '⑳' ) {
 				$article->SetText( "$char\n{{aimai}}\n" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 1, "JAWP::Article::LintText(丸付き数字,$char:警告数)" );
-				is( $result_ref->[0], '丸付き数字の使用は推奨されません(1)', "JAWP::Article::LintText(丸付き数字,$char:警告文)" );
+				is_deeply( $result_ref, [ '丸付き数字の使用は推奨されません(1)' ], "JAWP::Article::LintText(丸付き数字,$char)" );
 			}
 		}
 
@@ -910,24 +861,22 @@ sub TestJAWPArticle {
 			$article->SetTitle( '標準' );
 			$article->SetText( "{{aimai}}\n[[en:dummy]]" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(言語間リンク:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(言語間リンク)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "{{aimai}}\n[[en:dummy]]\n[[fr:dummy]]\n" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(言語間リンク,複数:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(言語間リンク,複数)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "{{aimai}}\n[[en:dummy]]\n[[en:dummy]]\n" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(言語間リンク,重複:警告数)' );
-			is( $result_ref->[0], '言語間リンクが重複しています(3)', 'JAWP::Article::LintText(言語間リンク,重複:警告文)' );
+			is_deeply( $result_ref, [ '言語間リンクが重複しています(3)' ], 'JAWP::Article::LintText(言語間リンク,重複)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "{{aimai}}\n[[fr:dummy]]\n[[en:dummy]]\n" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(言語間リンク,順序:警告数)' );
-			is( $result_ref->[0], '言語間リンクはアルファベット順に並べることが推奨されます(3)', 'JAWP::Article::LintText(言語間リンク,順序:警告文)' );
+			is_deeply( $result_ref, [ '言語間リンクはアルファベット順に並べることが推奨されます(3)' ], 'JAWP::Article::LintText(言語間リンク,順序)' );
 		}
 
 		# 曖昧さ回避リンクテスト
@@ -935,13 +884,12 @@ sub TestJAWPArticle {
 			$article->SetTitle( '標準' );
 			$article->SetText( "[[標準]]\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(曖昧さ回避リンク,標準:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(曖昧さ回避リンク,標準)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "[[曖昧さ回避語]]\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(曖昧さ回避リンク,曖昧さ回避語:警告数)' );
-			is( $result_ref->[0], '(曖昧さ回避語)のリンク先は曖昧さ回避です(1)', 'JAWP::Article::LintText(曖昧さ回避リンク,曖昧さ回避語:警告文)' );
+			is_deeply( $result_ref, [ '(曖昧さ回避語)のリンク先は曖昧さ回避です(1)' ], 'JAWP::Article::LintText(曖昧さ回避リンク,曖昧さ回避語)' );
 		}
 
 		# リダイレクトリンクテスト
@@ -949,13 +897,12 @@ sub TestJAWPArticle {
 			$article->SetTitle( '標準' );
 			$article->SetText( "[[標準]]\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(リダイレクトリンク,標準:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(リダイレクトリンク,標準)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "[[転送語]]\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(リダイレクトリンク,転送語:警告数)' );
-			is( $result_ref->[0], '(転送語)のリンク先はリダイレクトです(1)', 'JAWP::Article::LintText(リダイレクトリンク,転送語:警告文)' );
+			is_deeply( $result_ref, [ '(転送語)のリンク先はリダイレクトです(1)' ], 'JAWP::Article::LintText(リダイレクトリンク,転送語)' );
 		}
 
 		# 年月日リンクテスト
@@ -963,18 +910,17 @@ sub TestJAWPArticle {
 			$article->SetTitle( '標準' );
 			$article->SetText( "[[2011年]][[1月1日]]\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(年月日リンク,[[2011年]][[1月1日]]:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(年月日リンク,[[2011年]][[1月1日]])' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "[[2011年1月1日は元旦]]\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(年月日リンク,[[2011年1月1日は元旦]]:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(年月日リンク,[[2011年1月1日は元旦]])' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "[[2011年1月1日]]\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(年月日リンク,[[2011年1月1日]]:警告数)' );
-			is( $result_ref->[0], '年月日へのリンクは年と月日を分けることが推奨されます(1)', 'JAWP::Article::LintText(リダイレクトリンク,[[2011年1月1日]]:警告文)' );
+			is_deeply( $result_ref, [ '年月日へのリンクは年と月日を分けることが推奨されます(1)' ], 'JAWP::Article::LintText(リダイレクトリンク,[[2011年1月1日]])' );
 		}
 
 		# 不正URLテスト
@@ -982,13 +928,12 @@ sub TestJAWPArticle {
 			$article->SetTitle( '標準' );
 			$article->SetText( "[http://www.yahoo.co.jp/]\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(不正URL,http://www.yahoo.co.jp/:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(不正URL,http://www.yahoo.co.jp/)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "[http:///www.yahoo.co.jp/]\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(不正URL,http:///www.yahoo.co.jp/:警告数)' );
-			is( $result_ref->[0], '不正なURLです(1)', 'JAWP::Article::LintText(不正URL,http:///www.yahoo.co.jp/:警告文)' );
+			is_deeply( $result_ref, [ '不正なURLです(1)' ], 'JAWP::Article::LintText(不正URL,http:///www.yahoo.co.jp/)' );
 		}
 
 		# カッコ対応テスト
@@ -996,19 +941,18 @@ sub TestJAWPArticle {
 			$article->SetTitle( '標準' );
 			$article->SetText( "[ ]\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(カッコ対応,[ ]:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(カッコ対応,[ ])' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "{ }\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(カッコ対応,{ }:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(カッコ対応,{ })' );
 
 			foreach my $subtext ( '[', ']', '[[', ']]', '{', '}', '{{', '}}', '[}', '{]' ) {
 				$article->SetTitle( '標準' );
 				$article->SetText( "$subtext\n{{aimai}}" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 1, 'JAWP::Article::LintText(カッコ対応,[:警告数)' );
-				is( $result_ref->[0], '空のリンクまたは閉じられていないカッコがあります(1)', "JAWP::Article::LintText(カッコ対応,$subtext:警告文)" );
+				is_deeply( $result_ref, [ '空のリンクまたは閉じられていないカッコがあります(1)' ], "JAWP::Article::LintText(カッコ対応,$subtext)" );
 			}
 		}
 
@@ -1017,18 +961,17 @@ sub TestJAWPArticle {
 			$article->SetTitle( '標準' );
 			$article->SetText( "<ref>あああ</ref>\n<references/>\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(リファレンス,<references/>:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(リファレンス,<references/>)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "<ref>あああ</ref>\n{{reflist}}\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(リファレンス,{{reflist}}:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(リファレンス,{{reflist}})' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "<ref>あああ</ref>\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(リファレンス,不存在:警告数)' );
-			is( $result_ref->[0], '<ref>要素があるのに<references>要素がありません', 'JAWP::Article::LintText(リファレンス,不存在:警告文)' );
+			is_deeply( $result_ref, [ '<ref>要素があるのに<references>要素がありません' ], 'JAWP::Article::LintText(リファレンス,不存在)' );
 		}
 
 		# 定義文テスト
@@ -1036,49 +979,47 @@ sub TestJAWPArticle {
 			$article->SetTitle( '標準' );
 			$article->SetText( "== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, "JAWP::Article::LintText(定義文,'標準'-'':警告数)" );
-			is( $result_ref->[0], '定義文が見当たりません', "JAWP::Article::LintText(定義文,'標準'-'':警告文)" );
+			is_deeply( $result_ref, [ '定義文が見当たりません' ], "JAWP::Article::LintText(定義文,'標準'-'')" );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "'''あああ'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, "JAWP::Article::LintText(定義文,'標準'-'''あああ''':警告数)" );
-			is( $result_ref->[0], '定義文が見当たりません', "JAWP::Article::LintText(定義文,'標準'-'''あああ''':警告文)" );
+			is_deeply( $result_ref, [ '定義文が見当たりません' ], "JAWP::Article::LintText(定義文,'標準'-'''あああ''')" );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "'''標 準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, "JAWP::Article::LintText(定義文,'標準'-'''標 準''':警告数)" );
+			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'標準'-'''標 準''')" );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "''' 標準 '''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, "JAWP::Article::LintText(定義文,'標準'-''' 標準 ''':警告数)" );
+			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'標準'-''' 標準 ''')" );
 
 			$article->SetTitle( '標 準' );
 			$article->SetText( "''' 標 準 '''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, "JAWP::Article::LintText(定義文,'標 準'-''' 標 準 ''':警告数)" );
+			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'標 準'-''' 標 準 ''')" );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "'''あああ'''\n''' 標準 '''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, "JAWP::Article::LintText(定義文,'標準'-'''あああ'''\n''' 標準 ''':警告数)" );
+			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'標準'-'''あああ'''\n''' 標準 ''')" );
 
 			$article->SetTitle( '標準 (曖昧さ回避)' );
 			$article->SetText( "'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, "JAWP::Article::LintText(定義文,'標準 (曖昧さ回避)'-'''標準''':警告数)" );
+			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'標準 (曖昧さ回避)'-'''標準''')" );
 
 			$article->SetTitle( 'Abc' );
 			$article->SetText( "'''abc'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, "JAWP::Article::LintText(定義文,'Abc'-'''abc''':警告数)" );
+			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'Abc'-'''abc''')" );
 
 			$article->SetTitle( 'Shift JIS' );
 			$article->SetText( "'''Shift_JIS'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, "JAWP::Article::LintText(定義文,'Shift JIS'-'''Shift_JIS''':警告数)" );
+			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'Shift JIS'-'''Shift_JIS''')" );
 		}
 
 		# カテゴリ、デフォルトソート、出典なしテスト
@@ -1086,20 +1027,17 @@ sub TestJAWPArticle {
 			$article->SetTitle( '標準' );
 			$article->SetText( "'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(カテゴリ無し:警告数)' );
-			is( $result_ref->[0], 'カテゴリが一つもありません', 'JAWP::Article::LintText(カテゴリ無し:警告文)' );
+			is_deeply( $result_ref, [ 'カテゴリが一つもありません' ], 'JAWP::Article::LintText(カテゴリ無し)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "'''標準'''\n== 出典 ==\n[[Category:カテゴリ]]" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(デフォルトソート無し:警告数)' );
-			is( $result_ref->[0], 'デフォルトソートがありません', 'JAWP::Article::LintText(デフォルトソート無し:警告文)' );
+			is_deeply( $result_ref, [ 'デフォルトソートがありません' ], 'JAWP::Article::LintText(デフォルトソート無し)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "'''標準'''\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(出典無し:警告数)' );
-			is( $result_ref->[0], '出典に関する節がありません', 'JAWP::Article::LintText(出典無し:警告文)' );
+			is_deeply( $result_ref, [ '出典に関する節がありません' ], 'JAWP::Article::LintText(出典無し)' );
 		}
 
 		# ブロック順序テスト
@@ -1107,42 +1045,37 @@ sub TestJAWPArticle {
 			$article->SetTitle( '標準' );
 			$article->SetText( "'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(ブロック順序,本文-カテゴリ:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(ブロック順序,本文-カテゴリ)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n[[en:interlink]]\n" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(ブロック順序,本文-カテゴリ-言語間リンク:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(ブロック順序,本文-カテゴリ-言語間リンク)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "'''標準'''\n== 出典 ==\n[[en:interlink]]\n[[Category:カテゴリ]]\n{{DEFAULTSORT:あああ}}\n" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(ブロック順序,本文-言語間リンク-カテゴリ:警告数)' );
-			is( $result_ref->[0], '本文、カテゴリ、言語間リンクの順に記述することが推奨されます(4)', 'JAWP::Article::LintText(ブロック順序,本文-言語間リンク-カテゴリ:警告文)' );
+			is_deeply( $result_ref, [ '本文、カテゴリ、言語間リンクの順に記述することが推奨されます(4)' ], 'JAWP::Article::LintText(ブロック順序,本文-言語間リンク-カテゴリ)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "[[Category:カテゴリ]]\n'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[en:interlink]]\n" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(ブロック順序,カテゴリ-本文-言語間リンク:警告数)' );
-			is( $result_ref->[0], '本文、カテゴリ、言語間リンクの順に記述することが推奨されます(2)', 'JAWP::Article::LintText(ブロック順序,カテゴリ-本文-言語間リンク:警告文)' );
+			is_deeply( $result_ref, [ '本文、カテゴリ、言語間リンクの順に記述することが推奨されます(2)' ], 'JAWP::Article::LintText(ブロック順序,カテゴリ-本文-言語間リンク)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "[[Category:カテゴリ]]\n{{DEFAULTSORT:あああ}}\n[[en:interlink]]\n'''標準'''\n== 出典 ==\n" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(ブロック順序,カテゴリ-言語間リンク-本文:警告数)' );
-			is( $result_ref->[0], '本文、カテゴリ、言語間リンクの順に記述することが推奨されます(4)', 'JAWP::Article::LintText(ブロック順序,カテゴリ-言語間リンク-本文:警告文)' );
+			is_deeply( $result_ref, [ '本文、カテゴリ、言語間リンクの順に記述することが推奨されます(4)' ], 'JAWP::Article::LintText(ブロック順序,カテゴリ-言語間リンク-本文)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "[[en:interlink]]\n[[Category:カテゴリ]]\n{{DEFAULTSORT:あああ}}\n'''標準'''\n== 出典 ==\n" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(ブロック順序,言語間リンク-カテゴリ-本文:警告数)' );
-			is( $result_ref->[0], '本文、カテゴリ、言語間リンクの順に記述することが推奨されます(2)', 'JAWP::Article::LintText(ブロック順序,言語間リンク-カテゴリ-本文:警告文)' );
+			is_deeply( $result_ref, [ '本文、カテゴリ、言語間リンクの順に記述することが推奨されます(2)' ], 'JAWP::Article::LintText(ブロック順序,言語間リンク-カテゴリ-本文)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "[[en:interlink]]\n'''標準'''\n== 出典 ==\n[[Category:カテゴリ]]\n{{DEFAULTSORT:あああ}}\n" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(ブロック順序,言語間リンク-本文-カテゴリ:警告数)' );
-			is( $result_ref->[0], '本文、カテゴリ、言語間リンクの順に記述することが推奨されます(2)', 'JAWP::Article::LintText(ブロック順序,言語間リンク-本文-カテゴリ:警告文)' );
+			is_deeply( $result_ref, [ '本文、カテゴリ、言語間リンクの順に記述することが推奨されます(2)' ], 'JAWP::Article::LintText(ブロック順序,言語間リンク-本文-カテゴリ)' );
 		}
 
 		# 生没年カテゴリテスト
@@ -1151,65 +1084,58 @@ sub TestJAWPArticle {
 				$article->SetTitle( '標準' );
 				$article->SetText( "$subtext\n{{aimai}}" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 0, "JAWP::Article::LintText(生没年カテゴリ,$subtext:警告数)" );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText(生没年カテゴリ,$subtext)" );
 			}
 
 			foreach my $subtext ( "[[Category:2001年生]]\n[[Category:2011年没]]\n[[Category:存命人物]]\n{{死亡年月日と没年齢|2001|1|1|2011|12|31}}", "[[Category:2001年生]]\n[[Category:没年不明]]\n[[Category:存命人物]]", "[[Category:生年不明]]\n[[Category:2011年没]]\n[[Category:存命人物]]", "[[Category:生年不明]]\n[[Category:没年不明]]\n[[Category:存命人物]]", "[[Category:2001年生]]\n[[Category:存命人物]]\n{{死亡年月日と没年齢|2001|1|1|2011|12|31}}" ) {
 				$article->SetTitle( '標準' );
 				$article->SetText( "$subtext\n{{aimai}}" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 1, "JAWP::Article::LintText(生没年カテゴリ,存命人物ではありません,$subtext:警告数)" );
-				is( $result_ref->[0], '存命人物ではありません', "JAWP::Article::LintText(生没年カテゴリ,存命人物ではありません,$subtext:警告文)" );
+				is_deeply( $result_ref, [ '存命人物ではありません' ], "JAWP::Article::LintText(生没年カテゴリ,存命人物ではありません,$subtext)" );
 			}
 
 			foreach my $subtext ( "[[Category:存命人物]]", "[[Category:2011年没]]", "[[Category:没年不明]]" ) {
 				$article->SetTitle( '標準' );
 				$article->SetText( "$subtext\n{{aimai}}" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 1, "JAWP::Article::LintText(生没年カテゴリ,生年のカテゴリがありません,$subtext:警告数)" );
-				is( $result_ref->[0], '生年のカテゴリがありません', "JAWP::Article::LintText(生没年カテゴリ,生年のカテゴリがありません,$subtext:警告文)" );
+				is_deeply( $result_ref, [ '生年のカテゴリがありません' ], "JAWP::Article::LintText(生没年カテゴリ,生年のカテゴリがありません,$subtext)" );
 			}
 
 			foreach my $subtext ( "[[Category:2001年生]]", "[[Category:生年不明]]" ) {
 				$article->SetTitle( '標準' );
 				$article->SetText( "$subtext\n{{aimai}}" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 1, "JAWP::Article::LintText(生没年カテゴリ,存命人物または没年のカテゴリがありません,$subtext:警告数)" );
-				is( $result_ref->[0], '存命人物または没年のカテゴリがありません', "JAWP::Article::LintText(生没年カテゴリ,存命人物または没年のカテゴリがありません,$subtext:警告文)" );
+				is_deeply( $result_ref, [ '存命人物または没年のカテゴリがありません' ], "JAWP::Article::LintText(生没年カテゴリ,存命人物または没年のカテゴリがありません,$subtext)" );
 			}
 
 			foreach my $subtext ( "[[Category:2001年生]]\n[[Category:2011年没]]\n{{死亡年月日と没年齢|2002|1|1|2011|12|31}}", "[[Category:2001年生]]\n[[Category:2011年没]]\n{{没年齢|2002|1|1|2011|12|31}}", "[[Category:2001年生]]\n[[Category:存命人物]]\n{{生年月日と年齢|2002|1|1}}" ) {
 				$article->SetTitle( '標準' );
 				$article->SetText( "$subtext\n{{aimai}}" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 1, "JAWP::Article::LintText(生没年カテゴリ,テンプレートと生年のカテゴリ不一致,$subtext:警告数)" );
-				is( $result_ref->[0], '(生年月日と年齢or死亡年月日と没年齢or没年齢)テンプレートと生年のカテゴリが一致しません', "JAWP::Article::LintText(生没年カテゴリ,テンプレートと生年のカテゴリ不一致,$subtext:警告文)" );
+				is_deeply( $result_ref, [ '(生年月日と年齢or死亡年月日と没年齢or没年齢)テンプレートと生年のカテゴリが一致しません' ], "JAWP::Article::LintText(生没年カテゴリ,テンプレートと生年のカテゴリ不一致,$subtext)" );
 			}
 
 			foreach my $subtext ("[[Category:2001年生]]\n[[Category:2011年没]]\n{{死亡年月日と没年齢|2001|1|1|2012|12|31}}", "[[Category:2001年生]]\n[[Category:2011年没]]\n{{没年齢|2001|1|1|2012|12|31}}" ) {
 				$article->SetTitle( '標準' );
 				$article->SetText( "$subtext\n{{aimai}}" );
 				$result_ref = $article->LintText( $titlelist );
-				is( @$result_ref + 0, 1, "JAWP::Article::LintText(生没年カテゴリ,テンプレートと没年のカテゴリ不一致,$subtext:警告数)" );
-				is( $result_ref->[0], '(死亡年月日と没年齢or没年齢)テンプレートと没年のカテゴリが一致しません', "JAWP::Article::LintText(生没年カテゴリ,テンプレートと没年のカテゴリ不一致,$subtext:警告文)" );
+				is_deeply( $result_ref, [ '(死亡年月日と没年齢or没年齢)テンプレートと没年のカテゴリが一致しません' ], "JAWP::Article::LintText(生没年カテゴリ,テンプレートと没年のカテゴリ不一致,$subtext)" );
 			}
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "[[Category:2001年生]]\n[[Category:存命人物]]\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(生没年カテゴリ,2001年生-存命人物,テンプレート未使用:警告数)' );
-			is( $result_ref->[0], '(生年月日と年齢)のテンプレートを使うと便利です', 'JAWP::Article::LintText(生没年カテゴリ,2001年生-存命人物,テンプレート未使用:警告文)' );
+			is_deeply( $result_ref, [ '(生年月日と年齢)のテンプレートを使うと便利です' ], 'JAWP::Article::LintText(生没年カテゴリ,2001年生-存命人物,テンプレート未使用)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "[[Category:1900年生]]\n[[Category:1902年没]]\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintText(生没年カテゴリ,1900年生-1902年没,テンプレート範囲外:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(生没年カテゴリ,1900年生-1902年没,テンプレート範囲外)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "[[Category:2001年生]]\n[[Category:2011年没]]\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintText(生没年カテゴリ,2001年生-2011年没,テンプレート未使用:警告数)' );
-			is( $result_ref->[0], '(死亡年月日と没年齢)のテンプレートを使うと便利です', 'JAWP::Article::LintText(生没年カテゴリ,2001年生-2011年没,テンプレート未使用:警告文)' );
+			is_deeply( $result_ref, [ '(死亡年月日と没年齢)のテンプレートを使うと便利です' ], 'JAWP::Article::LintText(生没年カテゴリ,2001年生-2011年没,テンプレート未使用)' );
 		}
 	}
 
@@ -1221,17 +1147,17 @@ sub TestJAWPArticle {
 
 		$titlelist->{'標準'}->{'記事'} = 1;
 
+		# 戻り値の型確認
 		$article->SetTitle( '' );
 		$article->SetText( '' );
 		$result_ref = $article->LintIndex( $titlelist );
 		is( ref $result_ref, 'ARRAY', 'JAWP::Article::LintIndex(空文字列:リファレンス種別)' );
-		is( @$result_ref + 0, 0, 'JAWP::Article::LintIndex(空文字列:警告数)' );
 
 		# 索引記事以外は無視確認
 		$article->SetTitle( 'aaa' );
 		$article->SetText( '' );
 		$result_ref = $article->LintIndex( $titlelist );
-		is( @$result_ref + 0, 0, 'JAWP::Article::LintIndex(非索引:警告数)' );
+		is_deeply( $result_ref, [], 'JAWP::Article::LintIndex(非索引)' );
 
 		# 見出しテスト
 		{
@@ -1239,21 +1165,19 @@ sub TestJAWPArticle {
 			$article->SetTitle( 'Wikipedia:索引 あ' );
 			$article->SetText( "==ああ==\n==あい==\n" );
 			$result_ref = $article->LintIndex( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintIndex(見出し正常:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintIndex(見出し正常)' );
 
 			# 見出し違反(記事名不一致)
 			$article->SetTitle( 'Wikipedia:索引 あ' );
 			$article->SetText( "==い==\n" );
 			$result_ref = $article->LintIndex( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintIndex(見出し違反(記事名不一致):警告数)' );
-			is( $result_ref->[0], '見出しが記事名に一致しません(1,い,あ)', 'JAWP::Article::LintIndex(見出し違反(記事名不一致):警告文)' );
+			is_deeply( $result_ref, [ '見出しが記事名に一致しません(1,い,あ)' ], 'JAWP::Article::LintIndex(見出し違反(記事名不一致))' );
 
 			# 見出し違反(順序違反)
 			$article->SetTitle( 'Wikipedia:索引 あ' );
 			$article->SetText( "==あい==\n==ああ==\n" );
 			$result_ref = $article->LintIndex( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintIndex(見出し違反(順序違反):警告数)' );
-			is( $result_ref->[0], '見出しがあいうえお順ではありません(2,あい,ああ)', 'JAWP::Article::LintIndex(見出し違反(順序違反):警告文)' );
+			is_deeply( $result_ref, [ '見出しがあいうえお順ではありません(2,あい,ああ)' ], 'JAWP::Article::LintIndex(見出し違反(順序違反))' );
 		}
 
 		# 項目テスト
@@ -1262,41 +1186,37 @@ sub TestJAWPArticle {
 			$article->SetTitle( 'Wikipedia:索引 あ' );
 			$article->SetText( "*[[記事]]（きじ）【分野】\n" );
 			$result_ref = $article->LintIndex( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintIndex(項目正常:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintIndex(項目正常)' );
 
 			# リダイレクト正常
 			$article->SetTitle( 'Wikipedia:索引 あ' );
 			$article->SetText( "*[[記事]]（きじ）⇒[[記事]]\n" );
 			$result_ref = $article->LintIndex( $titlelist );
-			is( @$result_ref + 0, 0, 'JAWP::Article::LintIndex(リダイレクト正常:警告数)' );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintIndex(リダイレクト正常)' );
 
 			# 赤リンク
 			$article->SetTitle( 'Wikipedia:索引 あ' );
 			$article->SetText( "*[[あああ]]【分野】\n" );
 			$result_ref = $article->LintIndex( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintIndex(赤リンク:警告数)' );
-			is( $result_ref->[0], '(あああ)は赤リンクです(1)', 'JAWP::Article::LintIndex(赤リンク:警告文)' );
+			is_deeply( $result_ref, [ '(あああ)は赤リンクです(1)' ], 'JAWP::Article::LintIndex(赤リンク)' );
 
 			# 読み仮名無し
 			$article->SetTitle( 'Wikipedia:索引 あ' );
 			$article->SetText( "*[[記事]]【分野】\n" );
 			$result_ref = $article->LintIndex( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintIndex(赤リンク:警告数)' );
-			is( $result_ref->[0], '読み仮名がありません(1)', 'JAWP::Article::LintIndex(赤リンク:警告文)' );
+			is_deeply( $result_ref, [ '読み仮名がありません(1)' ], 'JAWP::Article::LintIndex(赤リンク)' );
 
 			# '曖昧'使用
 			$article->SetTitle( 'Wikipedia:索引 あ' );
 			$article->SetText( "*[[記事]]（きじ）【曖昧】\n" );
 			$result_ref = $article->LintIndex( $titlelist );
-			is( @$result_ref + 0, 1, "JAWP::Article::LintIndex('曖昧'使用:警告数)" );
-			is( $result_ref->[0], '【曖昧】より【曖昧さ回避】が推奨されます(1)', "JAWP::Article::LintIndex('曖昧'使用:警告文)" );
+			is_deeply( $result_ref, [ '【曖昧】より【曖昧さ回避】が推奨されます(1)' ], "JAWP::Article::LintIndex('曖昧'使用)" );
 
 			# 分野名無し
 			$article->SetTitle( 'Wikipedia:索引 あ' );
 			$article->SetText( "*[[記事]]（きじ）\n" );
 			$result_ref = $article->LintIndex( $titlelist );
-			is( @$result_ref + 0, 1, 'JAWP::Article::LintIndex(分野名無し:警告数)' );
-			is( $result_ref->[0], '分野名がありません(1)', 'JAWP::Article::LintIndex(分野名無:警告文)' );
+			is_deeply( $result_ref, [ '分野名がありません(1)' ], 'JAWP::Article::LintIndex(分野名無)' );
 		}
 	}
 }
