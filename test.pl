@@ -2114,30 +2114,23 @@ sub TestJAWPUtil {
 
 		foreach my $str ( '', 'あああ', '[あああ]', '[[あああ', '[[]]', '[[#abc]]' ) {
 			$result_ref = JAWP::Util::GetLinkwordList( $str );
-			is( @$result_ref + 0 , 0, "JAWP::Util::GetLinkwordList($str,リンクワード数)" );
+			is_deeply( $result_ref, [], "JAWP::Util::GetLinkwordList($str)" );
 		}
 
 		$result_ref = JAWP::Util::GetLinkwordList( '[[あああ]]' );
-		is( @$result_ref + 0 , 1, 'JAWP::Util::GetLinkwordList([[あああ]],リンクワード数)' );
-		is( $result_ref->[0] , 'あああ', 'JAWP::Util::GetLinkwordList([[あああ]],リンクワード)' );
+		is_deeply( $result_ref, [ 'あああ' ], 'JAWP::Util::GetLinkwordList([[あああ]])' );
 
 		$result_ref = JAWP::Util::GetLinkwordList( 'あああ[[いいい]]ううう' );
-		is( @$result_ref + 0 , 1, 'JAWP::Util::GetLinkwordList(あああ[[いいい]]ううう,リンクワード数)' );
-		is( $result_ref->[0] , 'いいい', 'JAWP::Util::GetLinkwordList(あああ[[いいい]]ううう,リンクワード)' );
+		is_deeply( $result_ref, [ 'いいい' ], 'JAWP::Util::GetLinkwordList(あああ[[いいい]]ううう)' );
 
 		$result_ref = JAWP::Util::GetLinkwordList( '[[あああ|いいい]]' );
-		is( @$result_ref + 0 , 1, 'JAWP::Util::GetLinkwordList([[あああ|いいい]],リンクワード数)' );
-		is( $result_ref->[0] , 'あああ', 'JAWP::Util::GetLinkwordList([[あああ|いいい]],リンクワード)' );
+		is_deeply( $result_ref, [ 'あああ' ], 'JAWP::Util::GetLinkwordList([[あああ|いいい]])' );
 
 		$result_ref = JAWP::Util::GetLinkwordList( '[[あああ]]いいい[[ううう]]' );
-		is( @$result_ref + 0 , 2, 'JAWP::Util::GetLinkwordList([[あああ]]いいい[[ううう]],リンクワード数)' );
-		is( $result_ref->[0] , 'あああ', 'JAWP::Util::GetLinkwordList([[あああ]]いいい[[ううう]],リンクワード1' );
-		is( $result_ref->[1] , 'ううう', 'JAWP::Util::GetLinkwordList([[あああ]]いいい[[ううう]],リンクワード2' );
+		is_deeply( $result_ref, [ 'あああ', 'ううう' ], 'JAWP::Util::GetLinkwordList([[あああ]]いいい[[ううう]]' );
 
 		$result_ref = JAWP::Util::GetLinkwordList( "[[あああ]]\nいいい\n[[ううう]]\n" );
-		is( @$result_ref + 0 , 2, 'JAWP::Util::GetLinkwordList([[あああ]]\nいいい\n[[ううう]]\n,リンクワード数)' );
-		is( $result_ref->[0] , 'あああ', 'JAWP::Util::GetLinkwordList([[あああ]]\nいいい\n[[ううう]]\n,リンクワード1)' );
-		is( $result_ref->[1] , 'ううう', 'JAWP::Util::GetLinkwordList([[あああ]]\nいいい\n[[ううう]]\n,リンクワード2)' );
+		is_deeply( $result_ref, [ 'あああ', 'ううう' ], 'JAWP::Util::GetLinkwordList([[あああ]]\nいいい\n[[ううう]]\n)' );
 	}
 
 	# GetTemplatewordListテスト
@@ -2146,30 +2139,23 @@ sub TestJAWPUtil {
 
 		foreach my $str ( '', 'あああ', '{あああ}', '{{あああ', '{{デフォルトソート:あああ}}', '{{DEFAULTSORT:あああ}}', '{{}}' ) {
 			$result_ref = JAWP::Util::GetTemplatewordList( $str );
-			is( @$result_ref + 0 , 0, "JAWP::Util::GetTemplatewordList($str:テンプレートワード数)" );
+			is_deeply( $result_ref, [], "JAWP::Util::GetTemplatewordList($str)" );
 		}
 
 		$result_ref = JAWP::Util::GetTemplatewordList( '{{あああ}}' );
-		is( @$result_ref + 0 , 1, 'JAWP::Util::GetTemplatewordList({{あああ}}:テンプレートワード数)' );
-		is( $result_ref->[0] , 'あああ', 'JAWP::Util::GetTemplatewordList({{あああ}}:テンプレートワード)' );
+		is_deeply( $result_ref, [ 'あああ' ], 'JAWP::Util::GetTemplatewordList({{あああ}})' );
 
 		$result_ref = JAWP::Util::GetTemplatewordList( 'あああ{{いいい}}ううう' );
-		is( @$result_ref + 0 , 1, 'JAWP::Util::GetTemplatewordList(あああ{{いいい}}ううう:テンプレートワード数)' );
-		is( $result_ref->[0] , 'いいい', 'JAWP::Util::GetTemplatewordList(あああ{{いいい}}ううう:テンプレートワード)' );
+		is_deeply( $result_ref, [ 'いいい' ], 'JAWP::Util::GetTemplatewordList(あああ{{いいい}}ううう)' );
 
 		$result_ref = JAWP::Util::GetTemplatewordList( '{{あああ|いいい}}' );
-		is( @$result_ref + 0 , 1, 'JAWP::Util::GetTemplatewordList({{あああ|いいい}}:テンプレートワード数)' );
-		is( $result_ref->[0] , 'あああ', 'JAWP::Util::GetTemplatewordList({{あああ|いいい}}:テンプレートワード)' );
+		is_deeply( $result_ref, [ 'あああ' ], 'JAWP::Util::GetTemplatewordList({{あああ|いいい}})' );
 
 		$result_ref = JAWP::Util::GetTemplatewordList( '{{あああ}}いいい{{ううう}}' );
-		is( @$result_ref + 0 , 2, 'JAWP::Util::GetTemplatewordList({{あああ}}いいい{{ううう}}:テンプレートワード数)' );
-		is( $result_ref->[0] , 'あああ', 'JAWP::Util::GetTemplatewordList({{あああ}}いいい{{ううう}}:テンプレートワード1)' );
-		is( $result_ref->[1] , 'ううう', 'JAWP::Util::GetTemplatewordList({{あああ}}いいい{{ううう}}:テンプレートワード2)' );
+		is_deeply( $result_ref, [ 'あああ', 'ううう' ], 'JAWP::Util::GetTemplatewordList({{あああ}}いいい{{ううう}})' );
 
 		$result_ref = JAWP::Util::GetTemplatewordList( "{{あああ}}\nいいい\n{{ううう}}\n" );
-		is( @$result_ref + 0 , 2, 'JAWP::Util::GetTemplatewordList({{あああ}}\nいいい\n{{ううう}}\n:テンプレートワード数)' );
-		is( $result_ref->[0] , 'あああ', 'JAWP::Util::GetTemplatewordList({{あああ}}\nいいい\n{{ううう}}\n:テンプレートワード1)' );
-		is( $result_ref->[1] , 'ううう', 'JAWP::Util::GetTemplatewordList({{あああ}}\nいいい\n{{ううう}}\n:テンプレートワード2)' );
+		is_deeply( $result_ref, [ 'あああ', 'ううう' ], 'JAWP::Util::GetTemplatewordList({{あああ}}\nいいい\n{{ううう}}\n)' );
 	}
 
 	# GetExternallinkListテスト
@@ -2177,19 +2163,16 @@ sub TestJAWPUtil {
 		my $result_ref;
 
 		$result_ref = JAWP::Util::GetExternallinkList( '' );
-		is( @$result_ref + 0 , 0, 'JAWP::Util::GetExternallinkList(空文字列,URL数)' );
+		is_deeply( $result_ref, [], 'JAWP::Util::GetExternallinkList(空文字列)' );
 
 		$result_ref = JAWP::Util::GetExternallinkList( 'あああ' );
-		is( @$result_ref + 0 , 0, 'JAWP::Util::GetExternallinkList(あああ,URL数)' );
+		is_deeply( $result_ref, [], 'JAWP::Util::GetExternallinkList(あああ)' );
 
 		$result_ref = JAWP::Util::GetExternallinkList( 'あああ http://www.yahoo.co.jp いいい' );
-		is( @$result_ref + 0 , 1, 'JAWP::Util::GetExternallinkList(あああ http://www.yahoo.co.jp いいい,URL数)' );
-		is( $result_ref->[0], 'http://www.yahoo.co.jp', 'JAWP::Util::GetExternallinkList(あああ http://www.yahoo.co.jp いいい,URL)' );
+		is_deeply( $result_ref, [ 'http://www.yahoo.co.jp' ], 'JAWP::Util::GetExternallinkList(あああ http://www.yahoo.co.jp いいい)' );
 
 		$result_ref = JAWP::Util::GetExternallinkList( 'あああ http://www.yahoo.co.jp/aaa/bbb http://www.google.co.jp/ccc/ddd いいい' );
-		is( @$result_ref + 0 , 2, 'JAWP::Util::GetExternallinkList(あああ http://www.yahoo.co.jp/aaa/bbb http://www.google.co.jp/ccc/ddd いいい,URL数)' );
-		is( $result_ref->[0], 'http://www.yahoo.co.jp/aaa/bbb', 'JAWP::Util::GetExternallinkList(あああ http://www.yahoo.co.jp/aaa/bbb http://www.google.co.jp/ccc/ddd いいい,URL1)' );
-		is( $result_ref->[1], 'http://www.google.co.jp/ccc/ddd', 'JAWP::Util::GetExternallinkList(あああ http://www.yahoo.co.jp/aaa/bbb http://www.google.co.jp/ccc/ddd いいい,URL2)' );
+		is_deeply( $result_ref, [ 'http://www.yahoo.co.jp/aaa/bbb', 'http://www.google.co.jp/ccc/ddd' ], 'JAWP::Util::GetExternallinkList(あああ http://www.yahoo.co.jp/aaa/bbb http://www.google.co.jp/ccc/ddd いいい)' );
 	}
 
 	# GetHostテスト
@@ -2289,26 +2272,22 @@ sub TestJAWPUtil {
 		my $result_ref;
 
 		$result_ref = JAWP::Util::GetHeadnameList( '' );
-		is( @$result_ref + 0 , 0, 'JAWP::Util::GetHeadnameList(空文字列:見出し数)' );
+		is_deeply( $result_ref, [], 'JAWP::Util::GetHeadnameList(空文字列)' );
 
 		$result_ref = JAWP::Util::GetHeadnameList( 'あああ' );
-		is( @$result_ref + 0 , 0, 'JAWP::Util::GetHeadnameList(あああ:見出し数)' );
+		is_deeply( $result_ref, [], 'JAWP::Util::GetHeadnameList(あああ)' );
 
 		$result_ref = JAWP::Util::GetHeadnameList( '= =' );
-		is( @$result_ref + 0 , 0, 'JAWP::Util::GetHeadnameList(= =:見出し数)' );
+		is_deeply( $result_ref, [], 'JAWP::Util::GetHeadnameList(= =)' );
 
 		$result_ref = JAWP::Util::GetHeadnameList( "あああ\n==見出し==\nいいい" );
-		is( @$result_ref + 0 , 1, 'JAWP::Util::GetHeadnameList(あああ\n==見出し==\nいいい:見出し数)' );
-		is( $result_ref->[0], '見出し', 'JAWP::Util::GetHeadnameList(あああ\n==見出し==\nいいい:見出し)' );
+		is_deeply( $result_ref, [ '見出し' ], 'JAWP::Util::GetHeadnameList(あああ\n==見出し==\nいいい)' );
 
 		$result_ref = JAWP::Util::GetHeadnameList( "あああ\n==見出し==\n== 見出し2 ==\nいいい" );
-		is( @$result_ref + 0 , 2, 'JAWP::Util::GetHeadnameList(あああ\n==見出し==\n== 見出し2 ==\nいいい:見出し数)' );
-		is( $result_ref->[0], '見出し', 'JAWP::Util::GetHeadnameList(あああ\n==見出し==\n== 見出し2 ==\nいいい:見出し1)' );
-		is( $result_ref->[1], '見出し2', 'JAWP::Util::GetHeadnameList(あああ\n==見出し==\n== 見出し2 ==\nいいい:見出し2)' );
+		is_deeply( $result_ref, [ '見出し', '見出し2' ], 'JAWP::Util::GetHeadnameList(あああ\n==見出し==\n== 見出し2 ==\nいいい)' );
 
 		$result_ref = JAWP::Util::GetHeadnameList( "あああ\n==見 出 し==\nいいい" );
-		is( @$result_ref + 0 , 1, 'JAWP::Util::GetHeadnameList(あああ\n==見 出 し==\nいいい:見出し数)' );
-		is( $result_ref->[0], '見 出 し', 'JAWP::Util::GetHeadnameList(あああ\n==見 出 し==\nいいい:見出し)' );
+		is_deeply( $result_ref, [ '見 出 し' ], 'JAWP::Util::GetHeadnameList(あああ\n==見 出 し==\nいいい)' );
 	}
 
 	# GetTalkTimestampListテスト
@@ -2316,22 +2295,19 @@ sub TestJAWPUtil {
 		my $result_ref;
 
 		$result_ref = JAWP::Util::GetTalkTimestampList( '' );
-		is( @$result_ref + 0 , 0, 'JAWP::Util::GetTalkTimestampList(空文字列:発言日時数)' );
+		is_deeply( $result_ref, [], 'JAWP::Util::GetTalkTimestampList(空文字列)' );
 
 		$result_ref = JAWP::Util::GetTalkTimestampList( 'あああ' );
-		is( @$result_ref + 0 , 0, 'JAWP::Util::GetTalkTimestampList(あああ:発言日時数)' );
+		is_deeply( $result_ref, [], 'JAWP::Util::GetTalkTimestampList(あああ)' );
 
 		$result_ref = JAWP::Util::GetTalkTimestampList( '2011年8月2日 (火) 14:14 (UTC)' );
-		is( @$result_ref + 0 , 1, 'JAWP::Util::GetTalkTimestampList(2011年8月2日 (火) 14:14 (UTC):発言日時数)' );
-		is( $result_ref->[0], '2011-08-02T14:14:00Z', 'JAWP::Util::GetTalkTimestampList(2011年8月2日 (火) 14:14 (UTC):発言日時)' );
+		is_deeply( $result_ref, [ '2011-08-02T14:14:00Z' ], 'JAWP::Util::GetTalkTimestampList(2011年8月2日 (火) 14:14 (UTC))' );
 
 		$result_ref = JAWP::Util::GetTalkTimestampList( '２０１１年８月２日 (火) １４:１４ (UTC)' );
-		is( @$result_ref + 0 , 0, 'JAWP::Util::GetTalkTimestampList(２０１１年８月２日 (火) １４:１４ (UTC):発言日時数,全角数字)' );
+		is_deeply( $result_ref, [], 'JAWP::Util::GetTalkTimestampList(２０１１年８月２日 (火) １４:１４ (UTC))' );
 
 		$result_ref = JAWP::Util::GetTalkTimestampList( '2011年8月2日 (火) 14:14 (UTC)あああ2011年8月7日 (日) 14:55 (UTC)' );
-		is( @$result_ref + 0 , 2, 'JAWP::Util::GetTalkTimestampList(2011年8月2日 (火) 14:14 (UTC)あああ2011年8月7日 (日) 14:55 (UTC):発言日時数)' );
-		is( $result_ref->[0], '2011-08-02T14:14:00Z', 'JAWP::Util::GetTalkTimestampList(2011年8月2日 (火) 14:14 (UTC)あああ2011年8月7日 (日) 14:55 (UTC):発言日時1)' );
-		is( $result_ref->[1], '2011-08-07T14:55:00Z', 'JAWP::Util::GetTalkTimestampList(2011年8月2日 (火) 14:14 (UTC)あああ2011年8月7日 (日) 14:55 (UTC):発言日時2)' );
+		is_deeply( $result_ref, [ '2011-08-02T14:14:00Z', '2011-08-07T14:55:00Z' ], 'JAWP::Util::GetTalkTimestampList(2011年8月2日 (火) 14:14 (UTC)あああ2011年8月7日 (日) 14:55 (UTC))' );
 	}
 }
 
