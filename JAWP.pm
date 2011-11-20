@@ -964,24 +964,33 @@ sub GetHost {
 sub GetLinkType {
 	my( $word, $titlelist ) = @_;
 
-	if( defined( $titlelist->{'標準'}->{$word} ) ) {
-		if( defined( $titlelist->{'標準_曖昧'}->{$word} ) ) {
-			return( 'aimai', $word );
+	my $pos = index( $word, ':' );
+	my $ucword;
+	if( $pos >= 0 ) {
+		$ucword = substr( $word, 0, $pos + 1 ) . ucfirst( substr( $word, $pos + 1 ) );
+	}
+	else {
+		$ucword = ucfirst( $word );
+	}
+
+	if( defined( $titlelist->{'標準'}->{$ucword} ) ) {
+		if( defined( $titlelist->{'標準_曖昧'}->{$ucword} ) ) {
+			return( 'aimai', $ucword );
 		}
 		else {
-			return( '標準', $word );
+			return( '標準', $ucword );
 		}
 	}
-	elsif( defined( $titlelist->{'標準_リダイレクト'}->{$word} ) ) {
-		return( 'redirect', $word );
+	elsif( defined( $titlelist->{'標準_リダイレクト'}->{$ucword} ) ) {
+		return( 'redirect', $ucword );
 	}
-	elsif( $word =~ /^(Category|カテゴリ):(.*)/i ) {
+	elsif( $ucword =~ /^(Category|カテゴリ):(.*)/i ) {
 		return( 'category', $2 ) if( defined( $titlelist->{'Category'}->{$2} ) );
 	}
-	elsif( $word =~ /^(ファイル|画像|メディア|file|image|media):(.*)/i ) {
+	elsif( $ucword =~ /^(ファイル|画像|メディア|file|image|media):(.*)/i ) {
 		return( 'file', $2 ) if( defined( $titlelist->{'ファイル'}->{$2} ) );
 	}
-	elsif( $word =~ /^(Template|テンプレート):(.*)/i ) {
+	elsif( $ucword =~ /^(Template|テンプレート):(.*)/i ) {
 		return( 'template', $2 ) if( defined( $titlelist->{'Template'}->{$2} ) );
 	}
 	elsif( $word =~ /^(Help|ヘルプ|MediaWiki|Portal|Wikipedia|プロジェクト|Project):/i

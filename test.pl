@@ -2124,12 +2124,12 @@ sub TestJAWPUtil {
 		my( $linktype, $word );
 		my $titlelist = new JAWP::TitleList;
 
-		$titlelist->{'標準'} = { '標準記事'=>1, '曖昧記事'=>1 };
-		$titlelist->{'標準_曖昧'} = { '曖昧記事'=>1 };
-		$titlelist->{'標準_リダイレクト'} = { 'リダイレクト記事'=>1 };
-		$titlelist->{'ファイル'} = { 'ファイル名'=>1 };
-		$titlelist->{'Template'} = { 'テンプレート名'=>1 };
-		$titlelist->{'Category'} = { 'カテゴリ名'=>1 };
+		$titlelist->{'標準'} = { '標準記事'=>1, 'Abc_article'=>1, '曖昧記事'=>1, 'Abc_aimai'=>1 };
+		$titlelist->{'標準_曖昧'} = { '曖昧記事'=>1, 'Abc_aimai'=>1 };
+		$titlelist->{'標準_リダイレクト'} = { 'リダイレクト記事'=>1, 'Abc_redirect'=>1 };
+		$titlelist->{'ファイル'} = { 'ファイル名'=>1, 'Abc_file'=>1 };
+		$titlelist->{'Template'} = { 'テンプレート名'=>1, 'Abc_template'=>1 };
+		$titlelist->{'Category'} = { 'カテゴリ名'=>1, 'Abc_category'=>1 };
 
 		( $linktype, $word ) = JAWP::Util::GetLinkType( '', $titlelist );
 		is( $linktype , 'redlink', 'JAWP::Util::GetLinkType(空文字列:linktype)' );
@@ -2139,30 +2139,54 @@ sub TestJAWPUtil {
 		is( $linktype , '標準', 'JAWP::Util::GetLinkType(標準記事:linktype)' );
 		is( $word, '標準記事', 'JAWP::Util::GetLinkType(標準記事:word)' );
 
+		( $linktype, $word ) = JAWP::Util::GetLinkType( 'abc_article', $titlelist );
+		is( $linktype , '標準', 'JAWP::Util::GetLinkType(abc_article:linktype)' );
+		is( $word, 'Abc_article', 'JAWP::Util::GetLinkType(abc_article:word)' );
+
 		( $linktype, $word ) = JAWP::Util::GetLinkType( '曖昧記事', $titlelist );
 		is( $linktype , 'aimai', 'JAWP::Util::GetLinkType(曖昧記事:linktype)' );
 		is( $word, '曖昧記事', 'JAWP::Util::GetLinkType(曖昧記事:word)' );
+
+		( $linktype, $word ) = JAWP::Util::GetLinkType( 'abc_aimai', $titlelist );
+		is( $linktype , 'aimai', 'JAWP::Util::GetLinkType(abc_aimai:linktype)' );
+		is( $word, 'Abc_aimai', 'JAWP::Util::GetLinkType(abc_aimai:word)' );
 
 		( $linktype, $word ) = JAWP::Util::GetLinkType( 'リダイレクト記事', $titlelist );
 		is( $linktype , 'redirect', 'JAWP::Util::GetLinkType(リダイレクト記事:linktype)' );
 		is( $word, 'リダイレクト記事', 'JAWP::Util::GetLinkType(リダイレクト記事:word)' );
 
+		( $linktype, $word ) = JAWP::Util::GetLinkType( 'abc_redirect', $titlelist );
+		is( $linktype , 'redirect', 'JAWP::Util::GetLinkType(abc_redirect:linktype)' );
+		is( $word, 'Abc_redirect', 'JAWP::Util::GetLinkType(abc_redirect:word)' );
+
 		foreach my $type ( 'Category', 'カテゴリ' ) {
 			( $linktype, $word ) = JAWP::Util::GetLinkType( "$type:カテゴリ名", $titlelist );
 			is( $linktype , 'category', "JAWP::Util::GetLinkType(カテゴリ名,$type:linktype)" );
 			is( $word, 'カテゴリ名', "JAWP::Util::GetLinkType(カテゴリ名,$type:word)" );
+
+			( $linktype, $word ) = JAWP::Util::GetLinkType( "$type:abc_category", $titlelist );
+			is( $linktype , 'category', "JAWP::Util::GetLinkType(abc_category,$type:linktype)" );
+			is( $word, 'Abc_category', "JAWP::Util::GetLinkType(abc_category,$type:word)" );
 		}
 
 		foreach my $type ( 'ファイル', '画像', 'メディア', 'file', 'image', 'media' ) {
 			( $linktype, $word ) = JAWP::Util::GetLinkType( "$type:ファイル名", $titlelist );
 			is( $linktype , 'file', "JAWP::Util::GetLinkType(ファイル名,$type:linktype)" );
 			is( $word, 'ファイル名', "JAWP::Util::GetLinkType(ファイル名,$type:word)" );
+
+			( $linktype, $word ) = JAWP::Util::GetLinkType( "$type:abc_file", $titlelist );
+			is( $linktype , 'file', "JAWP::Util::GetLinkType(abc_file,$type:linktype)" );
+			is( $word, 'Abc_file', "JAWP::Util::GetLinkType(abc_file,$type:word)" );
 		}
 
 		foreach my $type ( 'Template', 'テンプレート' ) {
 			( $linktype, $word ) = JAWP::Util::GetLinkType( "$type:テンプレート名", $titlelist );
 			is( $linktype , 'template', "JAWP::Util::GetLinkType(テンプレート名,$type:linktype)" );
 			is( $word, 'テンプレート名', "JAWP::Util::GetLinkType(テンプレート名,$type:word)" );
+
+			( $linktype, $word ) = JAWP::Util::GetLinkType( "$type:abc_template", $titlelist );
+			is( $linktype , 'template', "JAWP::Util::GetLinkType(abc_template,$type:linktype)" );
+			is( $word, 'Abc_template', "JAWP::Util::GetLinkType(abc_template,$type:word)" );
 		}
 
 		( $linktype, $word ) = JAWP::Util::GetLinkType( '赤リンク記事', $titlelist );
