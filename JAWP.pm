@@ -427,7 +427,7 @@ sub LintText {
 			push @result, "不正なURLです($n)";
 		}
 
-		foreach my $word ( JAWP::Util::GetLinkwordList( $lines[$n - 1], 1 ) ) {
+		foreach my $word ( @{ JAWP::Util::GetLinkwordList( $lines[$n - 1], 1 ) } ) {
 			if( defined( $titlelist->{'標準_曖昧'}->{$word} ) ) {
 				push @result, "($word)のリンク先は曖昧さ回避です($n)";
 			}
@@ -569,17 +569,17 @@ sub LintIndex {
 			}
 		}
 		if( index( $lines[$n - 1], '*' ) == 0 ) {
-			my @words = JAWP::Util::GetLinkwordList( $lines[$n - 1] );
-			if( @words + 0 != 0 ) {
-				foreach( @words ) {
+			my $wordlist_ref = JAWP::Util::GetLinkwordList( $lines[$n - 1] );
+			if( $wordlist_ref + 0 != 0 ) {
+				foreach( @$wordlist_ref ) {
 					my ( $linktype, $word ) = JAWP::Util::GetLinkType( $_, $titlelist );
 					if( $linktype eq 'redlink' ) {
 						push @result, "($word)は赤リンクです($n)";
 					}
 				}
-				$words[0] =~ s/ \(.+\)$//;
-				if( index( $words[0], 'Wikipedia:索引' ) < 0 ) {
-					if( !( $words[0] =~ /^[ぁ-ゟァ-ヿA-Za-z!"#\$%&'\(\)\*\+,\-\.\/！”＃＄％＆’\（\）＋，．／：；＜＝＞\？\｛\｜\｝・ 　]+$/ ) && !( $lines[$n - 1] =~ /(\(|\（)(\[\[|)[ぁ-ゟァ-ヿ=\-]+(\]\]|)(\)|\）)/ ) ) {
+				$wordlist_ref->[0] =~ s/ \(.+\)$//;
+				if( index( $wordlist_ref->[0], 'Wikipedia:索引' ) < 0 ) {
+					if( !( $wordlist_ref->[0] =~ /^[ぁ-ゟァ-ヿA-Za-z!"#\$%&'\(\)\*\+,\-\.\/！”＃＄％＆’\（\）＋，．／：；＜＝＞\？\｛\｜\｝・ 　]+$/ ) && !( $lines[$n - 1] =~ /(\(|\（)(\[\[|)[ぁ-ゟァ-ヿ=\-]+(\]\]|)(\)|\）)/ ) ) {
 						push @result, "読み仮名がありません($n)";
 					}
 					if( $lines[$n - 1] =~ /【(.+)】/ ) {
@@ -726,7 +726,7 @@ sub GetTitleList {
 			$titlelist->{$namespace}->{$title} = 1;
 		}
 		if( $withsection ) {
-			foreach my $section ( JAWP::Util::GetHeadnameList( $article->{'text'} ) ) {
+			foreach my $section ( @{ JAWP::Util::GetHeadnameList( $article->{'text'} ) } ) {
 				$titlelist->{$namespace}->{"$title#$section"} = 1;
 			}
 		}
@@ -903,7 +903,7 @@ sub GetLinkwordList {
 		}
 	}
 
-	return( @wordlist );
+	return( \@wordlist );
 }
 
 
@@ -926,7 +926,7 @@ sub GetTemplatewordList {
 		}
 	}
 
-	return( @wordlist );
+	return( \@wordlist );
 }
 
 
@@ -938,7 +938,7 @@ sub GetExternallinkList {
 
 	my @linklist = $text =~ /s?https?:\/\/[-_.!~*'()a-zA-Z0-9;\/?:\@&=+\$,%#]+/g;
 
-	return( @linklist );
+	return( \@linklist );
 }
 
 
@@ -1019,7 +1019,7 @@ sub GetHeadnameList {
         }
 	}
 
-	return( @headnamelist );
+	return( \@headnamelist );
 }
 
 
@@ -1034,7 +1034,13 @@ sub GetTalkTimestampList {
 		push @timestamplist, sprintf( "%04d-%02d-%02dT%02d:%02d:00Z", $1, $2, $3, $4, $5 );
 	}
 
-	return( sort @timestamplist );
+	if( @timestamplist + 0 != 0 ) {
+		@timestamplist = sort @timestamplist;
+		return( \@timestamplist );
+	}
+	else {
+		return( [] );
+	}
 }
 
 
@@ -1230,9 +1236,9 @@ STR
 		if( $article->Namespace eq 'ノート' ) {
 			push @{$result{'note'}}, "[[$article->{'title'}]]";
 		}
-		my @wordlist = JAWP::Util::GetLinkwordList( $article->{'text'}, 1 );
-		if( @wordlist + 0 > 0 ) {
-			my ( $linktype, $word ) = JAWP::Util::GetLinkType( $wordlist[0], $titlelist );
+		my $wordlist_ref = JAWP::Util::GetLinkwordList( $article->{'text'}, 1 );
+		if( @$wordlist_ref + 0 > 0 ) {
+			my ( $linktype, $word ) = JAWP::Util::GetLinkType( $wordlist_ref->[0], $titlelist );
 			if( $linktype eq 'redlink' ) {
 				push @{$result{'redlink'}}, "[[$article->{'title'}]]($word)";
 			}
@@ -1322,29 +1328,29 @@ STR
 
 		my %count = ();
 		my $linktype;
-		my @linkwordlist = JAWP::Util::GetLinkwordList( $article->{'text'} );
+		my $linkwordlist_ref = JAWP::Util::GetLinkwordList( $article->{'text'} );
 		if( $article->Namespace eq '標準' ) {
-			$linkcount{'発リンク'}->{$article->{'title'}} = @linkwordlist + 0;
+			$linkcount{'発リンク'}->{$article->{'title'}} = @$linkwordlist_ref + 0;
 		}
-		foreach my $word ( @linkwordlist ) {
+		foreach my $word ( @$linkwordlist_ref ) {
 			next if( ++$count{$word} > 1 );
 
 			( $linktype, $word ) = JAWP::Util::GetLinkType( $word, $titlelist );
 			$linkcount{$linktype}->{$word}++ if( $linktype ne 'none' );
 		}
 
-		foreach my $word ( JAWP::Util::GetTemplatewordList( $article->{'text'} ) ) {
+		foreach my $word ( @{ JAWP::Util::GetTemplatewordList( $article->{'text'} ) } ) {
 			next if( ++$count{$word} > 1 );
 
 			$linkcount{template}->{$word}++ if( defined( $titlelist->{'Template'}->{$word} ) );
 		}
 
-		foreach my $word ( JAWP::Util::GetExternallinkList( $article->{'text'} ) ) {
+		foreach my $word ( @{ JAWP::Util::GetExternallinkList( $article->{'text'} ) } ) {
 			$word = JAWP::Util::GetHost( $word );
 			$linkcount{'externalhost'}->{$word}++ if( defined( $word ) );
 		}
 
-		foreach my $word ( JAWP::Util::GetHeadnameList( $article->{'text'} ) ) {
+		foreach my $word ( @{ JAWP::Util::GetHeadnameList( $article->{'text'} ) } ) {
 			$headnamecount{$word}++;
 		}
 	}
@@ -1374,7 +1380,7 @@ STR
 	%headnamecount = ();
 
 
-	my @timestamplist;
+	my $timestamplist_ref;
 	my( %idobatacount, %idobatatalkcount );
 	my( %afdcount, %afdtalkcount );
 	my( %checkusercount, %checkusertalkcount );
@@ -1387,52 +1393,52 @@ STR
 		print "$n\r"; $n++;
 
 		if( index( $article->{'title'}, 'Wikipedia:井戸端/subj/' ) == 0 ) {
-			@timestamplist = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
-			if( @timestamplist + 0 ) {
-				$idobatacount{substr( $timestamplist[0], 0, 7 )}++;
-				$idobatatalkcount{substr( $timestamplist[0], 0, 7 )} += ( @timestamplist + 0 );
+			$timestamplist_ref = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
+			if( @$timestamplist_ref + 0 ) {
+				$idobatacount{substr( $timestamplist_ref->[0], 0, 7 )}++;
+				$idobatatalkcount{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
 			}
 		}
 		if( index( $article->{'title'}, 'Wikipedia:削除依頼/' ) == 0 ) {
-			@timestamplist = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
-			if( @timestamplist + 0 ) {
-				$afdcount{substr( $timestamplist[0], 0, 7 )}++;
-				$afdtalkcount{substr( $timestamplist[0], 0, 7 )} += ( @timestamplist + 0 );
+			$timestamplist_ref = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
+			if( @$timestamplist_ref + 0 ) {
+				$afdcount{substr( $timestamplist_ref->[0], 0, 7 )}++;
+				$afdtalkcount{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
 			}
 		}
 		if( index( $article->{'title'}, 'Wikipedia:CheckUser依頼/' ) == 0 || index( $article->{'title'}, 'Wikipedia:チェックユーザー依頼/' ) == 0 ) {
-			@timestamplist = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
-			if( @timestamplist + 0 ) {
-				$checkusercount{substr( $timestamplist[0], 0, 7 )}++;
-				$checkusertalkcount{substr( $timestamplist[0], 0, 7 )} += ( @timestamplist + 0 );
+			$timestamplist_ref = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
+			if( @$timestamplist_ref + 0 ) {
+				$checkusercount{substr( $timestamplist_ref->[0], 0, 7 )}++;
+				$checkusertalkcount{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
 			}
 		}
 		if( index( $article->{'title'}, 'Wikipedia:投稿ブロック依頼/' ) == 0 ) {
-			@timestamplist = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
-			if( @timestamplist + 0 ) {
-				$blockcount{substr( $timestamplist[0], 0, 7 )}++;
-				$blocktalkcount{substr( $timestamplist[0], 0, 7 )} += ( @timestamplist + 0 );
+			$timestamplist_ref = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
+			if( @$timestamplist_ref + 0 ) {
+				$blockcount{substr( $timestamplist_ref->[0], 0, 7 )}++;
+				$blocktalkcount{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
 			}
 		}
 		if( index( $article->{'title'}, 'Wikipedia:管理者への立候補/' ) == 0 ) {
-			@timestamplist = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
-			if( @timestamplist + 0 ) {
-				$rfacount{substr( $timestamplist[0], 0, 7 )}++;
-				$rfatalkcount{substr( $timestamplist[0], 0, 7 )} += ( @timestamplist + 0 );
+			$timestamplist_ref = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
+			if( @$timestamplist_ref + 0 ) {
+				$rfacount{substr( $timestamplist_ref->[0], 0, 7 )}++;
+				$rfatalkcount{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
 			}
 		}
 		if( index( $article->{'title'}, 'Wikipedia:コメント依頼/' ) == 0 ) {
-			@timestamplist = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
-			if( @timestamplist + 0 ) {
-				$commentcount{substr( $timestamplist[0], 0, 7 )}++;
-				$commenttalkcount{substr( $timestamplist[0], 0, 7 )} += ( @timestamplist + 0 );
+			$timestamplist_ref = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
+			if( @$timestamplist_ref + 0 ) {
+				$commentcount{substr( $timestamplist_ref->[0], 0, 7 )}++;
+				$commenttalkcount{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
 			}
 		}
 		if( index( $article->{'title'}, 'Wikipedia:査読依頼/' ) == 0 ) {
-			@timestamplist = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
-			if( @timestamplist + 0 ) {
-				$commentcount{substr( $timestamplist[0], 0, 7 )}++;
-				$commenttalkcount{substr( $timestamplist[0], 0, 7 )} += ( @timestamplist + 0 );
+			$timestamplist_ref = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
+			if( @$timestamplist_ref + 0 ) {
+				$commentcount{substr( $timestamplist_ref->[0], 0, 7 )}++;
+				$commenttalkcount{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
 			}
 		}
 	}
@@ -1855,7 +1861,7 @@ STR
 	print "\n";
 
 	foreach( keys %indextext ) {
-		foreach my $word ( JAWP::Util::GetLinkwordList( $indextext{$_} ) ) {
+		foreach my $word ( @{ JAWP::Util::GetLinkwordList( $indextext{$_} ) } ) {
 			delete $titlelist{$word};
 		}
 	}
