@@ -1765,7 +1765,7 @@ STR
 		if( $article->IsSeibotsuDoujitsu ) {
 			push @seibotsudoujitu, $article->{'title'};
 		}
-		if( $article->{'text'} =~ /\[\[(Category|カテゴリ):(.*)(都|道|府|県)出身の人物/i ) {
+		if( $article->{'text'} =~ /\[\[(Category|カテゴリ):(.*)([都道府県])出身の人物/i ) {
 			$key = "$2$3";
 			if( !defined( $pref{$key} ) ) {
 				$pref{$key} = [];
@@ -1776,7 +1776,7 @@ STR
 		if( $article->{'title'} =~ /^(\d+)年$/ || $article->{'title'} =~ /^(\d+)月(\d+)日$/ || $article->{'title'} eq '生没同日' ) {
 			$text{$article->{'title'}} = $article->{'text'};
 		}
-		if( $article->{'title'} =~ /^(.*)(都|道|府|県)出身の人物一覧$/ ) {
+		if( $article->{'title'} =~ /^(.*)([都道府県])出身の人物一覧$/ ) {
 			$text{"$1$2"} = $article->{'text'};
 		}
 	}
@@ -1807,7 +1807,7 @@ STR
 	if( @datalist + 0 != 0 ) {
 		$report->OutputWikiList( '[[生没同日]]', \@datalist );
 	}
-	foreach my $key ( sort grep { /^.*(都|道|府|県)$/ } keys %text ) {
+	foreach my $key ( sort grep { /[都道府県]$/ } keys %text ) {
 		@datalist = map { sprintf( "[[%s出身の人物一覧]]", $_ ) } grep { index( $text{$key},$_ ) < 0 } @{$pref{$key}};
 		if( @datalist + 0 != 0 ) {
 			$report->OutputWikiList( "[[$key]]", \@datalist );
