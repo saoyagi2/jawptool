@@ -1392,13 +1392,11 @@ STR
 
 
 	my $timestamplist_ref;
-	my( %idobatacount, %idobatatalkcount );
-	my( %afdcount, %afdtalkcount );
-	my( %checkusercount, %checkusertalkcount );
-	my( %blockcount, %blocktalkcount );
-	my( %rfacount, %rfatalkcount );
-	my( %commentcount, %commenttalkcount );
-	my( %sadokucount, %sadokutalkcount );
+	my( %subpagecount, %talkcount );
+	foreach my $subpagetype ( '井戸端', '削除依頼', 'CheckUser依頼', '投稿ブロック依頼', '管理者への立候補', 'コメント依頼', '査読依頼' ) {
+		$subpagecount{$subpagetype} = {};
+		$talkcount{$subpagetype} = {};
+	}
 	$n = 1;
 	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
@@ -1406,131 +1404,67 @@ STR
 		if( index( $article->{'title'}, 'Wikipedia:井戸端/subj/' ) == 0 ) {
 			$timestamplist_ref = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
 			if( @$timestamplist_ref + 0 ) {
-				$idobatacount{substr( $timestamplist_ref->[0], 0, 7 )}++;
-				$idobatatalkcount{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
+				$subpagecount{'井戸端'}->{substr( $timestamplist_ref->[0], 0, 7 )}++;
+				$talkcount{'井戸端'}->{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
 			}
 		}
 		if( index( $article->{'title'}, 'Wikipedia:削除依頼/' ) == 0 ) {
 			$timestamplist_ref = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
 			if( @$timestamplist_ref + 0 ) {
-				$afdcount{substr( $timestamplist_ref->[0], 0, 7 )}++;
-				$afdtalkcount{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
+				$subpagecount{'削除依頼'}->{substr( $timestamplist_ref->[0], 0, 7 )}++;
+				$talkcount{'削除依頼'}->{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
 			}
 		}
 		if( index( $article->{'title'}, 'Wikipedia:CheckUser依頼/' ) == 0 || index( $article->{'title'}, 'Wikipedia:チェックユーザー依頼/' ) == 0 ) {
 			$timestamplist_ref = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
 			if( @$timestamplist_ref + 0 ) {
-				$checkusercount{substr( $timestamplist_ref->[0], 0, 7 )}++;
-				$checkusertalkcount{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
+				$subpagecount{'CheckUser依頼'}->{substr( $timestamplist_ref->[0], 0, 7 )}++;
+				$talkcount{'CheckUser依頼'}->{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
 			}
 		}
 		if( index( $article->{'title'}, 'Wikipedia:投稿ブロック依頼/' ) == 0 ) {
 			$timestamplist_ref = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
 			if( @$timestamplist_ref + 0 ) {
-				$blockcount{substr( $timestamplist_ref->[0], 0, 7 )}++;
-				$blocktalkcount{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
+				$subpagecount{'投稿ブロック依頼'}->{substr( $timestamplist_ref->[0], 0, 7 )}++;
+				$talkcount{'投稿ブロック依頼'}->{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
 			}
 		}
 		if( index( $article->{'title'}, 'Wikipedia:管理者への立候補/' ) == 0 ) {
 			$timestamplist_ref = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
 			if( @$timestamplist_ref + 0 ) {
-				$rfacount{substr( $timestamplist_ref->[0], 0, 7 )}++;
-				$rfatalkcount{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
+				$subpagecount{'管理者への立候補'}->{substr( $timestamplist_ref->[0], 0, 7 )}++;
+				$talkcount{'管理者への立候補'}->{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
 			}
 		}
 		if( index( $article->{'title'}, 'Wikipedia:コメント依頼/' ) == 0 ) {
 			$timestamplist_ref = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
 			if( @$timestamplist_ref + 0 ) {
-				$commentcount{substr( $timestamplist_ref->[0], 0, 7 )}++;
-				$commenttalkcount{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
+				$subpagecount{'コメント依頼'}->{substr( $timestamplist_ref->[0], 0, 7 )}++;
+				$talkcount{'コメント依頼'}->{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
 			}
 		}
 		if( index( $article->{'title'}, 'Wikipedia:査読依頼/' ) == 0 ) {
 			$timestamplist_ref = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
 			if( @$timestamplist_ref + 0 ) {
-				$commentcount{substr( $timestamplist_ref->[0], 0, 7 )}++;
-				$commenttalkcount{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
+				$subpagecount{'査読依頼'}->{substr( $timestamplist_ref->[0], 0, 7 )}++;
+				$talkcount{'査読依頼'}->{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
 			}
 		}
 	}
 	print "\n";
 
-	my $text = <<'TEXT';
+	foreach my $subpagetype ( '井戸端', '削除依頼', 'CheckUser依頼', '投稿ブロック依頼', '管理者への立候補', 'コメント依頼', '査読依頼' ) {
+		my $text = <<'TEXT';
 {| class="wikitable" style="text-align:right"
 ! 年月 !! サブページ数 !! 発言数 !! 発言数/サブページ数
 TEXT
-	foreach( sort keys %idobatacount ) {
-		$text .= "|-\n";
-		$text .= sprintf( "|%s || %d || %d || %2.1f\n", $_, $idobatacount{$_}, $idobatatalkcount{$_}, $idobatatalkcount{$_} / $idobatacount{$_} );
+		foreach( sort keys %{ $subpagecount{$subpagetype} } ) {
+			$text .= "|-\n";
+			$text .= sprintf( "|%s || %d || %d || %2.1f\n", $_, $subpagecount{$subpagetype}->{$_}, $talkcount{$subpagetype}->{$_}, $talkcount{$subpagetype}->{$_} / $subpagecount{$subpagetype}->{$_} );
+		}
+		$text .= '|}';
+		$report->OutputWiki( $subpagetype . '統計', \$text );
 	}
-	$text .= '|}';
-	$report->OutputWiki( '井戸端統計', \$text );
-
-	$text = <<'TEXT';
-{| class="wikitable" style="text-align:right"
-! 年月 !! サブページ数 !! 発言数 !! 発言数/サブページ数
-TEXT
-	foreach( sort keys %afdcount ) {
-		$text .= "|-\n";
-		$text .= sprintf( "|%s || %d || %d || %2.1f\n", $_, $afdcount{$_}, $afdtalkcount{$_}, $afdtalkcount{$_} / $afdcount{$_} );
-	}
-	$text .= '|}';
-	$report->OutputWiki( '削除依頼統計', \$text );
-
-	$text = <<'TEXT';
-{| class="wikitable" style="text-align:right"
-! 年月 !! サブページ数 !! 発言数 !! 発言数/サブページ数
-TEXT
-	foreach( sort keys %checkusercount ) {
-		$text .= "|-\n";
-		$text .= sprintf( "|%s || %d || %d || %2.1f\n", $_, $checkusercount{$_}, $checkusertalkcount{$_}, $checkusertalkcount{$_} / $checkusercount{$_} );
-	}
-	$text .= '|}';
-	$report->OutputWiki( 'CheckUser依頼統計', \$text );
-
-	$text = <<'TEXT';
-{| class="wikitable" style="text-align:right"
-! 年月 !! サブページ数 !! 発言数 !! 発言数/サブページ数
-TEXT
-	foreach( sort keys %blockcount ) {
-		$text .= "|-\n";
-		$text .= sprintf( "|%s || %d || %d || %2.1f\n", $_, $blockcount{$_}, $blocktalkcount{$_}, $blocktalkcount{$_} / $blockcount{$_} );
-	}
-	$text .= '|}';
-	$report->OutputWiki( '投稿ブロック依頼統計', \$text );
-
-	$text = <<'TEXT';
-{| class="wikitable" style="text-align:right"
-! 年月 !! サブページ数 !! 発言数 !! 発言数/サブページ数
-TEXT
-	foreach( sort keys %rfacount ) {
-		$text .= "|-\n";
-		$text .= sprintf( "|%s || %d || %d || %2.1f\n", $_, $rfacount{$_}, $rfatalkcount{$_}, $rfatalkcount{$_} / $rfacount{$_} );
-	}
-	$text .= '|}';
-	$report->OutputWiki( '管理者への立候補統計', \$text );
-
-	$text = <<'TEXT';
-{| class="wikitable" style="text-align:right"
-! 年月 !! サブページ数 !! 発言数 !! 発言数/サブページ数
-TEXT
-	foreach( sort keys %commentcount ) {
-		$text .= "|-\n";
-		$text .= sprintf( "|%s || %d || %d || %2.1f\n", $_, $commentcount{$_}, $commenttalkcount{$_}, $commenttalkcount{$_} / $commentcount{$_} );
-	}
-	$text .= '|}';
-	$report->OutputWiki( 'コメント依頼統計', \$text );
-
-	$text = <<'TEXT';
-{| class="wikitable" style="text-align:right"
-! 年月 !! サブページ数 !! 発言数 !! 発言数/サブページ数
-TEXT
-	foreach( sort keys %commentcount ) {
-		$text .= "|-\n";
-		$text .= sprintf( "|%s || %d || %d || %2.1f\n", $_, $commentcount{$_}, $commenttalkcount{$_}, $commenttalkcount{$_} / $commentcount{$_} );
-	}
-	$text .= '|}';
-	$report->OutputWiki( '査読依頼統計', \$text );
 }
 
 
