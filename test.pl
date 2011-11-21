@@ -496,7 +496,9 @@ sub TestJAWPArticle {
 		my $result_ref;
 
 		$titlelist->{'標準_リダイレクト'}->{'転送語'} = 1;
+		$titlelist->{'標準_リダイレクト'}->{'Abc 転送語'} = 1;
 		$titlelist->{'標準_曖昧'}->{'曖昧さ回避語'} = 1;
+		$titlelist->{'標準_曖昧'}->{'Abc 曖昧さ回避語'} = 1;
 		$titlelist->{'Category'}->{'カテゴリ'} = 1;
 		$titlelist->{'Category'}->{'カテゴリ1'} = 1;
 		$titlelist->{'Category'}->{'カテゴリ2'} = 1;
@@ -507,9 +509,12 @@ sub TestJAWPArticle {
 		$titlelist->{'Category'}->{'2011年没'} = 1;
 		$titlelist->{'Category'}->{'生年不明'} = 1;
 		$titlelist->{'Category'}->{'没年不明'} = 1;
+		$titlelist->{'Category'}->{'Abc'} = 1;
 		$titlelist->{'ファイル'}->{'ファイル'} = 1;
+		$titlelist->{'ファイル'}->{'Abc'} = 1;
 		$titlelist->{'Template'}->{'Reflist'} = 1;
 		$titlelist->{'Template'}->{'Aimai'} = 1;
+		$titlelist->{'Template'}->{'Abc'} = 1;
 		$titlelist->{'Template'}->{'死亡年月日と没年齢'} = 1;
 		$titlelist->{'Template'}->{'テンプレート'} = 1;
 
@@ -783,7 +788,12 @@ sub TestJAWPArticle {
 				$article->SetTitle( '標準' );
 				$article->SetText( "{{aimai}}\n[[$type:カテゴリ1]]\n[[$type:カテゴリ2]]\n" );
 				$result_ref = $article->LintText( $titlelist );
-				is_deeply( $result_ref, [], "JAWP::Article::LintText($type)" );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText($type,カテゴリ1,カテゴリ2)" );
+
+				$article->SetTitle( '標準' );
+				$article->SetText( "{{aimai}}\n[[$type:abc]]\n\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText($type,abc)" );
 
 				$article->SetTitle( '標準' );
 				$article->SetText( "{{aimai}}\n[[$type:カテゴリ1]][[$type:カテゴリ2]]\n" );
@@ -793,12 +803,22 @@ sub TestJAWPArticle {
 				$article->SetTitle( '標準' );
 				$article->SetText( "{{aimai}}\n[[$type:カテゴリ]]\n[[$type:カテゴリ]]\n" );
 				$result_ref = $article->LintText( $titlelist );
-				is_deeply( $result_ref, [ '既に使用されているカテゴリです(3)' ], "JAWP::Article::LintText($type,重複指定)" );
+				is_deeply( $result_ref, [ '既に使用されているカテゴリです(3)' ], "JAWP::Article::LintText($type,重複指定,カテゴリ)" );
+
+				$article->SetTitle( '標準' );
+				$article->SetText( "{{aimai}}\n[[$type:Abc]]\n[[$type:abc]]\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [ '既に使用されているカテゴリです(3)' ], "JAWP::Article::LintText($type,重複指定,Abc,abc)" );
 
 				$article->SetTitle( '標準' );
 				$article->SetText( "{{aimai}}\n[[$type:カテゴリ]][[$type:カテゴリ]]\n" );
 				$result_ref = $article->LintText( $titlelist );
-				is_deeply( $result_ref, [ '既に使用されているカテゴリです(2)' ], "JAWP::Article::LintText($type,重複指定,同一行)" );
+				is_deeply( $result_ref, [ '既に使用されているカテゴリです(2)' ], "JAWP::Article::LintText($type,重複指定,同一行,カテゴリ)" );
+
+				$article->SetTitle( '標準' );
+				$article->SetText( "{{aimai}}\n[[$type:Abc]][[$type:abc]]\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [ '既に使用されているカテゴリです(2)' ], "JAWP::Article::LintText($type,重複指定,同一行,Abc,abc)" );
 
 				$article->SetTitle( '標準' );
 				$article->SetText( "{{aimai}}\n[[$type:カテゴリ3]]\n" );
@@ -813,7 +833,12 @@ sub TestJAWPArticle {
 				$article->SetTitle( '標準' );
 				$article->SetText( "{{aimai}}\n[[$type:テンプレート]]\n" );
 				$result_ref = $article->LintText( $titlelist );
-				is_deeply( $result_ref, [], "JAWP::Article::LintText($type,リンク呼び出し)" );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText($type,リンク呼び出し,テンプレート)" );
+
+				$article->SetTitle( '標準' );
+				$article->SetText( "{{aimai}}\n[[$type:abc]]\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText($type,リンク呼び出し,abc)" );
 
 				$article->SetTitle( '標準' );
 				$article->SetText( "{{aimai}}\n[[$type:テンプレート1]]\n" );
@@ -890,6 +915,11 @@ sub TestJAWPArticle {
 			$article->SetText( "[[曖昧さ回避語]]\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
 			is_deeply( $result_ref, [ '(曖昧さ回避語)のリンク先は曖昧さ回避です(1)' ], 'JAWP::Article::LintText(曖昧さ回避リンク,曖昧さ回避語)' );
+
+			$article->SetTitle( '標準' );
+			$article->SetText( "[[abc 曖昧さ回避語]]\n{{aimai}}" );
+			$result_ref = $article->LintText( $titlelist );
+			is_deeply( $result_ref, [ '(Abc 曖昧さ回避語)のリンク先は曖昧さ回避です(1)' ], 'JAWP::Article::LintText(曖昧さ回避リンク,abc 曖昧さ回避語)' );
 		}
 
 		# リダイレクトリンクテスト
@@ -903,6 +933,11 @@ sub TestJAWPArticle {
 			$article->SetText( "[[転送語]]\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
 			is_deeply( $result_ref, [ '(転送語)のリンク先はリダイレクトです(1)' ], 'JAWP::Article::LintText(リダイレクトリンク,転送語)' );
+
+			$article->SetTitle( '標準' );
+			$article->SetText( "[[abc 転送語]]\n{{aimai}}" );
+			$result_ref = $article->LintText( $titlelist );
+			is_deeply( $result_ref, [ '(Abc 転送語)のリンク先はリダイレクトです(1)' ], 'JAWP::Article::LintText(リダイレクトリンク,abc 転送語)' );
 		}
 
 		# 年月日リンクテスト

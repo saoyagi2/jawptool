@@ -380,21 +380,23 @@ sub LintText {
 			$defaultsort = 'set';
 		}
 		while( $lines[$n - 1] =~ /\[\[(Category|カテゴリ):(.*?)(|\|.*?)\]\]/ig ) {
-			if( defined( $category{$2} ) ) {
+			my $word = ucfirst( $2 );
+			if( defined( $category{$word} ) ) {
 				push @result, "既に使用されているカテゴリです($n)";
 			}
-			if( keys %{$titlelist->{'Category'}} != 0 && !defined( $titlelist->{'Category'}->{$2} ) ) {
+			if( keys %{$titlelist->{'Category'}} != 0 && !defined( $titlelist->{'Category'}->{$word} ) ) {
 				push @result, "($2)は存在しないカテゴリです($n)";
 			}
-			$category{$2} = 1;
+			$category{$word} = 1;
 			if( $3 =~ /[ぁぃぅぇぉっゃゅょゎがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽー]/ ) {
 				push @result, "ソートキーには濁音、半濁音、吃音、長音は清音化することが推奨されます($n)";
 			}
 			$mode = 'category';
 		}
 		while( $lines[$n - 1] =~ /\[\[(Template|テンプレート):(.*?)(|\|.*?)\]\]/ig ) {
-			if( keys %{$titlelist->{'Template'}} != 0 && !defined( $titlelist->{'Template'}->{$2} ) ) {
-				push @result, "($2)は存在しないテンプレートです($n)";
+			my $word = ucfirst( $2 );
+			if( keys %{$titlelist->{'Template'}} != 0 && !defined( $titlelist->{'Template'}->{$word} ) ) {
+				push @result, "($word)は存在しないテンプレートです($n)";
 			}
 		}
 		if( $lines[$n - 1] =~ /[，．！？＆＠]/ ) {
