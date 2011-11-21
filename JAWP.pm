@@ -896,6 +896,7 @@ sub GetLinkwordList {
 		$word =~ s/#.*?$// if( !$withsection );
 		$word =~ s/[_　‎]/ /g;
 		$word =~ s/^( +|)(.*?)( +|)$/$2/;
+		$word = ucfirst( $word );
 
 		if( $word ne '' ) {
 			push @wordlist, JAWP::Util::DecodeURL( $word );
@@ -918,6 +919,7 @@ sub GetTemplatewordList {
 		my $word = $1;
 		$word =~ s/[_　‎]/ /g;
 		$word =~ s/^( +|)(.*?)( +|)$/$2/;
+		$word = ucfirst( $word );
 
 		if( $word ne '' ) {
 			push @wordlist, JAWP::Util::DecodeURL( $word );
