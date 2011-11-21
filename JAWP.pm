@@ -1251,7 +1251,7 @@ STR
 		if( @$wordlist_ref + 0 > 0 ) {
 			my ( $linktype, $word ) = JAWP::Util::GetLinkType( $wordlist_ref->[0], $titlelist );
 			if( $linktype eq 'redlink' ) {
-				push @{$result{'redlink'}}, "[[$article->{'title'}]]($word)";
+				push @{$result{'redlink'}}, "[[$article->{'title'}]]⇒[[$word]]";
 			}
 		}
 	}
