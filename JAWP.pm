@@ -1443,16 +1443,7 @@ STR
 	print "\n";
 
 	foreach my $subpagetype ( '井戸端', '削除依頼', 'CheckUser依頼', '投稿ブロック依頼', '管理者への立候補', 'コメント依頼', '査読依頼' ) {
-		my $text = <<'TEXT';
-{| class="wikitable" style="text-align:right"
-! 年月 !! サブページ数 !! 発言数 !! 発言数/サブページ数
-TEXT
-		foreach( sort keys %{ $subpagecount{$subpagetype} } ) {
-			$text .= "|-\n";
-			$text .= sprintf( "|%s || %d || %d || %2.1f\n", $_, $subpagecount{$subpagetype}->{$_}, $talkcount{$subpagetype}->{$_}, $talkcount{$subpagetype}->{$_} / $subpagecount{$subpagetype}->{$_} );
-		}
-		$text .= '|}';
-		$report->OutputWiki( $subpagetype . '統計', \$text );
+		StatisticReportSub3( $subpagetype, $subpagecount{$subpagetype}, $talkcount{$subpagetype}, $report );
 	}
 }
 
@@ -1540,6 +1531,26 @@ sub StatisticReportSub2 {
 	}
 	$text .= sprintf( "全%d件", @$data2_ref + 0 );
 	$report->OutputWiki( $title, \$text );
+}
+
+
+# データ統計レポート出力サブモジュール3
+# param $title レポートタイトル
+# param $subpagecount_ref サブページ数ハッシュへのリファレンス
+# param $talkcount_ref 発言数ハッシュへのリファレンス
+# param $report JAWP::Reportオブジェクト
+sub StatisticReportSub3 {
+	my( $title, $subpagecount_ref, $talkcount_ref, $report ) = @_;
+	my $text = <<'TEXT';
+{| class="wikitable" style="text-align:right"
+! 年月 !! サブページ数 !! 発言数 !! 発言数/サブページ数
+TEXT
+	foreach my $ym ( sort keys %$subpagecount_ref ) {
+		$text .= "|-\n";
+		$text .= sprintf( "|%s || %d || %d || %2.1f\n", $ym, $subpagecount_ref->{$ym}, $talkcount_ref->{$ym}, $talkcount_ref->{$ym} / $subpagecount_ref->{$ym} );
+	}
+	$text .= '|}';
+	$report->OutputWiki( $title . '統計', \$text );
 }
 
 
