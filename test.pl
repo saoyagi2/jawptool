@@ -1750,6 +1750,38 @@ STR
 
 			unlink( $fname ) or die $!;
 		}
+
+		# 見出しありXMLファイル
+		{
+			my $str = <<'STR';
+<xml>
+	<title>A</title>
+	<timestamp>2011-01-01T00:00:00Z</timestamp>
+	<text xml:space="preserve">==見出し1==
+
+== 見出し 2 ==</text>
+</xml>
+STR
+			my $fname = WriteTestXMLFile( $str );
+
+			# withouthead
+			{
+				my $data = new JAWP::DataFile( $fname );
+				my $titlelist = $data->GetTitleList;
+
+				is_deeply( $titlelist, { 'allcount'=>1, '標準'=>{ 'A'=>1 }, '標準_曖昧'=>{}, '標準_リダイレクト'=>{}, '利用者'=>{}, 'Wikipedia'=>{}, 'ファイル'=>{}, 'MediaWiki'=>{}, 'Template'=>{}, 'Help'=>{}, 'Category'=>{}, 'Portal'=>{}, 'プロジェクト'=>{}, 'ノート'=>{}, '利用者‐会話'=>{}, 'Wikipedia‐ノート'=>{}, 'ファイル‐ノート'=>{}, 'MediaWiki‐ノート'=>{}, 'Template‐ノート'=>{}, 'Help‐ノート'=>{}, 'Category‐ノート'=>{}, 'Portal‐ノート'=>{}, 'プロジェクト‐ノート'=>{} }, 'JAWP::DataFile::GetTitleList(見出しありXMLファイル,withouthead)' );
+			}
+
+			# withhead
+			{
+				my $data = new JAWP::DataFile( $fname );
+				my $titlelist = $data->GetTitleList( 1 );
+
+				is_deeply( $titlelist, { 'allcount'=>1, '標準'=>{ 'A'=>1, 'A#見出し1'=>1, 'A#見出し 2'=>1 }, '標準_曖昧'=>{}, '標準_リダイレクト'=>{}, '利用者'=>{}, 'Wikipedia'=>{}, 'ファイル'=>{}, 'MediaWiki'=>{}, 'Template'=>{}, 'Help'=>{}, 'Category'=>{}, 'Portal'=>{}, 'プロジェクト'=>{}, 'ノート'=>{}, '利用者‐会話'=>{}, 'Wikipedia‐ノート'=>{}, 'ファイル‐ノート'=>{}, 'MediaWiki‐ノート'=>{}, 'Template‐ノート'=>{}, 'Help‐ノート'=>{}, 'Category‐ノート'=>{}, 'Portal‐ノート'=>{}, 'プロジェクト‐ノート'=>{} }, 'JAWP::DataFile::GetTitleList(見出しありXMLファイル,withhead)' );
+			}
+
+			unlink( $fname ) or die $!;
+		}
 	}
 }
 
