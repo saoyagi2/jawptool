@@ -157,6 +157,16 @@ sub IsIndex {
 }
 
 
+# 削除依頼タグ判別
+# param $article 記事データ
+# return 真偽値
+sub IsSakujo {
+	my $self = shift;
+
+	return( index( $self->{'text'}, '{{Sakujo/' ) >= 0 || index( $self->{'text'}, '{{sakujo/' ) >= 0 );
+}
+
+
 # 名前空間取得
 # return 名前空間
 sub Namespace {
@@ -1648,7 +1658,7 @@ STR
 
 		next if( $article->Namespace ne '標準' );
 
-		if( index( $article->{'text'}, '{{Sakujo/' ) >= 0 && $article->GetPassTime( $time ) gt '0000-03-00T00:00:00Z' ) {
+		if( $article->IsSakujo && $article->GetPassTime( $time ) gt '0000-03-00T00:00:00Z' ) {
 			push @datalist, "[[$article->{'title'}]]";
 		}
 	}

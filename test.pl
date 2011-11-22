@@ -288,6 +288,23 @@ sub TestJAWPArticle {
 		ok( !$article->IsIndex, 'JAWP::Article::IsIndex( Wikipedia:索引)' );
 	}
 
+	# IsSakujoテスト
+	{
+		my $article = new JAWP::Article;
+
+		$article->SetText( '' );
+		ok( !$article->IsSakujo, 'JAWP::Article::IsSakujo(空文字列)' );
+
+		$article->SetText( 'sakujo' );
+		ok( !$article->IsSakujo, 'JAWP::Article::IsSakujo(sakujo)' );
+
+		$article->SetText( '{{Sakujo/' );
+		ok( $article->IsSakujo, 'JAWP::Article::IsSakujo({{Sakujo/)' );
+
+		$article->SetText( '{{sakujo/' );
+		ok( $article->IsSakujo, 'JAWP::Article::IsSakujo({{sakujo/)' );
+	}
+
 	# Namespaceテスト
 	{
 		my $article = new JAWP::Article;
