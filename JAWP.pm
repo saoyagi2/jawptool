@@ -592,10 +592,10 @@ sub LintIndex {
 			my $head = $1;
 			if( $head =~ /^[あ-ん]+$/ ) {
 				if( index( $head, $title ) != 0 ) {
-					push @result, "見出しが記事名に一致しません($n,$head,$title)";
+					push @result, "見出し($head)が記事名に一致しません($n)";
 				}
 				if( $prevhead gt $head ) {
-					push @result, "見出しがあいうえお順ではありません($n,$prevhead,$head)";
+					push @result, "見出し($head)があいうえお順ではありません($n)";
 				}
 				$prevhead = $head;
 			}

@@ -1235,13 +1235,13 @@ sub TestJAWPArticle {
 			$article->SetTitle( 'Wikipedia:索引 あ' );
 			$article->SetText( "==い==\n" );
 			$result_ref = $article->LintIndex( $titlelist );
-			is_deeply( $result_ref, [ '見出しが記事名に一致しません(1,い,あ)' ], 'JAWP::Article::LintIndex(見出し違反(記事名不一致))' );
+			is_deeply( $result_ref, [ '見出し(い)が記事名に一致しません(1)' ], 'JAWP::Article::LintIndex(見出し違反(記事名不一致))' );
 
 			# 見出し違反(順序違反)
 			$article->SetTitle( 'Wikipedia:索引 あ' );
 			$article->SetText( "==あい==\n==ああ==\n" );
 			$result_ref = $article->LintIndex( $titlelist );
-			is_deeply( $result_ref, [ '見出しがあいうえお順ではありません(2,あい,ああ)' ], 'JAWP::Article::LintIndex(見出し違反(順序違反))' );
+			is_deeply( $result_ref, [ '見出し(ああ)があいうえお順ではありません(2)' ], 'JAWP::Article::LintIndex(見出し違反(順序違反))' );
 		}
 
 		# 項目テスト
