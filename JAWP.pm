@@ -1358,6 +1358,12 @@ STR
 	foreach my $linktype ( '発リンク', '標準', 'aimai', 'redirect', 'category', 'file', 'template', 'redlink', 'externalhost' ) {
 		$linkcount{$linktype} = {};
 	}
+	my $timestamplist_ref;
+	my( %subpagecount, %talkcount );
+	foreach my $subpagetype ( '井戸端', '削除依頼', 'CheckUser依頼', '投稿ブロック依頼', '管理者への立候補', 'コメント依頼', '査読依頼' ) {
+		$subpagecount{$subpagetype} = {};
+		$talkcount{$subpagetype} = {};
+	}
 	my $n = 1;
 	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
@@ -1390,6 +1396,15 @@ STR
 		foreach my $word ( @{ JAWP::Util::GetHeadList( $article->{'text'} ) } ) {
 			$headcount{$word}++;
 		}
+
+		my $subpagetype = $article->SubpageType;
+		if( $subpagetype ne '' ) {
+			$timestamplist_ref = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
+			if( @$timestamplist_ref + 0 ) {
+				$subpagecount{$subpagetype}->{substr( $timestamplist_ref->[0], 0, 7 )}++;
+				$talkcount{$subpagetype}->{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
+			}
+		}
 	}
 	print "\n";
 
@@ -1415,28 +1430,6 @@ STR
 	$linkcount{'externalhost'} = {};
 	StatisticReportSub2( '見出し語ランキング', \%headcount, '', $report, 0 );
 	%headcount = ();
-
-
-	my $timestamplist_ref;
-	my( %subpagecount, %talkcount );
-	foreach my $subpagetype ( '井戸端', '削除依頼', 'CheckUser依頼', '投稿ブロック依頼', '管理者への立候補', 'コメント依頼', '査読依頼' ) {
-		$subpagecount{$subpagetype} = {};
-		$talkcount{$subpagetype} = {};
-	}
-	$n = 1;
-	while( my $article = $jawpdata->GetArticle ) {
-		print "$n\r"; $n++;
-
-		my $subpagetype = $article->SubpageType;
-		if( $subpagetype ne '' ) {
-			$timestamplist_ref = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
-			if( @$timestamplist_ref + 0 ) {
-				$subpagecount{$subpagetype}->{substr( $timestamplist_ref->[0], 0, 7 )}++;
-				$talkcount{$subpagetype}->{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
-			}
-		}
-	}
-	print "\n";
 
 	foreach my $subpagetype ( '井戸端', '削除依頼', 'CheckUser依頼', '投稿ブロック依頼', '管理者への立候補', 'コメント依頼', '査読依頼' ) {
 		StatisticReportSub3( $subpagetype, $subpagecount{$subpagetype}, $talkcount{$subpagetype}, $report );
