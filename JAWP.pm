@@ -590,6 +590,9 @@ sub LintIndex {
 	for( my $n = 1; $n < @lines + 1; $n++ ) {
 		if( defined( $title ) && $lines[$n - 1] =~ /^=+ *([^=]+) *=+$/ ) {
 			my $head = $1;
+			if( $head =~ /[ぁぃぅぇぉっゃゅょゎがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽー]/ ) {
+				push @result, "見出し($head)は濁音、半濁音、吃音、拗音、長音を使っています($n)";
+			}
 			if( $head =~ /^[あ-ん]+$/ ) {
 				if( index( $head, $title ) != 0 ) {
 					push @result, "見出し($head)が記事名に一致しません($n)";
