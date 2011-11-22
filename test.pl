@@ -1485,10 +1485,7 @@ STR
 			my $data = new JAWP::DataFile( $fname );
 			my $article = $data->GetArticle;
 
-			ok( defined( $article ), 'JAWP::DataFile::GetArticle(要素重複XMLファイル,記事取得)' );
-			is( $article->{'title'}, '真記事名', 'JAWP::DataFile::GetArticle(要素重複XMLファイル,title)' );
-			is( $article->{'timestamp'}, '2011-01-01T00:00:00Z', 'JAWP::DataFile::GetArticle(要素重複XMLファイル,timestamp)' );
-			is( $article->{'text'}, '本文', 'JAWP::DataFile::GetArticle(要素重複XMLファイル,text)' );
+			is_deeply( $article, { 'title'=>'真記事名', 'timestamp'=>'2011-01-01T00:00:00Z', 'text'=>'本文' }, 'JAWP::DataFile::GetArticle(要素重複XMLファイル)' );
 
 			unlink( $fname ) or die $!;
 		}
@@ -1506,10 +1503,7 @@ STR
 			my $data = new JAWP::DataFile( $fname );
 			my $article = $data->GetArticle;
 
-			ok( defined( $article ), 'JAWP::DataFile::GetArticle(要素逆順XMLファイル,記事取得)' );
-			is( $article->{'title'}, '記事名', 'JAWP::DataFile::GetArticle(要素逆順XMLファイル,title)' );
-			is( $article->{'timestamp'}, '2011-01-01T00:00:00Z', 'JAWP::DataFile::GetArticle(要素逆順XMLファイル,timestamp)' );
-			is( $article->{'text'}, '本文', 'JAWP::DataFile::GetArticle(要素逆順XMLファイル,text)' );
+			is_deeply( $article, { 'title'=>'記事名', 'timestamp'=>'2011-01-01T00:00:00Z', 'text'=>'本文' }, 'JAWP::DataFile::GetArticle(要素逆順XMLファイル)' );
 
 			unlink( $fname ) or die $!;
 		}
@@ -1527,20 +1521,14 @@ STR
 			my $data = new JAWP::DataFile( $fname );
 			my $article = $data->GetArticle;
 
-			ok( defined( $article ), 'JAWP::DataFile::GetArticle(2周読み込み,1周目1記事目取得)' );
-			is( $article->{'title'}, '記事名', 'JAWP::DataFile::GetArticle(2周読み込み,1周目1記事目,title)' );
-			is( $article->{'timestamp'}, '2011-01-01T00:00:00Z', 'JAWP::DataFile::GetArticle(2周読み込み,1周目1記事目,timestamp)' );
-			is( $article->{'text'}, '本文', 'JAWP::DataFile::GetArticle(2周読み込み,1周目1記事目,text)' );
+			is_deeply( $article, { 'title'=>'記事名', 'timestamp'=>'2011-01-01T00:00:00Z', 'text'=>'本文' }, 'JAWP::DataFile::GetArticle(2周読み込み,1周目1記事目取得)' );
 
 			$article = $data->GetArticle;
 			ok( !defined( $article ), 'JAWP::DataFile::GetArticle(2周読み込み,1周目2記事目取得)' );
 
 			$article = $data->GetArticle;
 
-			ok( defined( $article ), 'JAWP::DataFile::GetArticle(2周読み込み,2周目1記事目取得)' );
-			is( $article->{'title'}, '記事名', 'JAWP::DataFile::GetArticle(2周読み込み,2周目1記事目,title)' );
-			is( $article->{'timestamp'}, '2011-01-01T00:00:00Z', 'JAWP::DataFile::GetArticle(2周読み込み,2周目1記事目,timestamp)' );
-			is( $article->{'text'}, '本文', 'JAWP::DataFile::GetArticle(2周読み込み,2周目1記事目,text)' );
+			is_deeply( $article, { 'title'=>'記事名', 'timestamp'=>'2011-01-01T00:00:00Z', 'text'=>'本文' }, 'JAWP::DataFile::GetArticle(2周読み込み,2周目1記事目取得)' );
 
 			$article = $data->GetArticle;
 			ok( !defined( $article ), 'JAWP::DataFile::GetArticle(2周読み込み,2周目2記事目取得)' );
@@ -1565,10 +1553,7 @@ STR
 			my $data = new JAWP::DataFile( $fname );
 			my $article = $data->GetArticle;
 
-			ok( defined( $article ), 'JAWP::DataFile::GetArticle(本文複数行,記事取得)' );
-			is( $article->{'title'}, '記事名', 'JAWP::DataFile::GetArticle(本文複数行,title)' );
-			is( $article->{'timestamp'}, '2011-01-01T00:00:00Z', 'JAWP::DataFile::GetArticle(本文複数行,timestamp)' );
-			is( $article->{'text'}, "\n本文1\n本文2\n本文3\n", 'JAWP::DataFile::GetArticle(本文複数行,text)' );
+			is_deeply( $article, { 'title'=>'記事名', 'timestamp'=>'2011-01-01T00:00:00Z', 'text'=>"\n本文1\n本文2\n本文3\n" }, 'JAWP::DataFile::GetArticle(本文複数行)' );
 
 			unlink( $fname ) or die $!;
 		}
@@ -1592,10 +1577,7 @@ STR
 			my $data = new JAWP::DataFile( $fname );
 			my $article = $data->GetArticle;
 
-			ok( defined( $article ), 'JAWP::DataFile::GetArticle(コメント除去,記事取得)' );
-			is( $article->{'title'}, '記事名', 'JAWP::DataFile::GetArticle(コメント除去,title)' );
-			is( $article->{'timestamp'}, '2011-01-01T00:00:00Z', 'JAWP::DataFile::GetArticle(コメント除去,timestamp)' );
-			is( $article->{'text'}, "\n本文1\n\n\n\n真本文3\n", 'JAWP::DataFile::GetArticle(コメント除去,text)' );
+			is_deeply( $article, { 'title'=>'記事名', 'timestamp'=>'2011-01-01T00:00:00Z', 'text'=>"\n本文1\n\n\n\n真本文3\n" }, 'JAWP::DataFile::GetArticle(コメント除去)' );
 
 			unlink( $fname ) or die $!;
 		}
@@ -1616,17 +1598,11 @@ STR
 			my $data = new JAWP::DataFile( $fname );
 			my $article = $data->GetArticle;
 
-			ok( defined( $article ), 'JAWP::DataFile::GetArticle(2記事読み込み,1記事目取得)' );
-			is( $article->{'title'}, '記事名1', 'JAWP::DataFile::GetArticle(2記事読み込み,1記事目,title)' );
-			is( $article->{'timestamp'}, '2011-01-01T00:00:01Z', 'JAWP::DataFile::GetArticle(2記事読み込み,1記事目,timestamp)' );
-			is( $article->{'text'}, '本文1', 'JAWP::DataFile::GetArticle(2記事読み込み,1記事目,text)' );
+			is_deeply( $article, { 'title'=>'記事名1', 'timestamp'=>'2011-01-01T00:00:01Z', 'text'=>'本文1' }, 'JAWP::DataFile::GetArticle(2記事読み込み,1記事目)' );
 
 			$article = $data->GetArticle;
 
-			ok( defined( $article ), 'JAWP::DataFile::GetArticle(2記事読み込み,2記事目取得)' );
-			is( $article->{'title'}, '記事名2', 'JAWP::DataFile::GetArticle(2記事読み込み,2記事目,title)' );
-			is( $article->{'timestamp'}, '2011-01-01T00:00:02Z', 'JAWP::DataFile::GetArticle(2記事読み込み,2記事目,timestamp)' );
-			is( $article->{'text'}, '本文2', 'JAWP::DataFile::GetArticle(2記事読み込み,2記事目,text)' );
+			is_deeply( $article, { 'title'=>'記事名2', 'timestamp'=>'2011-01-01T00:00:02Z', 'text'=>'本文2' }, 'JAWP::DataFile::GetArticle(2記事読み込み,2記事目)' );
 
 			$article = $data->GetArticle;
 			ok( !defined( $article ), 'JAWP::DataFile::GetArticle(2記事読み込み,3記事目取得)' );
@@ -1657,10 +1633,7 @@ STR
 			my $data = new JAWP::DataFile( $fname );
 			my $titlelist = $data->GetTitleList;
 
-			ok( defined( $titlelist ), 'JAWP::DataFile::GetTitleList(空XMLファイル' );
-			foreach my $namespace ( '標準', '標準_曖昧', '標準_リダイレクト', '利用者', 'Wikipedia', 'ファイル', 'MediaWiki', 'Template', 'Help', 'Category', 'Portal', 'プロジェクト', 'ノート', '利用者‐会話', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki‐ノート', 'Template‐ノート', 'Help‐ノート', 'Category‐ノート', 'Portal‐ノート', 'プロジェクト‐ノート' ) {
-				ok( defined( $titlelist->{$namespace} ), "JAWP::DataFile::GetTitleList(空XMLファイル,$namespace)" );
-			}
+			is_deeply( $titlelist, { 'allcount'=>0, '標準'=>{}, '標準_曖昧'=>{}, '標準_リダイレクト'=>{}, '利用者'=>{}, 'Wikipedia'=>{}, 'ファイル'=>{}, 'MediaWiki'=>{}, 'Template'=>{}, 'Help'=>{}, 'Category'=>{}, 'Portal'=>{}, 'プロジェクト'=>{}, 'ノート'=>{}, '利用者‐会話'=>{}, 'Wikipedia‐ノート'=>{}, 'ファイル‐ノート'=>{}, 'MediaWiki‐ノート'=>{}, 'Template‐ノート'=>{}, 'Help‐ノート'=>{}, 'Category‐ノート'=>{}, 'Portal‐ノート'=>{}, 'プロジェクト‐ノート'=>{} }, 'JAWP::DataFile::GetTitleList(空XMLファイル)' );
 
 			unlink( $fname ) or die $!;
 		}
@@ -1671,10 +1644,7 @@ STR
 			my $data = new JAWP::DataFile( $fname );
 			my $titlelist = $data->GetTitleList;
 
-			ok( defined( $titlelist ), 'xml要素のみXMLファイル' );
-			foreach my $namespace ( '標準', '標準_曖昧', '標準_リダイレクト', '利用者', 'Wikipedia', 'ファイル', 'MediaWiki', 'Template', 'Help', 'Category', 'Portal', 'プロジェクト', 'ノート', '利用者‐会話', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki‐ノート', 'Template‐ノート', 'Help‐ノート', 'Category‐ノート', 'Portal‐ノート', 'プロジェクト‐ノート' ) {
-				ok( defined( $titlelist->{$namespace} ), "JAWP::DataFile::GetTitleList(xml要素のみXMLファイル,$namespace)" );
-			}
+			is_deeply( $titlelist, { 'allcount'=>0, '標準'=>{}, '標準_曖昧'=>{}, '標準_リダイレクト'=>{}, '利用者'=>{}, 'Wikipedia'=>{}, 'ファイル'=>{}, 'MediaWiki'=>{}, 'Template'=>{}, 'Help'=>{}, 'Category'=>{}, 'Portal'=>{}, 'プロジェクト'=>{}, 'ノート'=>{}, '利用者‐会話'=>{}, 'Wikipedia‐ノート'=>{}, 'ファイル‐ノート'=>{}, 'MediaWiki‐ノート'=>{}, 'Template‐ノート'=>{}, 'Help‐ノート'=>{}, 'Category‐ノート'=>{}, 'Portal‐ノート'=>{}, 'プロジェクト‐ノート'=>{} }, 'JAWP::DataFile::GetTitleList(xml要素のみXMLファイル)' );
 
 			unlink( $fname ) or die $!;
 		}
@@ -1776,16 +1746,7 @@ STR
 			my $data = new JAWP::DataFile( $fname );
 			my $titlelist = $data->GetTitleList;
 
-			ok( defined( $titlelist ), 'JAWP::DataFile::GetTitleList(標準XMLファイル)' );
-			ok( defined( $titlelist->{'標準'} ), 'JAWP::DataFile::GetTitleList(標準XMLファイル,標準)' );
-			is( keys %{$titlelist->{'標準'}}, 2, 'JAWP::DataFile::GetTitleList(標準XMLファイル,標準,記事数)' );
-			ok( defined( $titlelist->{'標準'}->{'標準A'} ), 'JAWP::DataFile::GetTitleList(標準XMLファイル,標準,標準A)' );
-			ok( defined( $titlelist->{'標準'}->{'標準 曖昧A'} ), 'JAWP::DataFile::GetTitleList(標準XMLファイル,標準_曖昧,標準 曖昧A)' );
-			foreach my $namespace ( '標準_リダイレクト', '利用者', 'Wikipedia', 'ファイル', 'MediaWiki', 'Template', 'Help', 'Category', 'Portal', 'プロジェクト', 'ノート', '利用者‐会話', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki‐ノート', 'Template‐ノート', 'Help‐ノート', 'Category‐ノート', 'Portal‐ノート', 'プロジェクト‐ノート' ) {
-				ok( defined( $titlelist->{$namespace} ), "JAWP::DataFile::GetTitleList(標準XMLファイル,$namespace)" );
-				is( keys %{$titlelist->{$namespace}}, 1, "JAWP::DataFile::GetTitleList(標準XMLファイル,$namespace,記事数)" );
-				ok( defined( $titlelist->{$namespace}->{'A'} ), "JAWP::DataFile::GetTitleList(標準XMLファイル,$namespace,A)" );
-			}
+			is_deeply( $titlelist, { 'allcount'=>22, '標準'=>{ '標準A'=>1, '標準 曖昧A'=>1 }, '標準_曖昧'=>{ '標準 曖昧A'=>1 }, '標準_リダイレクト'=>{ 'A'=>1 }, '利用者'=>{ 'A'=>1 }, 'Wikipedia'=>{ 'A'=>1 }, 'ファイル'=>{ 'A'=>1 }, 'MediaWiki'=>{ 'A'=>1 }, 'Template'=>{ 'A'=>1 }, 'Help'=>{ 'A'=>1 }, 'Category'=>{ 'A'=>1 }, 'Portal'=>{ 'A'=>1 }, 'プロジェクト'=>{ 'A'=>1 }, 'ノート'=>{ 'A'=>1 }, '利用者‐会話'=>{ 'A'=>1 }, 'Wikipedia‐ノート'=>{ 'A'=>1 }, 'ファイル‐ノート'=>{ 'A'=>1 }, 'MediaWiki‐ノート'=>{ 'A'=>1 }, 'Template‐ノート'=>{ 'A'=>1 }, 'Help‐ノート'=>{ 'A'=>1 }, 'Category‐ノート'=>{ 'A'=>1 }, 'Portal‐ノート'=>{ 'A'=>1 }, 'プロジェクト‐ノート'=>{ 'A'=>1 } }, 'JAWP::DataFile::GetTitleList(標準XMLファイル)' );
 
 			unlink( $fname ) or die $!;
 		}
