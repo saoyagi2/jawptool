@@ -302,6 +302,35 @@ sub TestJAWPArticle {
 		}
 	}
 
+	# SubpageTypeテスト
+	{
+		my $article = new JAWP::Article;
+
+		$article->SetTitle( '' );
+		is( $article->SubpageType, '', 'JAWP::Article::SubpageType(空文字列)' );
+
+		$article->SetTitle( 'Wikipedia:井戸端/subj/dummy' );
+		is( $article->SubpageType, '井戸端', 'JAWP::Article::SubpageType(Wikipedia:井戸端/subj/dummy)' );
+
+		$article->SetTitle( 'Wikipedia:削除依頼/dummy' );
+		is( $article->SubpageType, '削除依頼', 'JAWP::Article::SubpageType(Wikipedia:削除依頼/dummy)' );
+
+		$article->SetTitle( 'Wikipedia:CheckUser依頼/dummy' );
+		is( $article->SubpageType, 'CheckUser依頼', 'JAWP::Article::SubpageType(Wikipedia:CheckUser依頼/dummy)' );
+
+		$article->SetTitle( 'Wikipedia:投稿ブロック依頼/dummy' );
+		is( $article->SubpageType, '投稿ブロック依頼', 'JAWP::Article::SubpageType(Wikipedia:投稿ブロック依頼/dummy)' );
+
+		$article->SetTitle( 'Wikipedia:管理者への立候補/dummy' );
+		is( $article->SubpageType, '管理者への立候補', 'JAWP::Article::SubpageType(Wikipedia:管理者への立候補/dummy)' );
+
+		$article->SetTitle( 'Wikipedia:コメント依頼/dummy' );
+		is( $article->SubpageType, 'コメント依頼', 'JAWP::Article::SubpageType(Wikipedia:コメント依頼/dummy)' );
+
+		$article->SetTitle( 'Wikipedia:査読依頼/dummy' );
+		is( $article->SubpageType, '査読依頼', 'JAWP::Article::SubpageType(Wikipedia:査読依頼/dummy)' );
+	}
+
 	# GetPassTimeテスト
 	{
 		my $article = new JAWP::Article;

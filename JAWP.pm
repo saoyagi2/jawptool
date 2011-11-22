@@ -171,6 +171,36 @@ sub Namespace {
 }
 
 
+# サブページ種別取得
+sub SubpageType {
+	my $self = shift;
+
+	if( index( $self->{'title'}, 'Wikipedia:井戸端/subj/' ) == 0 ) {
+		return( '井戸端' );
+	}
+	if( index( $self->{'title'}, 'Wikipedia:削除依頼/' ) == 0 ) {
+		return( '削除依頼' );
+	}
+	if( index( $self->{'title'}, 'Wikipedia:CheckUser依頼/' ) == 0 || index( $self->{'title'}, 'Wikipedia:チェックユーザー依頼/' ) == 0 ) {
+		return( 'CheckUser依頼' );
+	}
+	if( index( $self->{'title'}, 'Wikipedia:投稿ブロック依頼/' ) == 0 ) {
+		return( '投稿ブロック依頼' );
+	}
+	if( index( $self->{'title'}, 'Wikipedia:管理者への立候補/' ) == 0 ) {
+		return( '管理者への立候補' );
+	}
+	if( index( $self->{'title'}, 'Wikipedia:コメント依頼/' ) == 0 ) {
+		return( 'コメント依頼' );
+	}
+	if( index( $self->{'title'}, 'Wikipedia:査読依頼/' ) == 0 ) {
+		return( '査読依頼' );
+	}
+
+	return( '' );
+}
+
+
 # 経過時間取得
 # param $time 時刻
 # return 経過時間(YYYY-MM-DDTHH:MM:SSZ形式)
@@ -1401,53 +1431,12 @@ STR
 	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
-		if( index( $article->{'title'}, 'Wikipedia:井戸端/subj/' ) == 0 ) {
+		my $subpagetype = $article->SubpageType;
+		if( $subpagetype ne '' ) {
 			$timestamplist_ref = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
 			if( @$timestamplist_ref + 0 ) {
-				$subpagecount{'井戸端'}->{substr( $timestamplist_ref->[0], 0, 7 )}++;
-				$talkcount{'井戸端'}->{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
-			}
-		}
-		if( index( $article->{'title'}, 'Wikipedia:削除依頼/' ) == 0 ) {
-			$timestamplist_ref = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
-			if( @$timestamplist_ref + 0 ) {
-				$subpagecount{'削除依頼'}->{substr( $timestamplist_ref->[0], 0, 7 )}++;
-				$talkcount{'削除依頼'}->{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
-			}
-		}
-		if( index( $article->{'title'}, 'Wikipedia:CheckUser依頼/' ) == 0 || index( $article->{'title'}, 'Wikipedia:チェックユーザー依頼/' ) == 0 ) {
-			$timestamplist_ref = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
-			if( @$timestamplist_ref + 0 ) {
-				$subpagecount{'CheckUser依頼'}->{substr( $timestamplist_ref->[0], 0, 7 )}++;
-				$talkcount{'CheckUser依頼'}->{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
-			}
-		}
-		if( index( $article->{'title'}, 'Wikipedia:投稿ブロック依頼/' ) == 0 ) {
-			$timestamplist_ref = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
-			if( @$timestamplist_ref + 0 ) {
-				$subpagecount{'投稿ブロック依頼'}->{substr( $timestamplist_ref->[0], 0, 7 )}++;
-				$talkcount{'投稿ブロック依頼'}->{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
-			}
-		}
-		if( index( $article->{'title'}, 'Wikipedia:管理者への立候補/' ) == 0 ) {
-			$timestamplist_ref = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
-			if( @$timestamplist_ref + 0 ) {
-				$subpagecount{'管理者への立候補'}->{substr( $timestamplist_ref->[0], 0, 7 )}++;
-				$talkcount{'管理者への立候補'}->{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
-			}
-		}
-		if( index( $article->{'title'}, 'Wikipedia:コメント依頼/' ) == 0 ) {
-			$timestamplist_ref = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
-			if( @$timestamplist_ref + 0 ) {
-				$subpagecount{'コメント依頼'}->{substr( $timestamplist_ref->[0], 0, 7 )}++;
-				$talkcount{'コメント依頼'}->{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
-			}
-		}
-		if( index( $article->{'title'}, 'Wikipedia:査読依頼/' ) == 0 ) {
-			$timestamplist_ref = JAWP::Util::GetTalkTimestampList( $article->{'text'} );
-			if( @$timestamplist_ref + 0 ) {
-				$subpagecount{'査読依頼'}->{substr( $timestamplist_ref->[0], 0, 7 )}++;
-				$talkcount{'査読依頼'}->{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
+				$subpagecount{$subpagetype}->{substr( $timestamplist_ref->[0], 0, 7 )}++;
+				$talkcount{$subpagetype}->{substr( $timestamplist_ref->[0], 0, 7 )} += ( @$timestamplist_ref + 0 );
 			}
 		}
 	}
