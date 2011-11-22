@@ -930,7 +930,11 @@ sub GetLinkwordList {
 	while( $text =~ /\[\[(.*?)(\||\]\])/g ) {
 		next if( $1 =~ /[\[\{\}]/ );
 		my $word = $1;
-		$word =~ s/#.*?$// if( !$withhead );
+		if( $word =~ s/(#.*?)$// && $withhead && $1 ne '' ) {
+			my $tmp = Encode::encode( 'utf-8', $1 );
+			$tmp =~ s/\.([0-9a-fA-F][0-9a-fA-F])/pack("C",hex($1))/eg;
+			$word .= Encode::decode( 'utf-8', $tmp );;
+		}
 		$word =~ s/[_　‎]/ /g;
 		$word =~ s/^( +|)(.*?)( +|)$/$2/;
 		$word = ucfirst( $word );
