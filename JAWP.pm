@@ -729,10 +729,10 @@ sub GetArticle {
 
 
 # TitleList取得
-# param $withsection 節データフラグ。真なら含む、偽なら含まない
+# param $withhead 節見出しフラグ。真なら含む、偽なら含まない
 # return TitleList
 sub GetTitleList {
-	my( $self, $withsection ) = @_;
+	my( $self, $withhead ) = @_;
 
 	my $titlelist = new JAWP::TitleList;
 	my $n = 1;
@@ -761,9 +761,9 @@ sub GetTitleList {
 			$title = $1;
 			$titlelist->{$namespace}->{$title} = 1;
 		}
-		if( $withsection ) {
-			foreach my $section ( @{ JAWP::Util::GetHeadList( $article->{'text'} ) } ) {
-				$titlelist->{$namespace}->{"$title#$section"} = 1;
+		if( $withhead ) {
+			foreach my $head ( @{ JAWP::Util::GetHeadList( $article->{'text'} ) } ) {
+				$titlelist->{$namespace}->{"$title#$head"} = 1;
 			}
 		}
 	}
@@ -920,16 +920,16 @@ sub SortHash {
 
 # リンク語リストの取得
 # param $text 元テキスト
-# param $withsection 節データフラグ。真なら含む、偽なら含まない
+# param $withhead 節見出しフラグ。真なら含む、偽なら含まない
 # return リンク語リスト
 sub GetLinkwordList {
-	my( $text, $withsection ) = @_;
+	my( $text, $withhead ) = @_;
 
 	my @wordlist;
 	while( $text =~ /\[\[(.*?)(\||\]\])/g ) {
 		next if( $1 =~ /[\[\{\}]/ );
 		my $word = $1;
-		$word =~ s/#.*?$// if( !$withsection );
+		$word =~ s/#.*?$// if( !$withhead );
 		$word =~ s/[_　‎]/ /g;
 		$word =~ s/^( +|)(.*?)( +|)$/$2/;
 		$word = ucfirst( $word );
