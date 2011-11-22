@@ -1373,16 +1373,12 @@ STR
 		if( $article->Namespace eq '標準' ) {
 			$linkcount{'発リンク'}->{$article->{'title'}} = @$linkwordlist_ref + 0;
 		}
-		foreach my $word ( @$linkwordlist_ref ) {
-			next if( ++$count{$word} > 1 );
-
+		foreach my $word ( grep { ++$count{$_} == 1 } @$linkwordlist_ref ) {
 			( $linktype, $word ) = JAWP::Util::GetLinkType( $word, $titlelist );
 			$linkcount{$linktype}->{$word}++ if( $linktype ne 'none' );
 		}
 
-		foreach my $word ( @{ JAWP::Util::GetTemplatewordList( $article->{'text'} ) } ) {
-			next if( ++$count{$word} > 1 );
-
+		foreach my $word ( grep { ++$count{$_} == 1 }@{ JAWP::Util::GetTemplatewordList( $article->{'text'} ) } ) {
 			$linkcount{template}->{$word}++ if( defined( $titlelist->{'Template'}->{$word} ) );
 		}
 
