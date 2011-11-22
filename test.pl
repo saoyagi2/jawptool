@@ -1233,21 +1233,21 @@ sub TestJAWPArticle {
 
 			# 見出し違反(記事名不一致)
 			$article->SetTitle( 'Wikipedia:索引 あ' );
-			$article->SetText( "==い==\n" );
+			$article->SetText( "== い ==\n" );
 			$result_ref = $article->LintIndex( $titlelist );
 			is_deeply( $result_ref, [ '見出し(い)が記事名に一致しません(1)' ], 'JAWP::Article::LintIndex(見出し違反(記事名不一致))' );
 
 			# 見出し違反(濁音、半濁音、吃音、拗音、長音)
 			foreach my $head ( 'あが', 'あぱ', 'あっ', 'あゃ', 'あー' ) {
 				$article->SetTitle( 'Wikipedia:索引 あ' );
-				$article->SetText( "==$head==\n" );
+				$article->SetText( "== $head ==\n" );
 				$result_ref = $article->LintIndex( $titlelist );
 				is_deeply( $result_ref, [ "見出し($head)は濁音、半濁音、吃音、拗音、長音を使っています(1)" ], "JAWP::Article::LintIndex(見出し違反(濁音、半濁音、吃音、拗音、長音:$head))" );
 			}
 
 			# 見出し違反(順序違反)
 			$article->SetTitle( 'Wikipedia:索引 あ' );
-			$article->SetText( "==あい==\n==ああ==\n" );
+			$article->SetText( "== あい ==\n== ああ ==\n" );
 			$result_ref = $article->LintIndex( $titlelist );
 			is_deeply( $result_ref, [ '見出し(ああ)があいうえお順ではありません(2)' ], 'JAWP::Article::LintIndex(見出し違反(順序違反))' );
 		}

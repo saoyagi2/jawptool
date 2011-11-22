@@ -588,8 +588,9 @@ sub LintIndex {
 	my @lines = split( /\n/, $text );
 	my $prevhead = '';
 	for( my $n = 1; $n < @lines + 1; $n++ ) {
-		if( defined( $title ) && $lines[$n - 1] =~ /^=+ *([^=]+) *=+$/ ) {
+		if( defined( $title ) && $lines[$n - 1] =~ /^=+([^=]+)=+$/ ) {
 			my $head = $1;
+			$head =~ s/ //g;
 			if( $head =~ /[ぁぃぅぇぉっゃゅょゎがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽー]/ ) {
 				push @result, "見出し($head)は濁音、半濁音、吃音、拗音、長音を使っています($n)";
 			}
