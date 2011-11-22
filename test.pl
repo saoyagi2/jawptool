@@ -2137,6 +2137,15 @@ sub TestJAWPUtil {
 
 		$result_ref = JAWP::Util::GetLinkwordList( "[[あああ]]\nいいい\n[[ううう]]\n" );
 		is_deeply( $result_ref, [ 'あああ', 'ううう' ], 'JAWP::Util::GetLinkwordList([[あああ]]\nいいい\n[[ううう]]\n)' );
+
+		$result_ref = JAWP::Util::GetLinkwordList( '[[あああ#いいい]]' );
+		is_deeply( $result_ref, [ 'あああ' ], 'JAWP::Util::GetLinkwordList([[あああ#いいい]],withouthead)' );
+
+		$result_ref = JAWP::Util::GetLinkwordList( '[[あああ#いいい]]', 1 );
+		is_deeply( $result_ref, [ 'あああ#いいい' ], 'JAWP::Util::GetLinkwordList([[あああ#いいい]],withhead)' );
+
+		$result_ref = JAWP::Util::GetLinkwordList( '[[あああ#.E5.8D.97.E8.9B.AE.E6.BC.AC.E3.81.91]]', 1 );
+		is_deeply( $result_ref, [ 'あああ#南蛮漬け' ], 'JAWP::Util::GetLinkwordList([[あああ#.E5.8D.97.E8.9B.AE.E6.BC.AC.E3.81.91]],withhead)' );
 	}
 
 	# GetTemplatewordListテスト
