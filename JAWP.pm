@@ -1583,8 +1583,8 @@ sub TitleList {
 		$report->OutputDirect( "\$xmlfile = '$xmlfile';\n" );
 		$report->OutputDirect( sprintf( "\$%s = {\n", $varname{$namespace} ) );
 		foreach( keys %{$titlelist->{$namespace}} ) {
-			s/'/\\'/g;
 			s/\\/\\\\/g;
+			s/'/\\'/g;
 			$report->OutputDirect( "'$_'=>1,\n" );
 		}
 		$report->OutputDirect( "''=>1 };\n\n" );
