@@ -1908,7 +1908,7 @@ STR
 		my @datalist;
 		foreach( @{$aimailist{$title2}} ) {
 			if( index( $aimaitext{$title}, $_ ) < 0 && $title ne $_ ) {
-				push @datalist, $_;
+				push @datalist, "[[$_]]";
 			}
 		}
 		if( @datalist != 0 ) {
