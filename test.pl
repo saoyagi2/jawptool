@@ -10,7 +10,7 @@ binmode Test::More->builder->output, ':utf8';
 binmode Test::More->builder->failure_output, ':utf8';
 binmode Test::More->builder->todo_output, ':utf8';
 
-use Test::More 'no_plan';
+use Test::More;
 use File::Temp;
 
 my $fnametemp = 'jawptoolXXXX';
@@ -33,6 +33,8 @@ my $fnametemp = 'jawptoolXXXX';
 	TestJAWPCGIApp();
 
 	Cleanup();
+
+	done_testing;
 }
 
 
