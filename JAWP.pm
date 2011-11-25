@@ -617,7 +617,7 @@ sub LintIndex {
 		}
 		if( index( $lines[$n - 1], '*' ) == 0 ) {
 			my $wordlist_ref = JAWP::Util::GetLinkwordList( $lines[$n - 1] );
-			if( $wordlist_ref + 0 != 0 ) {
+			if( @$wordlist_ref + 0 != 0 ) {
 				foreach( @$wordlist_ref ) {
 					my ( $linktype, $word ) = JAWP::Util::GetLinkType( $_, $titlelist );
 					if( $linktype eq 'redlink' ) {
