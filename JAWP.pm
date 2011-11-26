@@ -1766,9 +1766,9 @@ STR
 		$report->OutputWikiList( '[[生没同日]]', \@datalist );
 	}
 	foreach my $key ( sort grep { /[都道府県]$/ } keys %text ) {
-		@datalist = map { sprintf( "[[%s出身の人物一覧]]", $_ ) } grep { index( $text{$key},$_ ) < 0 } @{$pref{$key}};
+		@datalist = map { sprintf( "[[$_]]" ) } grep { index( $text{$key}, $_ ) < 0 } @{$pref{$key}};
 		if( @datalist + 0 != 0 ) {
-			$report->OutputWikiList( "[[$key]]", \@datalist );
+			$report->OutputWikiList( sprintf( "[[%s出身の人物一覧]]", $key ), \@datalist );
 		}
 	}
 }
