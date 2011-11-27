@@ -96,7 +96,7 @@ sub IsLiving {
 sub IsNoref {
 	my $self = shift;
 
-	return( !( $self->{'text'} =~ /^==+.*(参考|文献|資料|書籍|図書|注|註|出典|典拠|出所|原典|ソース|情報源|引用元|論拠|参照).*==+ *$/m || $self->{'text'} =~ /<ref/ ) );
+	return( !( grep( /(参考|文献|資料|書籍|図書|注|註|出典|典拠|出所|原典|ソース|情報源|引用元|論拠|参照)/, @{ JAWP::Util::GetHeadList( $self->{'text'} ) } ) || $self->{'text'} =~ /<ref/ ) );
 }
 
 
@@ -598,10 +598,9 @@ sub LintIndex {
 	my @lines = split( /\n/, $text );
 	my $prevhead = '';
 	for( my $n = 1; $n < @lines + 1; $n++ ) {
-		if( defined( $title ) && $lines[$n - 1] =~ /^=+([^=]+)=+ *$/ ) {
-			my $head = $1;
-	        $head =~ s/^ *//;
-	        $head =~ s/ *$//;
+		my $headlist_ref = JAWP::Util::GetHeadList( $lines[$n - 1] );
+		if( defined( $title ) && @$headlist_ref != 0 ) {
+			my $head = $headlist_ref->[0];
 			if( $head =~ /[ぁぃぅぇぉっゃゅょゎがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽー]/ ) {
 				push @result, "見出し($head)は濁音、半濁音、吃音、拗音、長音を使っています($n)";
 			}
