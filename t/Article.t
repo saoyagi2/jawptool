@@ -126,10 +126,22 @@ use Test::More;
 		$article->SetText( '' );
 		ok( $article->IsNoref, 'JAWP::Article::IsNoref(空文字列)' );
 
-		foreach my $text ( '== 参考 ==', '== 文献 ==', '== 資料 ==', '== 書籍 ==', '== 図書 ==', '== 注 ==', '== 註 ==', '== 出典 ==', '== 典拠 ==', '== 出所 ==', '== 原典 ==', '== ソース ==', '== 情報源 ==', '== 引用元 ==', '== 論拠 ==', '== 参照 ==', '<ref>' ) {
-			$article->SetText( "あああ\n$text\nいいい\n" );
-			ok( !$article->IsNoref, "JAWP::Article::IsNoref($text)" );
+		foreach my $text ( '参考', '文献', '資料', '書籍', '図書', '注', '註', '出典', '典拠', '出所', '原典', 'ソース', '情報源', '引用元', '論拠', '参照' ) {
+			$article->SetText( "あああ\n== $text ==\nいいい\n" );
+			ok( !$article->IsNoref, "JAWP::Article::IsNoref(== $text ==)" );
+
+			$article->SetText( "あああ\n== $text == \nいいい\n" );
+			ok( !$article->IsNoref, "JAWP::Article::IsNoref(== $text == )" );
+
+			$article->SetText( "あああ\n== $text ==a\nいいい\n" );
+			ok( $article->IsNoref, "JAWP::Article::IsNoref(== $text ==a)" );
+
+			$article->SetText( "あああ\n == $text ==\nいいい\n" );
+			ok( $article->IsNoref, "JAWP::Article::IsNoref( == $text ==)" );
 		}
+
+		$article->SetText( "あああ\n<ref>\nいいい\n" );
+		ok( !$article->IsNoref, "JAWP::Article::IsNoref(<ref>)" );
 	}
 
 	# GetBirthdayテスト
@@ -582,9 +594,19 @@ use Test::More;
 			is_deeply( $result_ref, [ 'レベル1の見出しがあります(2)' ], 'JAWP::Article::LintText(見出しレベル1)' );
 
 			$article->SetTitle( '標準' );
+			$article->SetText( "あああ\n= いいい = \nううう\n{{aimai}}" );
+			$result_ref = $article->LintText( $titlelist );
+			is_deeply( $result_ref, [ 'レベル1の見出しがあります(2)' ], 'JAWP::Article::LintText(見出しレベル1,後ろスペースあり)' );
+
+			$article->SetTitle( '標準' );
 			$article->SetText( "あああ\n = いいい = \nううう\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
 			is_deeply( $result_ref, [], 'JAWP::Article::LintText(見出しレベル1,無効)' );
+
+			$article->SetTitle( '標準' );
+			$article->SetText( "あああ\n= いいい =a\nううう\n{{aimai}}" );
+			$result_ref = $article->LintText( $titlelist );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintText(見出しレベル1,無効2)' );
 
 			$article->SetTitle( '標準' );
 			$article->SetText( "あああ\n== いいい ==\nううう\n{{aimai}}" );
@@ -1217,6 +1239,24 @@ use Test::More;
 			$article->SetText( "==ああ==\n==あい==\n" );
 			$result_ref = $article->LintIndex( $titlelist );
 			is_deeply( $result_ref, [], 'JAWP::Article::LintIndex(見出し正常)' );
+
+			# 見出し正常
+			$article->SetTitle( 'Wikipedia:索引 あ' );
+			$article->SetText( "==ああ== \n==あい== \n" );
+			$result_ref = $article->LintIndex( $titlelist );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintIndex(見出し正常,後ろスペースあり)' );
+
+			# 見出し違反(前スペースあり)
+			$article->SetTitle( 'Wikipedia:索引 あ' );
+			$article->SetText( " == い ==\n" );
+			$result_ref = $article->LintIndex( $titlelist );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintIndex(見出し違反,前スペースあり,警告無し)' );
+
+			# 見出し違反(後ろスペース以外あり)
+			$article->SetTitle( 'Wikipedia:索引 あ' );
+			$article->SetText( "== い ==a\n" );
+			$result_ref = $article->LintIndex( $titlelist );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintIndex(見出し違反,後ろスペース以外あり,警告無し)' );
 
 			# 見出し違反(記事名不一致)
 			$article->SetTitle( 'Wikipedia:索引 あ' );

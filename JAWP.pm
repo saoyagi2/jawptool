@@ -96,7 +96,7 @@ sub IsLiving {
 sub IsNoref {
 	my $self = shift;
 
-	return( !( $self->{'text'} =~ /^==+.*(参考|文献|資料|書籍|図書|注|註|出典|典拠|出所|原典|ソース|情報源|引用元|論拠|参照).*==+$/m || $self->{'text'} =~ /<ref/ ) );
+	return( !( $self->{'text'} =~ /^==+.*(参考|文献|資料|書籍|図書|注|註|出典|典拠|出所|原典|ソース|情報源|引用元|論拠|参照).*==+ *$/m || $self->{'text'} =~ /<ref/ ) );
 }
 
 
@@ -373,7 +373,7 @@ sub LintText {
 	for( my $n = 1; $n < @lines + 1; $n++ ) {
 		my $mode = ( $lines[$n - 1] eq '' || $lines[$n - 1] =~ /^\s*\{\{.*\}\}\s*$/ ) ? '' : 'text';
 
-		if( $lines[$n - 1] =~ /^(=+)[^=]+(=+)$/ ) {
+		if( $lines[$n - 1] =~ /^(=+)[^=]+(=+) *$/ ) {
 			if( length( $1 ) != length( $2 ) ) {
 				push @result, "見出し記法の左右の=の数が一致しません($n)";
 			}
@@ -598,7 +598,7 @@ sub LintIndex {
 	my @lines = split( /\n/, $text );
 	my $prevhead = '';
 	for( my $n = 1; $n < @lines + 1; $n++ ) {
-		if( defined( $title ) && $lines[$n - 1] =~ /^=+([^=]+)=+$/ ) {
+		if( defined( $title ) && $lines[$n - 1] =~ /^=+([^=]+)=+ *$/ ) {
 			my $head = $1;
 	        $head =~ s/^ *//;
 	        $head =~ s/ *$//;
@@ -1069,7 +1069,7 @@ sub GetHeadList {
 	my $text = shift;
 
 	my @headlist;
-	while( $text =~ /^=+([^=]+?)=+$/mg ) {
+	while( $text =~ /^=+([^=]+?)=+ *$/mg ) {
         my $tmp = $1;
         $tmp =~ s/^ *//;
         $tmp =~ s/ *$//;

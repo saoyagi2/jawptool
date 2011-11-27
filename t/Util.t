@@ -290,6 +290,15 @@ use Test::More;
 
 		$result_ref = JAWP::Util::GetHeadList( "あああ\n==見 出 し==\nいいい" );
 		is_deeply( $result_ref, [ '見 出 し' ], 'JAWP::Util::GetHeadList(あああ\n==見 出 し==\nいいい)' );
+
+		$result_ref = JAWP::Util::GetHeadList( "あああ\n==見 出 し== \nいいい" );
+		is_deeply( $result_ref, [ '見 出 し' ], 'JAWP::Util::GetHeadList(あああ\n==見 出 し== \nいいい)' );
+
+		$result_ref = JAWP::Util::GetHeadList( "あああ\n ==見 出 し==\nいいい" );
+		is_deeply( $result_ref, [], 'JAWP::Util::GetHeadList(あああ\n ==見 出 し==a\nいいい)' );
+
+		$result_ref = JAWP::Util::GetHeadList( "あああ\n==見 出 し==a\nいいい" );
+		is_deeply( $result_ref, [], 'JAWP::Util::GetHeadList(あああ\n==見 出 し==a\nいいい)' );
 	}
 
 	# GetTalkTimestampListテスト
