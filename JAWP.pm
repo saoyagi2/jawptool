@@ -184,27 +184,12 @@ sub Namespace {
 # サブページ種別取得
 sub SubpageType {
 	my $self = shift;
+	my %typelist = ( 'Wikipedia:井戸端/subj/'=>'井戸端', 'Wikipedia:削除依頼/'=>'削除依頼', 'Wikipedia:CheckUser依頼/'=>'CheckUser依頼', 'Wikipedia:チェックユーザー依頼/'=>'CheckUser依頼', 'Wikipedia:投稿ブロック依頼/'=>'投稿ブロック依頼', 'Wikipedia:管理者への立候補/'=>'管理者への立候補', 'Wikipedia:コメント依頼/'=>'コメント依頼', 'Wikipedia:査読依頼/'=>'査読依頼' );
 
-	if( index( $self->{'title'}, 'Wikipedia:井戸端/subj/' ) == 0 ) {
-		return( '井戸端' );
-	}
-	if( index( $self->{'title'}, 'Wikipedia:削除依頼/' ) == 0 ) {
-		return( '削除依頼' );
-	}
-	if( index( $self->{'title'}, 'Wikipedia:CheckUser依頼/' ) == 0 || index( $self->{'title'}, 'Wikipedia:チェックユーザー依頼/' ) == 0 ) {
-		return( 'CheckUser依頼' );
-	}
-	if( index( $self->{'title'}, 'Wikipedia:投稿ブロック依頼/' ) == 0 ) {
-		return( '投稿ブロック依頼' );
-	}
-	if( index( $self->{'title'}, 'Wikipedia:管理者への立候補/' ) == 0 ) {
-		return( '管理者への立候補' );
-	}
-	if( index( $self->{'title'}, 'Wikipedia:コメント依頼/' ) == 0 ) {
-		return( 'コメント依頼' );
-	}
-	if( index( $self->{'title'}, 'Wikipedia:査読依頼/' ) == 0 ) {
-		return( '査読依頼' );
+	foreach my $key ( keys %typelist ) {
+		if( index( $self->{'title'}, $key ) == 0 ) {
+			return( $typelist{$key} );
+		}
 	}
 
 	return( '' );
