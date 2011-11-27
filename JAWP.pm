@@ -1228,10 +1228,6 @@ sub LintText {
 	my $titlelist = $jawpdata->GetTitleList( 1 );
 	my $report = new JAWP::ReportFile( $reportfile );
 
-	foreach my $namespace ( '標準', '利用者', '利用者‐会話', 'Wikipedia', 'Wikipedia‐ノート', 'ファイル', 'ファイル‐ノート', 'MediaWiki', 'MediaWiki‐ノート', 'Template‐ノート', 'Help', 'Help‐ノート', 'Category‐ノート', 'Portal', 'Portal‐ノート', 'プロジェクト', 'プロジェクト‐ノート' ) {
-		$titlelist->{$namespace} = {};
-	}
-
 	$report->OutputDirect( <<"STR"
 = 記事本文lint =
 このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile を本文の誤りの可能性について検査したものです。
