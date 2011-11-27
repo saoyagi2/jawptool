@@ -757,7 +757,7 @@ sub GetTitleList {
 			$titlelist->{$namespace}->{$title} = 1;
 		}
 		if( $withhead ) {
-			foreach my $head ( @{ JAWP::Util::GetHeadList( $article->{'text'} ) } ) {
+			foreach my $head ( @{ JAWP::Util::GetHeadList( $article->{'text'} ) }, @{ JAWP::Util::GetIDList( $article->{'text'} ) } ) {
 				$titlelist->{$namespace}->{"$title#$head"} = 1;
 			}
 		}
