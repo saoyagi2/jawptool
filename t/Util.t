@@ -25,7 +25,7 @@ use Test::More;
 	{
 		foreach my $method ( 'UnescapeHTML', 'DecodeURL', 'SortHash',
 			'GetLinkwordList', 'GetTemplatewordList', 'GetExternallinkList',
-			'GetHost', 'GetLinkType', 'GetHeadList', 'GetTalkTimestampList' ) {
+			'GetHost', 'GetLinkType', 'GetHeadList', 'GetIDList', 'GetTalkTimestampList' ) {
 			ok( JAWP::Util->can($method), "JAWP::Util(メソッド呼び出し,$method)" );
 		}
 	}
@@ -299,6 +299,26 @@ use Test::More;
 
 		$result_ref = JAWP::Util::GetHeadList( "あああ\n==見 出 し==a\nいいい" );
 		is_deeply( $result_ref, [], 'JAWP::Util::GetHeadList(あああ\n==見 出 し==a\nいいい)' );
+	}
+
+	# GetIDListテスト
+	{
+		my $result_ref;
+
+		$result_ref = JAWP::Util::GetIDList( '' );
+		is_deeply( $result_ref, [], 'JAWP::Util::GetIDList(空文字列)' );
+
+		$result_ref = JAWP::Util::GetIDList( 'あああ' );
+		is_deeply( $result_ref, [], 'JAWP::Util::GetIDList(あああ)' );
+
+		$result_ref = JAWP::Util::GetIDList( '<span id="aaa">' );
+		is_deeply( $result_ref, [ 'aaa' ], 'JAWP::Util::GetIDList(<span id="aaa">)' );
+
+		$result_ref = JAWP::Util::GetIDList( '<span id=" aaa ">' );
+		is_deeply( $result_ref, [ 'aaa' ], 'JAWP::Util::GetIDList(<span id=" aaa ">)' );
+
+		$result_ref = JAWP::Util::GetIDList( '<span id="aaa"><span id="bbb">' );
+		is_deeply( $result_ref, [ 'aaa', 'bbb' ], 'JAWP::Util::GetIDList(<span id="aaa"><span id="bbb">)' );
 	}
 
 	# GetTalkTimestampListテスト

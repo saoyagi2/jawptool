@@ -1066,6 +1066,26 @@ sub GetHeadList {
 }
 
 
+# idリストの取得
+# param $text 元テキスト
+# return idリスト
+sub GetIDList {
+	my $text = shift;
+
+	my @idlist;
+	while( $text =~ /id="(.*?)"/g ) {
+        my $tmp = $1;
+        $tmp =~ s/^ *//;
+        $tmp =~ s/ *$//;
+        if( $tmp ne '' ) {
+			push @idlist, $tmp;
+        }
+	}
+
+	return( \@idlist );
+}
+
+
 # 発言タイムスタンプリストの取得
 # param $text 元テキスト
 # return 発言タイムスタンプリスト
