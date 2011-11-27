@@ -1877,7 +1877,7 @@ sub Aimai {
 STR
 	);
 
-	my( %aimailist, %aimaitext );
+	my( %aimailist, %aimailinklist );
 	my $n = 1;
 	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
@@ -1897,18 +1897,18 @@ STR
 		}
 
 		if( $article->IsAimai ) {
-			$aimaitext{$article->{'title'}} = $article->{'text'};
+			$aimailinklist{$article->{'title'}} = JAWP::Util::GetLinkwordList( $article->{'text'} );
 		}
 	}
 	print "\n";
 
-	foreach my $title ( keys %aimaitext ) {
+	foreach my $title ( keys %aimailinklist ) {
 		my $title2 = $title;
 		$title2 =~ s/ \(.*\)$//;
 		my @datalist;
-		foreach( @{$aimailist{$title2}} ) {
-			if( index( $aimaitext{$title}, $_ ) < 0 && $title ne $_ ) {
-				push @datalist, "[[$_]]";
+		foreach my $word ( @{$aimailist{$title2}} ) {
+			if( !( grep { $word eq $_ } @{$aimailinklist{$title}} ) && $title ne $word ) {
+				push @datalist, "[[$word]]";
 			}
 		}
 		if( @datalist != 0 ) {
