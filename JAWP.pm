@@ -1926,7 +1926,7 @@ sub Run {
 	my $cgi = new CGI;
 
 	my $wikitext = Encode::decode( 'utf-8', $cgi->param( 'wikitext' ) );
-	my $body;
+	my $resulttext;
 	if( $wikitext ) {
 		$wikitext =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 		my $titlelist = new JAWP::TitleList;
@@ -1949,26 +1949,17 @@ sub Run {
 		$article->SetText( $wikitext );
 		my $result_ref = $article->LintText( $titlelist );
 
-		$body = '<p>■チェック結果</p><ul>';
+		$resulttext = '<p>■チェック結果</p><ul>';
 		foreach( @$result_ref ) {
-			$body .= "<li>$_</li>";
+			$resulttext .= "<li>$_</li>";
 		}
-		$body .= '</ul><hr>';
+		$resulttext .= '</ul><hr>';
 
 		$wikitext = $cgi->escapeHTML( $wikitext );
 	}
 	else {
-		$body = $wikitext = '';
+		$resulttext = $wikitext = '';
 	}
-
-	$body .= <<"HTML";
-<form action="jawp-lint.cgi" method="post">
-<p>■ウィキテキスト</p>
-<textarea name="wikitext" style="width: 600px; height: 400px;">$wikitext</textarea>
-<br>
-<input type="submit" value="lint">
-</form>
-HTML
 
 	print <<"HTML";
 Content-Type: text/html; charset=utf-8;
@@ -1984,7 +1975,13 @@ Content-Type: text/html; charset=utf-8;
 このCGIは、ウィキペディア日本語版記事本文のウィキ文法及びスタイルが適切であるかどうかを調べるものです。プログラムで機械的に検査しているため、修正すべきでない記事についても検出されている可能性は大いにあります。このチェック結果を元に修正を行う場合は、個別にその修正が行われるべきか、十分に検討してから行うようにお願いします。また、修正は必ず各方針・ガイドラインに従って行ってください。本プログラムの開発時より後に方針・ガイドラインが更新されている可能性もあることを留意下さい。
 </p>
 <hr>
-$body
+$resulttext
+<form action="jawp-lint.cgi" method="post">
+<p>■ウィキテキスト</p>
+<textarea name="wikitext" style="width: 600px; height: 400px;">$wikitext</textarea>
+<br>
+<input type="submit" value="lint">
+</form>
 </body>
 </html>
 HTML
