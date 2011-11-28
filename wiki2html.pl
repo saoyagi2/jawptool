@@ -23,9 +23,6 @@ use open IO  => ":utf8";
 <html lang="ja">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta http-equiv="Content-Style-Type" content="text/css">
-<meta http-equiv="Content-Script-Type" content="text/javascript">
-<link rel="stylesheet" href="jawptool.css" type="text/css" title="base">
 <title>jawptool report($ARGV[0])</title>
 </head>
 <body>
