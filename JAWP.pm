@@ -717,7 +717,7 @@ sub GetArticle {
 
 # TitleList取得
 # param $withhead 節見出しフラグ。真なら含む、偽なら含まない
-# return TitleList
+# return JAWP::TitleList
 sub GetTitleList {
 	my( $self, $withhead ) = @_;
 
@@ -1040,7 +1040,7 @@ sub GetLinkType {
 
 # 見出し語リストの取得
 # param $text 元テキスト
-# return 見出し語リスト
+# return 見出し語リスト配列へのリファレンス
 sub GetHeadList {
 	my $text = shift;
 
@@ -1060,7 +1060,7 @@ sub GetHeadList {
 
 # idリストの取得
 # param $text 元テキスト
-# return idリスト
+# return idリスト配列へのリファレンス
 sub GetIDList {
 	my $text = shift;
 
@@ -1080,7 +1080,7 @@ sub GetIDList {
 
 # 発言タイムスタンプリストの取得
 # param $text 元テキスト
-# return 発言タイムスタンプリスト
+# return 発言タイムスタンプリスト配列へのリファレンス
 sub GetTalkTimestampList {
 	my $text = shift;
 
