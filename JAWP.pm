@@ -127,21 +127,6 @@ sub GetDeathday {
 }
 
 
-# 生没同日判別
-# return 真偽値
-sub IsSeibotsuDoujitsu {
-	my $self = shift;
-
-	if( $self->{'text'} =~ /\{\{(死亡年月日と没年齢|没年齢)\|([0-9]+)\|([0-9]+)\|([0-9]+)\|([0-9]+)\|([0-9]+)\|([0-9]+)\}\}/ ) {
-		if( $3 == $6 && $4 == $7 ) {
-			return( 1 );
-		}
-	}
-
-	return( 0 );
-}
-
-
 # 索引判別
 # return 真偽値
 sub IsIndex {

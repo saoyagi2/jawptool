@@ -23,7 +23,7 @@ use Test::More;
 
 	# メソッド呼び出しテスト
 	{
-		foreach my $method ( 'new', 'SetTitle', 'SetTimestamp', 'SetText', 'IsRedirect', 'IsAimai', 'IsLiving', 'IsNoref', 'IsSeibotsuDoujitsu', 'GetPassTime', 'LintTitle', 'LintText', 'LintIndex', 'Person' ) {
+		foreach my $method ( 'new', 'SetTitle', 'SetTimestamp', 'SetText', 'IsRedirect', 'IsAimai', 'IsLiving', 'IsNoref', 'GetPassTime', 'LintTitle', 'LintText', 'LintIndex', 'Person' ) {
 			ok( JAWP::Article->can($method), "JAWP::Article(メソッド呼び出し,$method)" );
 		}
 	}
@@ -225,32 +225,6 @@ use Test::More;
 		is( $y, 0, 'JAWP::Article::GetDeathday(没年齢テンプレート,全角数字,年)' );
 		is( $m, 0, 'JAWP::Article::GetDeathday(没年齢テンプレート,全角数字,月)' );
 		is( $d, 0, 'JAWP::Article::GetDeathday(没年齢テンプレート,全角数字,日)' );
-	}
-
-	# IsSeibotsuDoujitsuテスト
-	{
-		my $article = new JAWP::Article;
-
-		$article->SetText( '' );
-		ok( !$article->IsSeibotsuDoujitsu, 'JAWP::Article::IsSeibotsuDoujitsu(空文字列)' );
-
-		$article->SetText( '{{死亡年月日と没年齢|2001|1|1|2011|12|31}}' );
-		ok( !$article->IsSeibotsuDoujitsu, 'JAWP::Article::IsSeibotsuDoujitsu(死亡年月日と没年齢テンプレート,2001年1月1日生-2011年12月31日没)' );
-
-		$article->SetText( '{{死亡年月日と没年齢|2001|1|1|2011|1|1}}' );
-		ok( $article->IsSeibotsuDoujitsu, 'JAWP::Article::IsSeibotsuDoujitsu(死亡年月日と没年齢テンプレート,2001年1月1日生-2011年1月1日没)' );
-
-		$article->SetText( '{{死亡年月日と没年齢|２００１|１|１１|２０１１|１|１}}' );
-		ok( !$article->IsSeibotsuDoujitsu, 'JAWP::Article::IsSeibotsuDoujitsu(死亡年月日と没年齢テンプレート,2001年1月1日生-2011年1月1日没,全角数字)' );
-
-		$article->SetText( '{{没年齢|2001|1|1|2011|12|31}}' );
-		ok( !$article->IsSeibotsuDoujitsu, 'JAWP::Article::IsSeibotsuDoujitsu(没年齢テンプレート,2001年1月1日生-2011年12月31日没)' );
-
-		$article->SetText( '{{没年齢|2001|1|1|2011|1|1}}' );
-		ok( $article->IsSeibotsuDoujitsu, 'JAWP::Article::IsSeibotsuDoujitsu(没年齢テンプレート,2001年1月1日生-2011年1月1日没)' );
-
-		$article->SetText( '{{没年齢|２００１|１|１１|２０１１|１|１}}' );
-		ok( !$article->IsSeibotsuDoujitsu, 'JAWP::Article::IsSeibotsuDoujitsu(没年齢テンプレート,2001年1月1日生-2011年1月1日没,全角数字)' );
 	}
 
 	# IsIndexテスト
