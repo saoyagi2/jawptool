@@ -622,6 +622,35 @@ sub LintIndex {
 }
 
 
+# 人物記事属性一覧取得
+# return 属性リスト
+sub Person {
+	my $self = shift;
+	my @list;
+
+	return( @list ) if( $self->Namespace ne '標準' );
+
+	my( $by, $bm, $bd ) = $self->GetBirthday;
+	if( $by != 0 && $bm != 0 && $bd != 0 ) {
+		push @list, sprintf( "%d年誕生", $by );
+		push @list, sprintf( "%d月%d日誕生", $bm, $bd );
+	}
+	my( $dy, $dm, $dd ) = $self->GetDeathday;
+	if( $dy != 0 && $dm != 0 && $dd != 0 ) {
+		push @list, sprintf( "%d年死去", $dy );
+		push @list, sprintf( "%d月%d日死去", $dm, $dd );
+	}
+	if( $bm != 0 && $bd != 0 && $bm == $dm && $bd == $dd ) {
+		push @list, '生没同日';
+	}
+	if( $self->{'text'} =~ /\[\[(Category|カテゴリ):(.*)([都道府県])出身の人物/i ) {
+		push @list, sprintf( "%s%s出身の人物", $2, $3 );
+	}
+
+	return( @list );
+}
+
+
 ################################################################################
 # JAWP::TitleListクラス
 ################################################################################

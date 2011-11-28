@@ -23,7 +23,7 @@ use Test::More;
 
 	# メソッド呼び出しテスト
 	{
-		foreach my $method ( 'new', 'SetTitle', 'SetTimestamp', 'SetText', 'IsRedirect', 'IsAimai', 'IsLiving', 'IsNoref', 'IsSeibotsuDoujitsu', 'GetPassTime', 'LintTitle', 'LintText', 'LintIndex' ) {
+		foreach my $method ( 'new', 'SetTitle', 'SetTimestamp', 'SetText', 'IsRedirect', 'IsAimai', 'IsLiving', 'IsNoref', 'IsSeibotsuDoujitsu', 'GetPassTime', 'LintTitle', 'LintText', 'LintIndex', 'Person' ) {
 			ok( JAWP::Article->can($method), "JAWP::Article(メソッド呼び出し,$method)" );
 		}
 	}
@@ -1316,6 +1316,49 @@ use Test::More;
 			$article->SetText( "*[[記事]]（きじ）\n" );
 			$result_ref = $article->LintIndex( $titlelist );
 			is_deeply( $result_ref, [ '分野名がありません(1)' ], 'JAWP::Article::LintIndex(分野名無)' );
+		}
+	}
+
+	# Personテスト
+	{
+		my $article = new JAWP::Article;
+		my @list;
+
+		# 空文字列
+		$article->SetTitle( '' );
+		$article->SetText( '' );
+		@list = $article->Person;
+		is_deeply( \@list, [], 'JAWP::Article::Person(空文字列)' );
+
+		# 標準記事空間以外は無視
+		$article->SetTitle( 'Wikipedia:dummy' );
+		$article->SetText( '' );
+		@list = $article->Person;
+		is_deeply( \@list, [], 'JAWP::Article::Person(Wikipedia:dummy)' );
+
+		# 誕生、死去
+		$article->SetTitle( '標準' );
+		$article->SetText( '{{生年月日と年齢|2001|1|1}}' );
+		@list = $article->Person;
+		is_deeply( \@list, [ '2001年誕生', '1月1日誕生' ], 'JAWP::Article::Person({{生年月日と年齢|2001|1|1}})' );
+
+		$article->SetTitle( '標準' );
+		$article->SetText( '{{死亡年月日と没年齢|2001|1|1|2011|12|31}}' );
+		@list = $article->Person;
+		is_deeply( \@list, [ '2001年誕生', '1月1日誕生', '2011年死去', '12月31日死去' ], 'JAWP::Article::Person({{死亡年月日と没年齢|2001|1|1|2011|12|31}})' );
+
+		$article->SetTitle( '標準' );
+		$article->SetText( '{{没年齢|2001|1|1|2011|12|31}}' );
+		@list = $article->Person;
+		is_deeply( \@list, [ '2001年誕生', '1月1日誕生', '2011年死去', '12月31日死去' ], 'JAWP::Article::Person({{没年齢|2001|1|1|2011|12|31}})' );
+
+		# 出身都道府県
+		foreach my $cat ( 'Category', 'カテゴリ' ) {
+			my $text = "[[$cat:東京都出身の人物]]";
+			$article->SetTitle( '標準' );
+			$article->SetText( $text );
+			@list = $article->Person;
+			is_deeply( \@list, [ '東京都出身の人物' ], "JAWP::Article::Person($text)" );
 		}
 	}
 
