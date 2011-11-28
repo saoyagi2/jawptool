@@ -81,7 +81,6 @@ sub IsAimai {
 
 
 # 存命人物記事判別
-# param $article 記事データ
 # return 真偽値
 sub IsLiving {
 	my $self = shift;
@@ -91,7 +90,6 @@ sub IsLiving {
 
 
 # 出典の無い記事判別
-# param $article 記事データ
 # return 真偽値
 sub IsNoref {
 	my $self = shift;
@@ -101,7 +99,6 @@ sub IsNoref {
 
 
 # 誕生日取得
-# param $article 記事データ
 # return 年、月、日(不存在なら0,0,0)
 sub GetBirthday {
 	my $self = shift;
@@ -118,7 +115,6 @@ sub GetBirthday {
 
 
 # 死亡日取得
-# param $article 記事データ
 # return 年、月、日(不存在なら0,0,0)
 sub GetDeathday {
 	my $self = shift;
@@ -132,7 +128,6 @@ sub GetDeathday {
 
 
 # 生没同日判別
-# param $article 記事データ
 # return 真偽値
 sub IsSeibotsuDoujitsu {
 	my $self = shift;
@@ -148,7 +143,6 @@ sub IsSeibotsuDoujitsu {
 
 
 # 索引判別
-# param $article 記事データ
 # return 真偽値
 sub IsIndex {
 	my $self = shift;
@@ -158,7 +152,6 @@ sub IsIndex {
 
 
 # 削除依頼タグ判別
-# param $article 記事データ
 # return 真偽値
 sub IsSakujo {
 	my $self = shift;
@@ -182,6 +175,7 @@ sub Namespace {
 
 
 # サブページ種別取得
+# return サブページ種別
 sub SubpageType {
 	my $self = shift;
 	my %typelist = ( 'Wikipedia:井戸端/subj/'=>'井戸端', 'Wikipedia:削除依頼/'=>'削除依頼', 'Wikipedia:CheckUser依頼/'=>'CheckUser依頼', 'Wikipedia:チェックユーザー依頼/'=>'CheckUser依頼', 'Wikipedia:投稿ブロック依頼/'=>'投稿ブロック依頼', 'Wikipedia:管理者への立候補/'=>'管理者への立候補', 'Wikipedia:コメント依頼/'=>'コメント依頼', 'Wikipedia:査読依頼/'=>'査読依頼' );
@@ -242,9 +236,8 @@ sub GetPassTime {
 
 
 # タイトル文法チェック
-# param $article 記事データ
 # param $titlelist タイトルリスト
-# return $datalist_ref 結果配列へのリファレンス
+# return 結果配列へのリファレンス
 sub LintTitle {
 	my $self = shift;
 	my @result;
@@ -320,10 +313,9 @@ sub LintTitle {
 }
 
 
-# 文法チェック
-# param $article 記事データ
+# 本文文法チェック
 # param $titlelist JAWP::TitleListオブジェクト
-# return $datalist_ref 結果配列へのリファレンス
+# return 結果配列へのリファレンス
 sub LintText {
 	my( $self, $titlelist ) = @_;
 	my @result;
@@ -560,9 +552,8 @@ sub LintText {
 
 
 # 索引文法チェック
-# param $article 記事データ
 # param $titlelist タイトルリスト
-# return $datalist_ref 結果配列へのリファレンス
+# return 結果配列へのリファレンス
 sub LintIndex {
 	my( $self, $titlelist ) = @_;
 	my @result;
