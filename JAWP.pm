@@ -326,20 +326,21 @@ sub LintTitle {
 # return $datalist_ref 結果配列へのリファレンス
 sub LintText {
 	my( $self, $titlelist ) = @_;
-	my( $text, $checktimestamp, @time, @result, @lines, @lines2, $code, %category, %interlink, $previnterlink );
+	my @result;
 
 	if( $self->Namespace ne '標準' || $self->IsRedirect ) {
 		return( \@result );
 	}
 
-	$text = $self->{'text'};
+	my $text = $self->{'text'};
 	while( $text =~ /<(math|code|pre|nowiki)(.*?)(\/math|\/code|\/pre|\/nowiki)>/is ) {
 		my $tmp = $2;
 		$tmp =~ s/[^\n]//g;
 		$text =~ s/<(math|code|pre|nowiki)(.*?)(\/math|\/code|\/pre|\/nowiki)>/$tmp/is;
 	}
-	@lines = split( /\n/, $text );
+	my @lines = split( /\n/, $text );
 
+	my @lines2;
 	{
 		my $text2 = $text;
 		while( $text2 =~ s/\[([^[]+?)\]/ $1 /sg ){}
@@ -354,7 +355,7 @@ sub LintText {
 	my $prevheadlevel = 1;
 	my $defaultsort = '';
 	my $prevmode = 'text';
-	my $mode;
+	my( $mode, %category, %interlink, $previnterlink );
 	for( my $n = 1; $n < @lines + 1; $n++ ) {
 		my $mode = ( $lines[$n - 1] eq '' || $lines[$n - 1] =~ /^\s*\{\{.*\}\}\s*$/ ) ? '' : 'text';
 
@@ -380,7 +381,7 @@ sub LintText {
 			push @result, "ISBN記法では、ISBNと数字の間に半角スペースが必要です($n)";
 		}
 		if( $lines[$n - 1] =~ /ISBN[ =]([0-9X\-]+)/i ) {
-			$code = $1;
+			my $code = $1;
 			$code =~ s/\-//g;
 			if( length( $code ) != 10 && length( $code ) != 13 ) {
 				push @result, "ISBNは10桁もしくは13桁でないといけません($n)";
