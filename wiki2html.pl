@@ -9,7 +9,7 @@ use Encode;
 use open IO  => ":utf8";
 
 {
-	my( $ifh, $ofh, $line, $out, $li );
+	my( $ifh, $ofh, $line, $out, $closer );
 
 	if( @ARGV < 2 ) {
 		usage();
@@ -28,40 +28,73 @@ use open IO  => ":utf8";
 <body>
 HTMLHEAD
 
-	$li = 0;
+	$closer = '';
 	while( $line = <$ifh> ) {
 		chomp $line;
 
 		$out = '';
-		if( $line =~ /^=([^=]+)=$/ ) {
-			$out = "<h1>$1</h1>";
+		if( $line =~ /^(=+)([^=]+)=+ *$/ ) {
+			$out .= "$closer\n";
+			$out .= sprintf( "<h%d>%s</h%d>", length( $1 ), $2, length( $1 ) );
+			$closer = '';
 		}
-		elsif( $line =~ /^==([^=]+)==$/ ) {
-			$out = "<h2>$1</h2>";
-		}
-		elsif( $line =~ /^\*(.*)$/ ) {
-			if( !$li ) {
-				$out = '<ul>';
-				$li = 1;
+		elsif( $line =~ /^(\*+)(.*)$/ ) {
+			if( $closer ne '</ul>' x length( $1 ) ) {
+				$out .= "$closer\n";
+				$out .= '<ul>' x length( $1 ) . "\n";
+				$closer = '</ul>' x length( $1 );
 			}
-			$out .= "<li>$1</li>";
+			$out .= "<li>$2</li>";
 		}
-		elsif( $line =~ /^$/ ) {
-			if( $li ) {
-				$out = '</ul>';
-				$li = 0;
+		elsif( $line =~ /^;(.*)$/ ) {
+			if( $closer ne '</dl>' ) {
+				$out .= "$closer\n";
+				$out .= "<dl>\n";
+				$closer = '</dl>';
 			}
+			$out .= "<dt>$1</dt>";
+		}
+		elsif( $line =~ /^:(.*)$/ ) {
+			if( $closer ne '</dl>' ) {
+				$out .= "$closer\n";
+				$out .= "<dl>\n";
+				$closer = '</dl>';
+			}
+			$out .= "<dd>$1</dd>";
+		}
+		elsif( $line eq '<pre>' ) {
+			if( $closer ) {
+				print $ofh "$closer\n";
+				$closer = '';
+			}
+			print $ofh "$line\n";
+			while( $line = <$ifh> ) {
+				chomp $line;
+				print $ofh "$line\n";
+				last if( $line eq '</pre>' );
+			}
+		}
+		elsif( $line eq '' ) {
+			$out = $closer;
+			$closer = '';
 		}
 		else {
-			$out = $line;
+			if( $closer ne '</p>' ) {
+				$out .= "$closer\n";
+				$out .= "<p>\n";
+				$closer = '</p>';
+			}
+			$out .= $line;
 		}
 
 		$out =~ s/\[\[(.*?)\]\]/"<a href=\"http:\/\/ja.wikipedia.org\/wiki\/" . EncodeURL($1) . "\">$1<\/a>"/eg;
+		$out =~ s/\[(.*?) (.*?)\]/<a href="$1">$2<\/a>/g;
+		$out =~ s/\[(.*?)\]/<a href="$1">$1<\/a>/g;
+		$out =~ s/'''(.*?)'''/<b>$1<\/b>/g;
 		print $ofh "$out\n";
 	}
-	if( $li ) {
-		$out = '</ul>';
-		$li = 0;
+	if( $closer ) {
+		print $ofh "$closer\n";
 	}
 
 	print $ofh <<'HTMLFOOT';
