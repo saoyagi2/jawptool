@@ -19,7 +19,7 @@ use open IO  => ":utf8";
 	open $ofh, '>', $ARGV[1] or die;
 
 	print $ofh <<"HTMLHEAD";
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="ja">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
