@@ -10,7 +10,7 @@ binmode Test::More->builder->output, ':utf8';
 binmode Test::More->builder->failure_output, ':utf8';
 binmode Test::More->builder->todo_output, ':utf8';
 
-use Test::More;
+use Test::More( 'no_plan' );
 
 
 ################################################################################
@@ -340,7 +340,6 @@ use Test::More;
 		$result_ref = JAWP::Util::GetTalkTimestampList( '2011年8月2日 (火) 14:14 (UTC)あああ2011年8月7日 (日) 14:55 (UTC)' );
 		is_deeply( $result_ref, [ '2011-08-02T14:14:00Z', '2011-08-07T14:55:00Z' ], 'JAWP::Util::GetTalkTimestampList(2011年8月2日 (火) 14:14 (UTC)あああ2011年8月7日 (日) 14:55 (UTC))' );
 	}
-	done_testing;
 }
 
 

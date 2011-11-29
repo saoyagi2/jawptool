@@ -10,7 +10,7 @@ binmode Test::More->builder->output, ':utf8';
 binmode Test::More->builder->failure_output, ':utf8';
 binmode Test::More->builder->todo_output, ':utf8';
 
-use Test::More;
+use Test::More( 'no_plan' );
 
 
 ################################################################################
@@ -20,6 +20,4 @@ use Test::More;
 {
 	# useテスト
 	use_ok( 'JAWP', 'use JAWP' );
-
-	done_testing;
 }

@@ -10,7 +10,7 @@ binmode Test::More->builder->output, ':utf8';
 binmode Test::More->builder->failure_output, ':utf8';
 binmode Test::More->builder->todo_output, ':utf8';
 
-use Test::More;
+use Test::More( 'no_plan' );
 
 
 ################################################################################
@@ -1335,8 +1335,6 @@ use Test::More;
 			is_deeply( \@list, [ '東京都出身の人物' ], "JAWP::Article::Person($text)" );
 		}
 	}
-
-	done_testing;
 }
 
 

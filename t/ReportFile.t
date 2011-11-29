@@ -10,7 +10,7 @@ binmode Test::More->builder->output, ':utf8';
 binmode Test::More->builder->failure_output, ':utf8';
 binmode Test::More->builder->todo_output, ':utf8';
 
-use Test::More;
+use Test::More( 'no_plan' );
 
 require 't/common.pl';
 
@@ -290,5 +290,4 @@ STR
 		}
 		unlink( $fname ) or die $!;
 	}
-	done_testing;
 }
