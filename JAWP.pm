@@ -1716,7 +1716,7 @@ STR
 	foreach my $key ( sort grep { /^(\d+)年$/ } keys %linklist, sort grep { /^(\d+)月(\d+)日$/ } keys %linklist ) {
 		@datalist = ();
 		foreach my $title ( @{$list{$key . '誕生'}} ) {
-			if( !( grep { $_ eq $title } @{ $linklist{$title} } ) ) {
+			if( !( grep { $_ eq $title } @{ $linklist{$key} } ) ) {
 				push @datalist, "[[$title]]";
 			}
 		}
@@ -1726,7 +1726,7 @@ STR
 
 		@datalist = ();
 		foreach my $title ( @{$list{$key . '死去'}} ) {
-			if( !( grep { $_ eq $title } @{ $linklist{$title} } ) ) {
+			if( !( grep { $_ eq $title } @{ $linklist{$key} } ) ) {
 				push @datalist, "[[$title]]";
 			}
 		}
@@ -1737,7 +1737,7 @@ STR
 
 	@datalist = ();
 	foreach my $title ( @{$list{'生没同日'}} ) {
-		if( !( grep { $_ eq $title } @{ $linklist{$title} } ) ) {
+		if( !( grep { $_ eq $title } @{ $linklist{'生没同日'} } ) ) {
 			push @datalist, "[[$title]]";
 		}
 	}
@@ -1745,10 +1745,10 @@ STR
 		$report->OutputWikiList( '[[生没同日]]', \@datalist );
 	}
 
-	foreach my $key ( sort grep { /[都道府県]$/ } keys %linklist ) {
+	foreach my $key ( sort grep { /[都道府県]出身の人物$/ } keys %linklist ) {
 		@datalist = ();
-		foreach my $title ( @{$list{$key . '出身の人物'}} ) {
-			if( !( grep { $_ eq $title } @{ $linklist{$title} } ) ) {
+		foreach my $title ( @{$list{$key}} ) {
+			if( !( grep { $_ eq $title } @{ $linklist{$key} } ) ) {
 				push @datalist, "[[$title]]";
 			}
 		}
