@@ -72,7 +72,7 @@
 
 usageは次の通りです。
 <pre>
-jawptool 0.21
+jawptool 0.22
 
 Usage: jawptool.pl command xmlfile reportfile
 
@@ -140,6 +140,11 @@ jawp-lint.cgiとJAWP.pmをウェブサーバからアクセスできるディレ
 **jawp-lint.cgi - titlelist読み込み機能追加
 **多少の高速化
 **その他バグ修正
+*2011年11月29日 - 0.22公開。修正内容は以下の通り。
+**テストをクラスごとに分割しt/に移動
+**wiki2html.plの機能強化
+**テストの強化とコード整理
+**その他バグ修正
 
 より詳しい開発の経緯は http://www.saoyagi2.net/wikimedian/ に書かれています(それ以外のことも書いてますが)。コードの具体的な修正内容は http://sourceforge.jp/projects/jawptool/svn/view/ で閲覧できます。
 
@@ -155,10 +160,9 @@ jawp-lint.cgiとJAWP.pmをウェブサーバからアクセスできるディレ
 
 == TODO ==
 *XMLパースが超いい加減なのをちゃんとする。ただし、速度低下は出来ればしないように。
-*wiki2htmlの強化
 
 == 既知のバグ ==
-*Windows上のActivePerlでtest.plを実行すると、最後のCleanup()にて"Permission denied"で異常終了する。
+*Windows上のActivePerlでテストをパスしない。
 
 == バグ報告 ==
 プログラムにバグがありましたら、[http://sourceforge.jp/projects/jawptool/ プロジェクトトップページ]の「バグ報告」もしくは「フォーラム」までお知らせいただけたら助かります。
