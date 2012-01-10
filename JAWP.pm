@@ -85,7 +85,7 @@ sub IsAimai {
 sub IsLiving {
 	my $self = shift;
 
-	return( $self->{'text'} =~ /\[\[Category:存命人物/i || $self->{'text'} =~ /\{\{(blp|Blp)/ );
+	return( $self->{'text'} =~ /\[\[(Category|カテゴリ):存命人物/i || $self->{'text'} =~ /\{\{(blp|Blp)/ );
 }
 
 
@@ -387,7 +387,7 @@ sub LintText {
 			if( defined( $category{$word} ) ) {
 				push @result, "既に使用されているカテゴリです($n)";
 			}
-			if( keys %{$titlelist->{'Category'}} != 0 && !defined( $titlelist->{'Category'}->{$word} ) ) {
+			if( !defined( $titlelist->{'Category'}->{$word} ) ) {
 				push @result, "($2)は存在しないカテゴリです($n)";
 			}
 			$category{$word} = 1;
@@ -398,7 +398,7 @@ sub LintText {
 		}
 		while( $lines[$n - 1] =~ /\[\[(Template|テンプレート):(.*?)(|\|.*?)\]\]/ig ) {
 			my $word = ucfirst( $2 );
-			if( keys %{$titlelist->{'Template'}} != 0 && !defined( $titlelist->{'Template'}->{$word} ) ) {
+			if( !defined( $titlelist->{'Template'}->{$word} ) ) {
 				push @result, "($word)は存在しないテンプレートです($n)";
 			}
 		}
@@ -956,7 +956,7 @@ sub GetTemplatewordList {
 
 	my @wordlist;
 	while( $text =~ /\{\{(.*?)(\||\}\})/g ) {
-		next if( index( $1, 'DEFAULTSORT' ) == 0 || index( $1, 'デフォルトソート' ) == 0 || index( $1, 'Sakujo/' ) == 0 );
+		next if( index( $1, 'DEFAULTSORT' ) == 0 || index( $1, 'デフォルトソート' ) == 0 );
 		my $word = $1;
 		$word =~ s/[_　‎]/ /g;
 		$word =~ s/^( +|)(.*?)( +|)$/$2/;

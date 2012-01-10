@@ -102,8 +102,14 @@ use Test::More( 'no_plan' );
 		$result_ref = JAWP::Util::GetLinkwordList( "[[あああ]]\nいいい\n[[ううう]]\n" );
 		is_deeply( $result_ref, [ 'あああ', 'ううう' ], 'JAWP::Util::GetLinkwordList([[あああ]]\nいいい\n[[ううう]]\n)' );
 
+		$result_ref = JAWP::Util::GetLinkwordList( '[[あああ#]]' );
+		is_deeply( $result_ref, [ 'あああ' ], 'JAWP::Util::GetLinkwordList([[あああ#]],withouthead)' );
+
 		$result_ref = JAWP::Util::GetLinkwordList( '[[あああ#いいい]]' );
 		is_deeply( $result_ref, [ 'あああ' ], 'JAWP::Util::GetLinkwordList([[あああ#いいい]],withouthead)' );
+
+		$result_ref = JAWP::Util::GetLinkwordList( '[[あああ#]]', 1 );
+		is_deeply( $result_ref, [ 'あああ#' ], 'JAWP::Util::GetLinkwordList([[あああ#]],withhead)' );
 
 		$result_ref = JAWP::Util::GetLinkwordList( '[[あああ#いいい]]', 1 );
 		is_deeply( $result_ref, [ 'あああ#いいい' ], 'JAWP::Util::GetLinkwordList([[あああ#いいい]],withhead)' );

@@ -113,7 +113,7 @@ use Test::More( 'no_plan' );
 		$article->SetText( '' );
 		ok( !$article->IsLiving, 'JAWP::Article::IsLiving(空文字列)' );
 
-		foreach my $text ( '[[Category:存命人物]]', '{{Blp}}' ) {
+		foreach my $text ( '[[Category:存命人物]]', '[[category:存命人物]]', '[[カテゴリ:存命人物]]', '{{Blp}}', '{{blp}}' ) {
 			$article->SetText( $text );
 			ok( $article->IsLiving, "JAWP::Article::IsLiving($text)" );
 		}
@@ -291,6 +291,9 @@ use Test::More( 'no_plan' );
 		$article->SetTitle( 'Wikipedia:CheckUser依頼/dummy' );
 		is( $article->SubpageType, 'CheckUser依頼', 'JAWP::Article::SubpageType(Wikipedia:CheckUser依頼/dummy)' );
 
+		$article->SetTitle( 'Wikipedia:チェックユーザー依頼/dummy' );
+		is( $article->SubpageType, 'CheckUser依頼', 'JAWP::Article::SubpageType(Wikipedia:チェックユーザー依頼/dummy)' );
+
 		$article->SetTitle( 'Wikipedia:投稿ブロック依頼/dummy' );
 		is( $article->SubpageType, '投稿ブロック依頼', 'JAWP::Article::SubpageType(Wikipedia:投稿ブロック依頼/dummy)' );
 
@@ -307,6 +310,9 @@ use Test::More( 'no_plan' );
 	# GetPassTimeテスト
 	{
 		my $article = new JAWP::Article;
+
+		$article->SetTimestamp( '' );
+		is( $article->GetPassTime( 1293840000 ), '0000-00-00T00:00:00Z', 'JAWP::Article::GetPassTime()' );
 
 		$article->SetTimestamp( '2011-01-01T00:00:00Z' );
 		is( $article->GetPassTime( 1293840000 ), '0000-00-00T00:00:00Z', 'JAWP::Article::GetPassTime(2011-01-01T00:00:00Z)' );
@@ -325,6 +331,9 @@ use Test::More( 'no_plan' );
 
 		$article->SetTimestamp( '2010-02-01T00:00:00Z' );
 		is( $article->GetPassTime( 1293840000 ), '0000-11-00T00:00:00Z', 'JAWP::Article::GetPassTime(2010-02-01T00:00:00Z)' );
+
+		$article->SetTimestamp( '2011-01-02T00:00:00Z' );
+		is( $article->GetPassTime( 1293840000 ), '0000-00-00T00:00:00Z', 'JAWP::Article::GetPassTime(2011-01-01T00:00:00Z)' );
 	}
 
 	# LintTitleテスト
@@ -380,6 +389,12 @@ use Test::More( 'no_plan' );
 				$article->SetTitle( $title );
 				$result_ref = $article->LintTitle;
 				is_deeply( $result_ref, [ '曖昧さ回避の記事であればカッコは半角でないといけません' ], "JAWP::Article::LintTitle(曖昧さ回避,$title)" );
+			}
+			$article->SetText( '' );
+			foreach my $title ( '記事名(I)', '記事名  (I)', '記事名(V)', '記事名  (V)', '記事名(X)', '記事名  (X)', '記事名(,)', '記事名  (,)' ) {
+				$article->SetTitle( $title );
+				$result_ref = $article->LintTitle;
+				is_deeply( $result_ref, [], "JAWP::Article::LintTitle(曖昧さ回避,$title)" );
 			}
 			$article->SetText( '' );
 			foreach my $title ( '記事名(曖昧さ回避)', '記事名  (曖昧さ回避)' ) {
@@ -488,6 +503,10 @@ use Test::More( 'no_plan' );
 				$result_ref = $article->LintTitle;
 				is_deeply( $result_ref, [ sprintf( "%s(U+%04X) はJIS X 0208外の文字です", $title, ord( $title ) ) ], "JAWP::Article::LintTitle(文字・文言,$title)" );
 			}
+			$article->SetText( '' );
+			$article->SetTitle( chr( 65536 ) );
+			$result_ref = $article->LintTitle;
+			is_deeply( $result_ref, [ sprintf( "%s は基本多言語面外の文字です", chr( 65536 ) ) ], "JAWP::Article::LintTitle(文字・文言,chr( 65536 ))" );
 		}
 	}
 
@@ -1059,11 +1078,41 @@ use Test::More( 'no_plan' );
 			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'標準 (曖昧さ回避)'-'''標準''')" );
 
 			$article->SetTitle( 'Abc' );
+			$article->SetText( "'''Abc'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
+			$result_ref = $article->LintText( $titlelist );
+			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'Abc'-'''Abc''')" );
+
+			$article->SetTitle( 'Abc' );
 			$article->SetText( "'''abc'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
 			$result_ref = $article->LintText( $titlelist );
 			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'Abc'-'''abc''')" );
 
+			$article->SetTitle( 'abc' );
+			$article->SetText( "'''Abc'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
+			$result_ref = $article->LintText( $titlelist );
+			is_deeply( $result_ref, [ '定義文が見当たりません' ], "JAWP::Article::LintText(定義文,'abc'-'''Abc''')" );
+
+			$article->SetTitle( 'abc' );
+			$article->SetText( "'''abc'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
+			$result_ref = $article->LintText( $titlelist );
+			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'abc'-'''abc''')" );
+
 			$article->SetTitle( 'Shift JIS' );
+			$article->SetText( "'''Shift JIS'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
+			$result_ref = $article->LintText( $titlelist );
+			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'Shift JIS'-'''Shift_JIS''')" );
+
+			$article->SetTitle( 'Shift JIS' );
+			$article->SetText( "'''Shift_JIS'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
+			$result_ref = $article->LintText( $titlelist );
+			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'Shift JIS'-'''Shift_JIS''')" );
+
+			$article->SetTitle( 'Shift_JIS' );
+			$article->SetText( "'''Shift JIS'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
+			$result_ref = $article->LintText( $titlelist );
+			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'Shift JIS'-'''Shift_JIS''')" );
+
+			$article->SetTitle( 'Shift_JIS' );
 			$article->SetText( "'''Shift_JIS'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
 			$result_ref = $article->LintText( $titlelist );
 			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'Shift JIS'-'''Shift_JIS''')" );
@@ -1206,6 +1255,12 @@ use Test::More( 'no_plan' );
 		$result_ref = $article->LintIndex( $titlelist );
 		is_deeply( $result_ref, [], 'JAWP::Article::LintIndex(非索引)' );
 
+		# 索引トップは無視確認
+		$article->SetTitle( 'Wikipedia:索引' );
+		$article->SetText( '' );
+		$result_ref = $article->LintIndex( $titlelist );
+		is_deeply( $result_ref, [], 'JAWP::Article::LintIndex(索引トップ)' );
+
 		# 見出しテスト
 		{
 			# 見出し正常
@@ -1219,6 +1274,12 @@ use Test::More( 'no_plan' );
 			$article->SetText( "==ああ== \n==あい== \n" );
 			$result_ref = $article->LintIndex( $titlelist );
 			is_deeply( $result_ref, [], 'JAWP::Article::LintIndex(見出し正常,後ろスペースあり)' );
+
+			# 見出し正常
+			$article->SetTitle( 'Wikipedia:索引 記号' );
+			$article->SetText( "==記号==" );
+			$result_ref = $article->LintIndex( $titlelist );
+			is_deeply( $result_ref, [], 'JAWP::Article::LintIndex(見出し正常,記号)' );
 
 			# 見出し違反(前スペースあり)
 			$article->SetTitle( 'Wikipedia:索引 あ' );
