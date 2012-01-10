@@ -463,7 +463,7 @@ use Test::More( 'no_plan' );
 				foreach $title ( 'あヘ', 'あベ', 'あペ', 'ヘあ', 'ベあ', 'ペあ' ) {
 					$article->SetTitle( $title );
 					$result_ref = $article->LintTitle;
-					is_deeply( $result_ref, [ '平仮名と「へ/ベ/ペ(片仮名)」が隣接しています' ], "JAWP::Article::LintTitle(文字・文言,$title)" );
+					is_deeply( $result_ref, [ '平仮名と「ヘ/ベ/ペ(片仮名)」が隣接しています' ], "JAWP::Article::LintTitle(文字・文言,$title)" );
 				}
 				foreach $title ( 'アへ', 'アべ', 'アぺ', 'へア', 'べア', 'ぺア' ) {
 					$article->SetTitle( $title );
