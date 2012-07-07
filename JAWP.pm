@@ -76,7 +76,7 @@ sub IsRedirect {
 sub IsAimai {
 	my $self = shift;
 
-	return( $self->{'text'} =~ /\{\{(aimai|Aimai|曖昧さ回避|人名の曖昧さ回避|地名の曖昧さ回避|山の曖昧さ回避)/ );
+	return( $self->{'text'} =~ /\{\{(disambig|Disambig|aimai|Aimai|曖昧さ回避|人名の曖昧さ回避|地名の曖昧さ回避|山の曖昧さ回避)/ );
 }
 
 
