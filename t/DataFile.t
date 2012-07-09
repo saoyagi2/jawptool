@@ -243,10 +243,10 @@ STR
 	<timestamp>2011-01-01T00:00:00Z</timestamp>
 	<text xml:space="preserve">
 本文1
-<!--
+&lt;!--
 本文2
--->
-<!-- 偽本文3 -->真本文3<!-- 偽本文3 -->
+--&gt;
+&lt;!-- 偽本文3 --&gt;真本文3&lt;!-- 偽本文3 --&gt;
 </text>
 </xml>
 STR
@@ -438,7 +438,7 @@ STR
 
 == 見出し 2 ==
 
-<span id="aaa"></text>
+&lt;span id="aaa"&gt;&lt;/span&gt;</text>
 </xml>
 STR
 			my $fname = WriteTestXMLFile( $str );
