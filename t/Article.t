@@ -87,9 +87,13 @@ use Test::More( 'no_plan' );
 		$article->SetText( '' );
 		ok( !$article->IsRedirect, 'JAWP::Article::IsRedirect(空文字列)' );
 
-		foreach my $text ( '#redirect[[転送先]]', '#REDIRECT[[転送先]]', '#転送[[転送先]]', '＃redirect[[転送先]]', '＃REDIRECT[[転送先]]', '＃転送[[転送先]]' ) {
+		foreach my $text ( '#redirect[[転送先]]', '#REDIRECT[[転送先]]', '#転送[[転送先]]', '#リダイレクト[[転送先]]', '＃redirect[[転送先]]', '＃REDIRECT[[転送先]]', '＃転送[[転送先]]', '＃リダイレクト[[転送先]]' ) {
 			$article->SetText( $text );
 			ok( $article->IsRedirect, "JAWP::Article::IsRedirect($text)" );
+			$article->SetText( " $text" );
+			ok( $article->IsRedirect, "JAWP::Article::IsRedirect(' $text')" );
+			$article->SetText( "\n$text" );
+			ok( $article->IsRedirect, "JAWP::Article::IsRedirect('\\n$text')" );
 		}
 	}
 

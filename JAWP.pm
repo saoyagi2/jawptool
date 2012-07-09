@@ -67,7 +67,7 @@ sub SetText {
 sub IsRedirect {
 	my $self = shift;
 
-	return( $self->{'text'} =~ /^(#|＃)(REDIRECT|転送)/i );
+	return( $self->{'text'} =~ /^\s*(#|＃)(REDIRECT|転送|リダイレクト)/i );
 }
 
 
