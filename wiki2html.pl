@@ -74,6 +74,13 @@ HTMLHEAD
 				last if( $line eq '</pre>' );
 			}
 		}
+		elsif( $line eq '----' ) {
+			if( $closer ) {
+				print $ofh "$closer\n";
+				$closer = '';
+			}
+			print $ofh "<hr>\n";
+		}
 		elsif( $line eq '' ) {
 			$out = $closer;
 			$closer = '';
