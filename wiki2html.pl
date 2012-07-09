@@ -94,6 +94,7 @@ HTMLHEAD
 			$out .= $line;
 		}
 
+		$out =~ s/[^\[](s?https?:\/\/[-_.!~*'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)/<a href="$1">$1<\/a>/g;
 		$out =~ s/\[\[(.*?)\]\]/"<a href=\"http:\/\/ja.wikipedia.org\/wiki\/" . EncodeURL($1) . "\">$1<\/a>"/eg;
 		$out =~ s/\[(.*?) (.*?)\]/<a href="$1">$2<\/a>/g;
 		$out =~ s/\[(.*?)\]/<a href="$1">$1<\/a>/g;
