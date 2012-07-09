@@ -691,33 +691,45 @@ sub GetArticle {
 	my $article = new JAWP::Article;
 	my $fh = $self->{'fh'};
 	my $flag = 0;
-	while( <$fh> ) {
-		if( /<title>(.*)<\/title>/ ) {
-			$article->SetTitle( $1 );
-			$flag |= 1;
-		}
-		if( /<timestamp>(.*)<\/timestamp>/ ) {
-			$article->SetTimestamp( $1 );
-			$flag |= 2;
-		}
-		if( /<text xml:space="preserve">(.*)<\/text>/ ) {
-			$article->SetText( $1 );
-			$flag |= 4;
-		}
-		elsif( /<text xml:space="preserve">(.*)/ ) {
-			my $text = "$1\n";
-			while( <$fh> ) {
-				if( /(.*)<\/text>/ ) {
-					$text .= $1;
-					last;
+	my $element = '';
+	my $data = '';
+
+	while( my $line = <$fh> ) {
+		chomp $line;
+		while( $line =~ /^([^<]*)<([^>]+)>(.*)$/ ) {
+			$line = $3;
+
+			my @words = split( /\s+/, $2 );
+			if( substr( $words[0], 0, 1 ) eq '/' ) {
+				# close
+				if( $element eq substr( $words[0], 1 ) ) {
+					$data .= $1;
+					if( $element eq 'title' ) {
+						$article->SetTitle( $data );
+						$flag |= 1;
+					}
+					elsif( $element eq 'timestamp' ) {
+						$article->SetTimestamp( $data );
+						$flag |= 2;
+					}
+					elsif( $element eq 'text' ) {
+						$article->SetText( $data );
+						$flag |= 4;
+					}
 				}
-				else {
-					$text .= $_;
-				}
+				$element = '';
+				$data = '';
 			}
-			$article->SetText( $text );
-			$flag |= 4;
+			elsif( $words[@words - 1] eq '/' ) {
+				# empty
+			}
+			else {
+				# open
+				$element = $words[0];
+				$data = '';
+			}
 		}
+		$data .= "$line\n";
 
 		return( $article ) if( $flag == 7 );
 	}
