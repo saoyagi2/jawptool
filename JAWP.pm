@@ -695,6 +695,11 @@ sub GetArticle {
 	my $data = '';
 
 	while( my $line = <$fh> ) {
+		if( index( $line, '<' ) == -1 ) {
+			$data .= $line;
+			next;
+		}
+
 		chomp $line;
 		while( $line =~ /^([^<]*)<([^>]+)>(.*)$/ ) {
 			$line = $3;
