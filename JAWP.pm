@@ -1740,7 +1740,7 @@ STR
 			push @{$list{$key}}, $article->{'title'};
 		}
 
-		if( $article->{'title'} =~ /^(\d+)年$/ || $article->{'title'} =~ /^(\d+)月(\d+)日$/ || $article->{'title'} eq '生没同日' ) {
+		if( $article->{'title'} =~ /^(\d+年|\d+月\d+日)$/ || $article->{'title'} eq '生没同日' ) {
 			$linklist{$article->{'title'}} = JAWP::Util::GetLinkwordList( $article->{'text'} );
 		}
 		if( $article->{'title'} =~ /^(.*)([都道府県])出身の人物一覧$/ ) {
@@ -1751,7 +1751,7 @@ STR
 
 	my @datalist;
 
-	foreach my $key ( sort grep { /^(\d+)年$/ } keys %linklist, sort grep { /^(\d+)月(\d+)日$/ } keys %linklist ) {
+	foreach my $key ( sort grep { /^\d+年$/ } keys %linklist, sort grep { /^\d+月\d+日$/ } keys %linklist ) {
 		@datalist = ();
 		foreach my $title ( @{$list{$key . '誕生'}} ) {
 			if( !( grep { $_ eq $title } @{ $linklist{$key} } ) ) {
