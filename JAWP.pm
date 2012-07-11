@@ -1388,6 +1388,7 @@ sub Statistic {
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
 	my $titlelist = $jawpdata->GetTitleList;
 	my $report = new JAWP::ReportFile( $reportfile );
+	my $text;
 
 	$report->OutputDirect( <<"STR"
 = 統計 =
@@ -1398,7 +1399,8 @@ sub Statistic {
 STR
 	);
 
-	StatisticReportSub1( $titlelist, $report );
+	$text = StatisticReportSub1( $titlelist, $report );
+	$report->OutputWiki( '名前空間別ファイル数', \$text );
 	foreach my $namespace ( '利用者', '利用者‐会話', 'Wikipedia', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki', 'MediaWiki‐ノート', 'Template‐ノート', 'Help', 'Help‐ノート', 'Category‐ノート', 'Portal', 'Portal‐ノート', 'プロジェクト', 'プロジェクト‐ノート' ) {
 		$titlelist->{$namespace} = {};
 	}
@@ -1459,38 +1461,49 @@ STR
 
 	undef $titlelist;
 
-	StatisticReportSub2( '発リンク数ランキング', $linkcount{'発リンク'}, '', $report, 1 );
+	$text = StatisticReportSub2( $linkcount{'発リンク'}, '', 1 );
+	$report->OutputWiki( '発リンク数ランキング', \$text );
 	$linkcount{'発リンク'} = {};
-	StatisticReportSub2( '被リンク数ランキング', $linkcount{'標準'}, '', $report, 1 );
+	$text = StatisticReportSub2( $linkcount{'標準'}, '', 1 );
+	$report->OutputWiki( '被リンク数ランキング', \$text );
 	$linkcount{'標準'} = {};
-	StatisticReportSub2( 'リダイレクト呼出数ランキング', $linkcount{'redirect'}, '', $report, 1 );
+	$text = StatisticReportSub2( $linkcount{'redirect'}, '', 1 );
+	$report->OutputWiki( 'リダイレクト呼出数ランキング', \$text );
 	$linkcount{'redirect'} = {};
-	StatisticReportSub2( '曖昧さ回避呼出数ランキング', $linkcount{'aimai'}, '', $report, 1 );
+	$text = StatisticReportSub2( $linkcount{'aimai'}, '', 1 );
+	$report->OutputWiki( '曖昧さ回避呼出数ランキング', \$text );
 	$linkcount{'aimai'} = {};
-	StatisticReportSub2( '赤リンク数ランキング', $linkcount{'redlink'}, '', $report, 1 );
+	$text = StatisticReportSub2( $linkcount{'redlink'}, '', 1 );
+	$report->OutputWiki( '赤リンク数ランキング', \$text );
 	$linkcount{'redlink'} = {};
-	StatisticReportSub2( 'カテゴリ使用数ランキング', $linkcount{'category'}, ':Category:', $report, 1 );
+	$text = StatisticReportSub2( $linkcount{'category'}, ':Category:', 1 );
+	$report->OutputWiki( 'カテゴリ使用数ランキング', \$text );
 	$linkcount{'category'} = {};
-	StatisticReportSub2( 'ファイル使用数ランキング', $linkcount{'file'}, ':ファイル:', $report, 1 );
+	$text = StatisticReportSub2( $linkcount{'file'}, ':ファイル:', 1 );
+	$report->OutputWiki( 'ファイル使用数ランキング', \$text );
 	$linkcount{'file'} = {};
-	StatisticReportSub2( 'テンプレート使用数ランキング', $linkcount{'template'}, ':Template:', $report, 1 );
+	$text = StatisticReportSub2( $linkcount{'template'}, ':Template:', 1 );
+	$report->OutputWiki( 'テンプレート使用数ランキング', \$text );
 	$linkcount{'template'} = {};
-	StatisticReportSub2( '外部リンクホストランキング', $linkcount{'externalhost'}, '', $report, 0 );
+	$text = StatisticReportSub2( $linkcount{'externalhost'}, '', 0 );
+	$report->OutputWiki( '外部リンクホストランキング', \$text );
 	$linkcount{'externalhost'} = {};
-	StatisticReportSub2( '見出し語ランキング', \%headcount, '', $report, 0 );
+	$text = StatisticReportSub2( \%headcount, '', $report, 0 );
+	$report->OutputWiki( '見出し語ランキング', \$text );
 	%headcount = ();
 
 	foreach my $subpagetype ( '井戸端', '削除依頼', 'CheckUser依頼', '投稿ブロック依頼', '管理者への立候補', 'コメント依頼', '査読依頼' ) {
-		StatisticReportSub3( $subpagetype, $subpagecount{$subpagetype}, $talkcount{$subpagetype}, $report );
+		$text = StatisticReportSub3( $subpagecount{$subpagetype}, $talkcount{$subpagetype} );
+		$report->OutputWiki( $subpagetype, \$text );
 	}
 }
 
 
 # データ統計レポート出力サブモジュール1
 # param $titlelist JAWP::TitleListオブジェクト
-# param $report JAWP::Reportオブジェクト
+# return $text レポートテキスト
 sub StatisticReportSub1 {
-	my( $titlelist, $report ) = @_;
+	my( $titlelist ) = @_;
 
 	my $text = sprintf( <<"TEXT"
 {| class="wikitable" style="text-align:right"
@@ -1538,18 +1551,17 @@ TEXT
 		, ( keys %{ $titlelist->{'プロジェクト'} } ) + 0, ( keys %{ $titlelist->{'プロジェクト‐ノート'} } ) + 0
 		, $titlelist->{'allcount'} );
 
-	$report->OutputWiki( '名前空間別ファイル数', \$text );
+	return( $text );
 }
 
 
 # データ統計レポート出力サブモジュール2
-# param $title レポートタイトル
 # param $data_ref データハッシュへのリファレンス
 # param $prefix リンク出力時のプレフィックス
-# param $report JAWP::Reportオブジェクト
 # param $innerlink 内部リンク化フラグ
+# return $text レポートテキスト
 sub StatisticReportSub2 {
-	my( $title, $data_ref, $prefix, $report, $innerlink ) = @_;
+	my( $data_ref, $prefix, $innerlink ) = @_;
 
 	delete $data_ref->{''};
 	my $data2_ref = JAWP::Util::SortHash( $data_ref, 1, 0 );
@@ -1568,17 +1580,17 @@ sub StatisticReportSub2 {
 		$text .= "}}\n";
 	}
 	$text .= sprintf( "全%d件", @$data2_ref + 0 );
-	$report->OutputWiki( $title, \$text );
+
+	return( $text );
 }
 
 
 # データ統計レポート出力サブモジュール3
-# param $title レポートタイトル
 # param $subpagecount_ref サブページ数ハッシュへのリファレンス
 # param $talkcount_ref 発言数ハッシュへのリファレンス
-# param $report JAWP::Reportオブジェクト
+# return $text レポートテキスト
 sub StatisticReportSub3 {
-	my( $title, $subpagecount_ref, $talkcount_ref, $report ) = @_;
+	my( $subpagecount_ref, $talkcount_ref ) = @_;
 	my $text = <<'TEXT';
 {| class="wikitable" style="text-align:right"
 ! 年月 !! サブページ数 !! 発言数 !! 発言数/サブページ数
@@ -1588,7 +1600,8 @@ TEXT
 		$text .= sprintf( "|%s || %d || %d || %2.1f\n", $ym, $subpagecount_ref->{$ym}, $talkcount_ref->{$ym}, $talkcount_ref->{$ym} / $subpagecount_ref->{$ym} );
 	}
 	$text .= '|}';
-	$report->OutputWiki( $title . '統計', \$text );
+
+	return( $text );
 }
 
 
