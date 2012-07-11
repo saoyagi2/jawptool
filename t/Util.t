@@ -354,6 +354,20 @@ use Test::More( 'no_plan' );
 		$result_ref = JAWP::Util::GetTalkTimestampList( '2011年8月2日 (火) 14:14 (UTC)あああ2011年8月7日 (日) 14:55 (UTC)' );
 		is_deeply( $result_ref, [ '2011-08-02T14:14:00Z', '2011-08-07T14:55:00Z' ], 'JAWP::Util::GetTalkTimestampList(2011年8月2日 (火) 14:14 (UTC)あああ2011年8月7日 (日) 14:55 (UTC))' );
 	}
+
+	# GetBytesテスト
+	{
+		my $bytes;
+
+		$bytes = JAWP::Util::GetBytes( '' );
+		is( $bytes, 0, "JAWP::Util::GetBytes( '' )" );
+
+		$bytes = JAWP::Util::GetBytes( 'abc' );
+		is( $bytes, 3, "JAWP::Util::GetBytes( 'abc' )" );
+
+		$bytes = JAWP::Util::GetBytes( 'あいうえお' );
+		is( $bytes, 15, "JAWP::Util::GetBytes( 'あいうえお' )" );
+	}
 }
 
 
