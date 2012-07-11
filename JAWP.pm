@@ -1734,24 +1734,22 @@ STR
 		print "$n\r"; $n++;
 
 		foreach my $key ( $article->Person ) {
+			next if( $key =~ /\d+月\d+日[誕生|死去]/ || $key =~ /(19\d{2}|[2-9]\d{3})年/  || $key =~ /[都道府県]出身の人物/ );
 			if( !defined( $list{$key} ) ) {
 				$list{$key} = [];
 			}
 			push @{$list{$key}}, $article->{'title'};
 		}
 
-		if( $article->{'title'} =~ /^(\d+年|\d+月\d+日)$/ || $article->{'title'} eq '生没同日' ) {
+		if( $article->{'title'} =~ /^(\d{1,3}|1[0-8]\d{2})年$/ || $article->{'title'} eq '生没同日' ) {
 			$linklist{$article->{'title'}} = JAWP::Util::GetLinkwordList( $article->{'text'} );
-		}
-		if( $article->{'title'} =~ /^(.*)([都道府県])出身の人物一覧$/ ) {
-			$linklist{"$1$2" . '出身の人物'} = JAWP::Util::GetLinkwordList( $article->{'text'} );
 		}
 	}
 	print "\n";
 
 	my @datalist;
 
-	foreach my $key ( sort grep { /^\d+年$/ } keys %linklist, sort grep { /^\d+月\d+日$/ } keys %linklist ) {
+	foreach my $key ( sort grep { /^\d+年$/ } keys %linklist ) {
 		@datalist = ();
 		foreach my $title ( @{$list{$key . '誕生'}} ) {
 			if( !( grep { $_ eq $title } @{ $linklist{$key} } ) ) {
@@ -1781,18 +1779,6 @@ STR
 	}
 	if( @datalist + 0 != 0 ) {
 		$report->OutputWikiList( '[[生没同日]]', \@datalist );
-	}
-
-	foreach my $key ( sort grep { /[都道府県]出身の人物$/ } keys %linklist ) {
-		@datalist = ();
-		foreach my $title ( @{$list{$key}} ) {
-			if( !( grep { $_ eq $title } @{ $linklist{$key} } ) ) {
-				push @datalist, "[[$title]]";
-			}
-		}
-		if( @datalist + 0 != 0 ) {
-			$report->OutputWikiList( sprintf( "[[%s出身の人物一覧]]", $key ), \@datalist );
-		}
 	}
 }
 
