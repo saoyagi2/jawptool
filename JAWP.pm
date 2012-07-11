@@ -952,7 +952,7 @@ sub GetLinkwordList {
 			$tmp =~ s/\.([0-9a-fA-F][0-9a-fA-F])/pack("C",hex($1))/eg;
 			$word .= Encode::decode( 'utf-8', $tmp );;
 		}
-		$word =~ s/[_　‎]/ /g;
+		$word =~ s/[ _　‎]+/ /g;
 		$word =~ s/^( +|)(.*?)( +|)$/$2/;
 		$word = ucfirst( $word );
 

@@ -87,8 +87,13 @@ use Test::More( 'no_plan' );
 			is_deeply( $result_ref, [], "JAWP::Util::GetLinkwordList($str)" );
 		}
 
-		$result_ref = JAWP::Util::GetLinkwordList( '[[あああ]]' );
-		is_deeply( $result_ref, [ 'あああ' ], 'JAWP::Util::GetLinkwordList([[あああ]])' );
+		foreach my $str ( '[[あああ]]', '[[   あああ]]', '[[あああ   ]]', '[[   あああ   ]]') {
+			$result_ref = JAWP::Util::GetLinkwordList( $str );
+			is_deeply( $result_ref, [ 'あああ' ], "JAWP::Util::GetLinkwordList($str)" );
+		}
+
+		$result_ref = JAWP::Util::GetLinkwordList( '[[あ   ああ]]' );
+		is_deeply( $result_ref, [ 'あ ああ' ], 'JAWP::Util::GetLinkwordList([[あ   ああ]])' );
 
 		$result_ref = JAWP::Util::GetLinkwordList( 'あああ[[いいい]]ううう' );
 		is_deeply( $result_ref, [ 'いいい' ], 'JAWP::Util::GetLinkwordList(あああ[[いいい]]ううう)' );
@@ -113,6 +118,9 @@ use Test::More( 'no_plan' );
 
 		$result_ref = JAWP::Util::GetLinkwordList( '[[あああ#いいい]]', 1 );
 		is_deeply( $result_ref, [ 'あああ#いいい' ], 'JAWP::Util::GetLinkwordList([[あああ#いいい]],withhead)' );
+
+		$result_ref = JAWP::Util::GetLinkwordList( '[[あああ#.E5.8D.97.E8.9B.AE.E6.BC.AC.E3.81.91]]', 1 );
+		is_deeply( $result_ref, [ 'あああ#南蛮漬け' ], 'JAWP::Util::GetLinkwordList([[あああ#.E5.8D.97.E8.9B.AE.E6.BC.AC.E3.81.91]],withhead)' );
 
 		$result_ref = JAWP::Util::GetLinkwordList( '[[あああ#.E5.8D.97.E8.9B.AE.E6.BC.AC.E3.81.91]]', 1 );
 		is_deeply( $result_ref, [ 'あああ#南蛮漬け' ], 'JAWP::Util::GetLinkwordList([[あああ#.E5.8D.97.E8.9B.AE.E6.BC.AC.E3.81.91]],withhead)' );
