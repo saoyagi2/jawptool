@@ -1860,7 +1860,7 @@ STR
 
 		next if( !$article->IsIndex );
 
-		$indexlist{$article->{'title'}} = length( Encode::encode( 'utf-8', $article->{'text'} ) );
+		$indexlist{$article->{'title'}} = JAWP::Util::GetBytes( $article->{'text'} );
 	}
 	print "\n";
 
