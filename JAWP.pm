@@ -620,10 +620,16 @@ sub Person {
 		push @list, sprintf( "%d年誕生", $by );
 		push @list, sprintf( "%d月%d日誕生", $bm, $bd );
 	}
+	elsif( $self->{'text'} =~ /\[\[(Category|カテゴリ):(\d+)年生/i ) {
+		push @list, sprintf( "%d年誕生", $2 );
+	}
 	my( $dy, $dm, $dd ) = $self->GetDeathday;
 	if( $dy != 0 && $dm != 0 && $dd != 0 ) {
 		push @list, sprintf( "%d年死去", $dy );
 		push @list, sprintf( "%d月%d日死去", $dm, $dd );
+	}
+	elsif( $self->{'text'} =~ /\[\[(Category|カテゴリ):(\d+)年没/i ) {
+		push @list, sprintf( "%d年死去", $2 );
 	}
 	if( $bm != 0 && $bd != 0 && $bm == $dm && $bd == $dd ) {
 		push @list, '生没同日';

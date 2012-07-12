@@ -1391,6 +1391,46 @@ use Test::More( 'no_plan' );
 		@list = $article->Person;
 		is_deeply( \@list, [ '2001年誕生', '1月1日誕生', '2011年死去', '12月31日死去' ], 'JAWP::Article::Person({{没年齢|2001|1|1|2011|12|31}})' );
 
+		foreach my $cat ( 'Category', 'カテゴリ' ) {
+			my $text;
+
+			$text = "[[$cat:2001年生]]";
+			$article->SetTitle( '標準' );
+			$article->SetText( $text );
+			@list = $article->Person;
+			is_deeply( \@list, [ '2001年誕生' ], "JAWP::Article::Person($text)" );
+
+			$text = "[[$cat:2011年没]]";
+			$article->SetTitle( '標準' );
+			$article->SetText( $text );
+			@list = $article->Person;
+			is_deeply( \@list, [ '2011年死去' ], "JAWP::Article::Person($text)" );
+
+			$text = "{生年月日と年齢|2001|1|1}}\n[[$cat:2002年生]]";
+			$article->SetTitle( '標準' );
+			$article->SetText( "{{生年月日と年齢|2001|1|1}}\n[[Category:2002年生]]" );
+			@list = $article->Person;
+			is_deeply( \@list, [ '2001年誕生', '1月1日誕生' ], "JAWP::Article::Person($text)" );
+
+			$text = "{{生年月日と年齢|2001|1|1}}\n[[$cat:2012年没]]";
+			$article->SetTitle( '標準' );
+			$article->SetText( $text );
+			@list = $article->Person;
+			is_deeply( \@list, [ '2001年誕生', '1月1日誕生', '2012年死去' ], "JAWP::Article::Person($text)" );
+
+			$text = "{{死亡年月日と没年齢|2001|1|1|2011|12|31}}\n[[$cat:2012年没]]";
+			$article->SetTitle( '標準' );
+			$article->SetText( $text );
+			@list = $article->Person;
+			is_deeply( \@list, [ '2001年誕生', '1月1日誕生', '2011年死去', '12月31日死去' ], "JAWP::Article::Person({{死亡年月日と没年齢|2001|1|1|2011|12|31}}\n[[$cat:2012年没]])" );
+
+			$text = "{{没年齢|2001|1|1|2011|12|31}}\n[[$cat:2012年没]]";
+			$article->SetTitle( '標準' );
+			$article->SetText( $text );
+			@list = $article->Person;
+			is_deeply( \@list, [ '2001年誕生', '1月1日誕生', '2011年死去', '12月31日死去' ], "JAWP::Article::Person({{没年齢|2001|1|1|2011|12|31}}\n[[$cat:2012年没]])" );
+		}
+
 		# 出身都道府県
 		foreach my $cat ( 'Category', 'カテゴリ' ) {
 			my $text = "[[$cat:東京都出身の人物]]";
