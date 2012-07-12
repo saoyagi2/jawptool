@@ -439,7 +439,7 @@ sub LintText {
 			if( defined( $titlelist->{'標準_リダイレクト'}->{$word} ) ) {
 				push @result, "($word)のリンク先はリダイレクトです($n)";
 			}
-			if( $word =~ /^\d+年\d+月\d+日$/ ) {
+			if( $word =~ /^[0-9]+年[0-9]+月[0-9]+日$/ ) {
 				push @result, "年月日へのリンクは年と月日を分けることが推奨されます($n)";
 			}
 			if( index( $word, '#' ) >= 0 ) {
@@ -500,12 +500,12 @@ sub LintText {
 	}
 
 	my $cat存命 = defined( $category{'存命人物'} );
-	my $cat生年 = defined( $category{'生年不明'} ) || grep { /^\d+年生$/ } keys %category;
-	my $cat没年 = defined( $category{'没年不明'} ) || grep { /^\d+年没$/ } keys %category;
+	my $cat生年 = defined( $category{'生年不明'} ) || grep { /^[0-9]+年生$/ } keys %category;
+	my $cat没年 = defined( $category{'没年不明'} ) || grep { /^[0-9]+年没$/ } keys %category;
 	my $temp生年月日 = ( index( $text, '{{生年月日と年齢|' ) >= 0 );
 	my $temp死亡年月日 = ( index( $text, '{{死亡年月日と没年齢|' ) >= 0 || index( $text, '{{没年齢|' ) >= 0 );
-	my $生年 = $1 if( $text =~ /\[\[Category:(\d+)年生/i );
-	my $没年 = $1 if( $text =~ /\[\[Category:(\d+)年没/i );
+	my $生年 = $1 if( $text =~ /\[\[Category:([0-9]+)年生/i );
+	my $没年 = $1 if( $text =~ /\[\[Category:([0-9]+)年没/i );
 	my( $y, $m, $d );
 
 	if( $cat存命 && ( $cat没年 || $temp死亡年月日 ) ) {
@@ -620,7 +620,7 @@ sub Person {
 		push @list, sprintf( "%d年誕生", $by );
 		push @list, sprintf( "%d月%d日誕生", $bm, $bd );
 	}
-	elsif( $self->{'text'} =~ /\[\[(Category|カテゴリ):(\d+)年生/i ) {
+	elsif( $self->{'text'} =~ /\[\[(Category|カテゴリ):([0-9]+)年生/i ) {
 		push @list, sprintf( "%d年誕生", $2 );
 	}
 	my( $dy, $dm, $dd ) = $self->GetDeathday;
@@ -628,7 +628,7 @@ sub Person {
 		push @list, sprintf( "%d年死去", $dy );
 		push @list, sprintf( "%d月%d日死去", $dm, $dd );
 	}
-	elsif( $self->{'text'} =~ /\[\[(Category|カテゴリ):(\d+)年没/i ) {
+	elsif( $self->{'text'} =~ /\[\[(Category|カテゴリ):([0-9]+)年没/i ) {
 		push @list, sprintf( "%d年死去", $2 );
 	}
 	if( $bm != 0 && $bd != 0 && $bm == $dm && $bd == $dd ) {
@@ -1732,14 +1732,14 @@ STR
 		print "$n\r"; $n++;
 
 		foreach my $key ( $article->Person ) {
-			next if( $key =~ /\d+月\d+日[誕生|死去]/ || $key =~ /(19\d{2}|[2-9]\d{3})年/  || $key =~ /[都道府県]出身の人物/ );
+			next if( $key =~ /[0-9]+月[0-9]+日[誕生|死去]/ || $key =~ /(19[0-9]{2}|[2-9][0-9]{3})年/  || $key =~ /[都道府県]出身の人物/ );
 			if( !defined( $list{$key} ) ) {
 				$list{$key} = [];
 			}
 			push @{$list{$key}}, $article->{'title'};
 		}
 
-		if( $article->{'title'} =~ /^(\d{1,3}|1[0-8]\d{2})年$/ || $article->{'title'} eq '生没同日' ) {
+		if( $article->{'title'} =~ /^([0-9]{1,3}|1[0-8][0-9]{2})年$/ || $article->{'title'} eq '生没同日' ) {
 			$linklist{$article->{'title'}} = JAWP::Util::GetLinkwordList( $article->{'text'} );
 		}
 	}
@@ -1747,7 +1747,7 @@ STR
 
 	my @datalist;
 
-	foreach my $key ( sort grep { /^\d+年$/ } keys %linklist ) {
+	foreach my $key ( sort grep { /^[0-9]+年$/ } keys %linklist ) {
 		@datalist = ();
 		foreach my $title ( @{$list{$key . '誕生'}} ) {
 			if( !( grep { $_ eq $title } @{ $linklist{$key} } ) ) {
