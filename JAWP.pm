@@ -508,16 +508,21 @@ sub LintText {
 		}
 	}
 
+	my $生年;
+	my $没年;
+	for my $key ( keys %category ) {
+		$生年 = $1 if( $key =~ /([0-9]+)年生/ );
+		$没年 = $1 if( $key =~ /([0-9]+)年没/ );
+	}
 	my $cat存命 = defined( $category{'存命人物'} );
-	my $cat生年 = defined( $category{'生年不明'} ) || grep { /^[0-9]+年生$/ } keys %category;
-	my $cat没年 = defined( $category{'没年不明'} ) || grep { /^[0-9]+年没$/ } keys %category;
-	my $temp生年月日 = ( index( $text, '{{生年月日と年齢|' ) >= 0 );
-	my $temp死亡年月日 = ( index( $text, '{{死亡年月日と没年齢|' ) >= 0 || index( $text, '{{没年齢|' ) >= 0 );
-	my $生年 = $1 if( $text =~ /\[\[Category:([0-9]+)年生/i );
-	my $没年 = $1 if( $text =~ /\[\[Category:([0-9]+)年没/i );
-	my( $y, $m, $d );
+	my $cat生年 = defined( $category{'生年不明'} ) || defined( $生年 );
+	my $cat没年 = defined( $category{'没年不明'} ) || defined( $没年 );
+#	my $temp生年月日 = ( index( $text, '{{生年月日と年齢|' ) >= 0 );
+#	my $temp死亡年月日 = ( index( $text, '{{死亡年月日と没年齢|' ) >= 0 || index( $text, '{{没年齢|' ) >= 0 );
+	my( $by, $bm, $bd ) = $self->GetBirthday;
+	my( $dy, $dm, $dd ) = $self->GetDeathday;
 
-	if( $cat存命 && ( $cat没年 || $temp死亡年月日 ) ) {
+	if( $cat存命 && ( $cat没年 || $dy != 0 ) ) {
 		push @result, '存命人物ではありません';
 	}
 	if( ( $cat存命 || $cat没年 ) && !$cat生年 ) {
@@ -526,18 +531,16 @@ sub LintText {
 	if( $cat生年 && !$cat存命 && !$cat没年 ) {
 		push @result, '存命人物または没年のカテゴリがありません';
 	}
-	if( defined( $生年 ) && $cat存命 && !$cat没年 && !$temp死亡年月日 && !$temp生年月日 ) {
+	if( defined( $生年 ) && $cat存命 && !$cat没年 && $by == 0 && $dy == 0 ) {
 		push @result, '(生年月日と年齢)のテンプレートを使うと便利です';
 	}
-	if( defined( $生年 ) && $生年 >= 1903 && defined( $没年 ) && !$temp死亡年月日 ) {
+	if( defined( $生年 ) && $生年 >= 1903 && defined( $没年 ) && $dy == 0 ) {
 		push @result, '(死亡年月日と没年齢)のテンプレートを使うと便利です';
 	}
-	( $y, $m, $d ) = $self->GetBirthday;
-	if( $y != 0 && $m != 0 && $d != 0 && defined( $生年 ) && $y != $生年 ) {
+	if( $by != 0 && $bm != 0 && $bd != 0 && defined( $生年 ) && $by != $生年 ) {
 		push @result, '(生年月日と年齢or死亡年月日と没年齢or没年齢)テンプレートと生年のカテゴリが一致しません';
 	}
-	( $y, $m, $d ) = $self->GetDeathday;
-	if( $y != 0 && $m != 0 && $d != 0 && defined( $没年 ) && $y != $没年 ) {
+	if( $dy != 0 && $dm != 0 && $dd != 0 && defined( $没年 ) && $dy != $没年 ) {
 		push @result, '(死亡年月日と没年齢or没年齢)テンプレートと没年のカテゴリが一致しません';
 	}
 
