@@ -1193,12 +1193,6 @@ use Test::More( 'no_plan' );
 			$result_ref = $article->LintIndex( $titlelist );
 			is_deeply( $result_ref, [ '読み仮名がありません(1)' ], 'JAWP::Article::LintIndex(赤リンク)' );
 
-			# '曖昧'使用
-			$article->SetTitle( 'Wikipedia:索引 あ' );
-			$article->SetText( "*[[記事]]（きじ）【曖昧】\n" );
-			$result_ref = $article->LintIndex( $titlelist );
-			is_deeply( $result_ref, [ '【曖昧】より【曖昧さ回避】が推奨されます(1)' ], "JAWP::Article::LintIndex('曖昧'使用)" );
-
 			# 分野名無し
 			$article->SetTitle( 'Wikipedia:索引 あ' );
 			$article->SetText( "*[[記事]]（きじ）\n" );
