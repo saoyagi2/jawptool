@@ -980,6 +980,23 @@ sub GetLinkwordList {
 }
 
 
+# カテゴリ呼出し語リストの取得
+# param $text 元テキスト
+# return カテゴリリスト, ソートキーリスト
+sub GetCategorywordList {
+	my $text = shift;
+
+	my @wordlist;
+	for my $word ( @{ JAWP::Util::GetLinkwordList( $text ) } ) {
+		if( $word =~ /^(Category|カテゴリ):(.*)$/i ) {
+			push @wordlist, $2;
+		}
+	}
+
+	return( \@wordlist );
+}
+
+
 # テンプレート呼出し語リストの取得
 # param $text 元テキスト
 # return リンク語リスト

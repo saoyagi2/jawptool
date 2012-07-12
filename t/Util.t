@@ -126,6 +126,33 @@ use Test::More( 'no_plan' );
 		is_deeply( $result_ref, [ 'あああ#南蛮漬け' ], 'JAWP::Util::GetLinkwordList([[あああ#.E5.8D.97.E8.9B.AE.E6.BC.AC.E3.81.91]],withhead)' );
 	}
 
+	# GetCategorywordListテスト
+	{
+		my $result_ref;
+
+		foreach my $cat ( 'Category', 'category', 'カテゴリ' ) {
+			foreach my $str ( '', 'あああ', "[$cat:あああ]", "[[$cat:あああ", '[[$cat]]' ) {
+				$result_ref = JAWP::Util::GetCategorywordList( $str );
+				is_deeply( $result_ref, [], "JAWP::Util::GetCategorywordList($str)" );
+			}
+
+			$result_ref = JAWP::Util::GetCategorywordList( "[[$cat:あああ]]" );
+			is_deeply( $result_ref, [ 'あああ' ], "JAWP::Util::GetCategorywordList([[$cat:あああ]])" );
+
+			$result_ref = JAWP::Util::GetCategorywordList( "あああ[[$cat:いいい]]ううう" );
+			is_deeply( $result_ref, [ 'いいい' ], "JAWP::Util::GetCategorywordList(あああ[[$cat:いいい]]ううう)" );
+
+			$result_ref = JAWP::Util::GetCategorywordList( "[[$cat:あああ|いいい]]" );
+			is_deeply( $result_ref, [ 'あああ' ], "JAWP::Util::GetCategorywordList([[$cat:あああ|いいい]])" );
+
+			$result_ref = JAWP::Util::GetCategorywordList( "[[$cat:あああ]]いいい[[$cat:ううう]]" );
+			is_deeply( $result_ref, [ 'あああ', 'ううう' ], "JAWP::Util::GetCategorywordList([[$cat:あああ]]いいい[[$cat:ううう]])" );
+
+			$result_ref = JAWP::Util::GetCategorywordList( "[[$cat:あああ]]\nいいい\n[[$cat:ううう]]\n" );
+			is_deeply( $result_ref, [ 'あああ', 'ううう' ], "JAWP::Util::GetCategorywordList([[$cat:あああ]]\nいいい\n[[$cat:ううう]]\n)" );
+		}
+	}
+
 	# GetTemplatewordListテスト
 	{
 		my $result_ref;
