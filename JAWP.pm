@@ -1328,12 +1328,6 @@ STR
 
 		next if( !$article->IsRedirect );
 
-		if( $article->{'title'} =~ /\([^\(]+\)$/ ) {
-			push @{$result{'aimai'}}, "[[$article->{'title'}]]";
-		}
-		if( $article->Namespace eq 'ノート' ) {
-			push @{$result{'note'}}, "[[$article->{'title'}]]";
-		}
 		my $wordlist_ref = JAWP::Util::GetLinkwordList( $article->{'text'}, 1 );
 		if( @$wordlist_ref + 0 > 0 ) {
 			my ( $linktype, $word ) = JAWP::Util::GetLinkType( $wordlist_ref->[0], $titlelist );
@@ -1345,8 +1339,6 @@ STR
 	print "\n";
 	$titlelist = undef;
 
-	$report->OutputWikiList( '曖昧さ回避のカッコ付きリダイレクト', $result{'aimai'} );
-	$report->OutputWikiList( 'ノートのリダイレクト', $result{'note'} );
 	$report->OutputWikiList( '赤リンクへのリダイレクト', $result{'redlink'} );
 }
 
