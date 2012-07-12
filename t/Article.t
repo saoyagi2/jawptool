@@ -603,10 +603,12 @@ use Test::More( 'no_plan' );
 			$result_ref = $article->LintText( $titlelist );
 			is_deeply( $result_ref, [], 'JAWP::Article::LintText(ソートキー,デフォルトソート)' );
 
-			$article->SetTitle( '標準' );
-			$article->SetText( "{{aimai}}\n[[Category:カテゴリ|あああ]]\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [], 'JAWP::Article::LintText(ソートキー,Category)' );
+			foreach my $type ( 'Category', 'category', 'カテゴリ' ) {
+				$article->SetTitle( '標準' );
+				$article->SetText( "{{aimai}}\n[[$type:カテゴリ|あああ]]\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText(ソートキー,$type)" );
+			}
 
 			foreach my $char ( 'ぁ', 'ぃ', 'ぅ', 'ぇ', 'ぉ', 'っ', 'ゃ', 'ゅ', 'ょ', 'ゎ', 'が', 'ぎ', 'ぐ', 'げ', 'ご', 'ざ', 'じ', 'ず', 'ぜ', 'ぞ', 'だ', 'ぢ', 'づ', 'で', 'ど', 'ば', 'び', 'ぶ', 'べ', 'ぼ', 'ぱ', 'ぴ', 'ぷ', 'ぺ', 'ぽ', 'ー' ) {
 				$article->SetTitle( '標準' );
@@ -619,10 +621,12 @@ use Test::More( 'no_plan' );
 				$result_ref = $article->LintText( $titlelist );
 				is_deeply( $result_ref, [ 'ソートキーには濁音、半濁音、吃音、長音は清音化することが推奨されます(1)' ], "JAWP::Article::LintText(ソートキー,濁音、半濁音、吃音、長音,デフォルトソート,$char)" );
 
-				$article->SetTitle( '標準' );
-				$article->SetText( "{{aimai}}\n[[Category:カテゴリ|あああ$char]]\n" );
-				$result_ref = $article->LintText( $titlelist );
-				is_deeply( $result_ref, [ 'ソートキーには濁音、半濁音、吃音、長音は清音化することが推奨されます(2)' ], "JAWP::Article::LintText(ソートキー,濁音、半濁音、吃音、長音,Category,$char)" );
+				foreach my $type ( 'Category', 'category', 'カテゴリ' ) {
+					$article->SetTitle( '標準' );
+					$article->SetText( "{{aimai}}\n[[$type:カテゴリ|あああ$char]]\n" );
+					$result_ref = $article->LintText( $titlelist );
+					is_deeply( $result_ref, [ 'ソートキーには濁音、半濁音、吃音、長音は清音化することが推奨されます(2)' ], "JAWP::Article::LintText(ソートキー,濁音、半濁音、吃音、長音,$type,$char)" );
+				}
 			}
 		}
 
@@ -883,80 +887,82 @@ use Test::More( 'no_plan' );
 
 		# 定義文テスト
 		{
-			$article->SetTitle( '標準' );
-			$article->SetText( "== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [ '定義文が見当たりません' ], "JAWP::Article::LintText(定義文,'標準'-'')" );
+			foreach my $type ( 'Category', 'category', 'カテゴリ' ) {
+				$article->SetTitle( '標準' );
+				$article->SetText( "== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[$type:カテゴリ]]\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [ '定義文が見当たりません' ], "JAWP::Article::LintText(定義文,'標準'-'',$type)" );
 
-			$article->SetTitle( '標準' );
-			$article->SetText( "'''あああ'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [ '定義文が見当たりません' ], "JAWP::Article::LintText(定義文,'標準'-'''あああ''')" );
+				$article->SetTitle( '標準' );
+				$article->SetText( "'''あああ'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[$type:カテゴリ]]\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [ '定義文が見当たりません' ], "JAWP::Article::LintText(定義文,'標準'-'''あああ''',$type)" );
 
-			$article->SetTitle( '標準' );
-			$article->SetText( "'''標 準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'標準'-'''標 準''')" );
+				$article->SetTitle( '標準' );
+				$article->SetText( "'''標 準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[$type:カテゴリ]]\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'標準'-'''標 準''',$type)" );
 
-			$article->SetTitle( '標準' );
-			$article->SetText( "''' 標準 '''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'標準'-''' 標準 ''')" );
+				$article->SetTitle( '標準' );
+				$article->SetText( "''' 標準 '''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[$type:カテゴリ]]\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'標準'-''' 標準 ''',$type)" );
 
-			$article->SetTitle( '標 準' );
-			$article->SetText( "''' 標 準 '''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'標 準'-''' 標 準 ''')" );
+				$article->SetTitle( '標 準' );
+				$article->SetText( "''' 標 準 '''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[$type:カテゴリ]]\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'標 準'-''' 標 準 ''',$type)" );
 
-			$article->SetTitle( '標準' );
-			$article->SetText( "'''あああ'''\n''' 標準 '''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'標準'-'''あああ'''\n''' 標準 ''')" );
+				$article->SetTitle( '標準' );
+				$article->SetText( "'''あああ'''\n''' 標準 '''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[$type:カテゴリ]]\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'標準'-'''あああ'''\n''' 標準 ''',$type)" );
 
-			$article->SetTitle( '標準 (曖昧さ回避)' );
-			$article->SetText( "'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'標準 (曖昧さ回避)'-'''標準''')" );
+				$article->SetTitle( '標準 (曖昧さ回避)' );
+				$article->SetText( "'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[$type:カテゴリ]]\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'標準 (曖昧さ回避)'-'''標準''',$type)" );
 
-			$article->SetTitle( 'Abc' );
-			$article->SetText( "'''Abc'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'Abc'-'''Abc''')" );
+				$article->SetTitle( 'Abc' );
+				$article->SetText( "'''Abc'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[$type:カテゴリ]]\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'Abc'-'''Abc''',$type)" );
 
-			$article->SetTitle( 'Abc' );
-			$article->SetText( "'''abc'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'Abc'-'''abc''')" );
+				$article->SetTitle( 'Abc' );
+				$article->SetText( "'''abc'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[$type:カテゴリ]]\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'Abc'-'''abc''',$type)" );
 
-			$article->SetTitle( 'abc' );
-			$article->SetText( "'''Abc'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [ '定義文が見当たりません' ], "JAWP::Article::LintText(定義文,'abc'-'''Abc''')" );
+				$article->SetTitle( 'abc' );
+				$article->SetText( "'''Abc'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[$type:カテゴリ]]\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [ '定義文が見当たりません' ], "JAWP::Article::LintText(定義文,'abc'-'''Abc''',$type)" );
 
-			$article->SetTitle( 'abc' );
-			$article->SetText( "'''abc'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'abc'-'''abc''')" );
+				$article->SetTitle( 'abc' );
+				$article->SetText( "'''abc'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[$type:カテゴリ]]\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'abc'-'''abc''',$type)" );
 
-			$article->SetTitle( 'Shift JIS' );
-			$article->SetText( "'''Shift JIS'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'Shift JIS'-'''Shift_JIS''')" );
+				$article->SetTitle( 'Shift JIS' );
+				$article->SetText( "'''Shift JIS'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[$type:カテゴリ]]\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'Shift JIS'-'''Shift_JIS''',$type)" );
 
-			$article->SetTitle( 'Shift JIS' );
-			$article->SetText( "'''Shift_JIS'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'Shift JIS'-'''Shift_JIS''')" );
+				$article->SetTitle( 'Shift JIS' );
+				$article->SetText( "'''Shift_JIS'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[$type:カテゴリ]]\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'Shift JIS'-'''Shift_JIS''',$type)" );
 
-			$article->SetTitle( 'Shift_JIS' );
-			$article->SetText( "'''Shift JIS'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'Shift JIS'-'''Shift_JIS''')" );
+				$article->SetTitle( 'Shift_JIS' );
+				$article->SetText( "'''Shift JIS'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[$type:カテゴリ]]\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'Shift JIS'-'''Shift_JIS''',$type)" );
 
-			$article->SetTitle( 'Shift_JIS' );
-			$article->SetText( "'''Shift_JIS'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'Shift JIS'-'''Shift_JIS''')" );
+				$article->SetTitle( 'Shift_JIS' );
+				$article->SetText( "'''Shift_JIS'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[$type:カテゴリ]]\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText(定義文,'Shift JIS'-'''Shift_JIS''',$type)" );
+			}
 		}
 
 		# カテゴリ、デフォルトソート、出典なしテスト
@@ -966,113 +972,119 @@ use Test::More( 'no_plan' );
 			$result_ref = $article->LintText( $titlelist );
 			is_deeply( $result_ref, [ 'カテゴリが一つもありません' ], 'JAWP::Article::LintText(カテゴリ無し)' );
 
-			$article->SetTitle( '標準' );
-			$article->SetText( "'''標準'''\n== 出典 ==\n[[Category:カテゴリ]]" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [ 'デフォルトソートがありません' ], 'JAWP::Article::LintText(デフォルトソート無し)' );
+			foreach my $type ( 'Category', 'category', 'カテゴリ' ) {
+				$article->SetTitle( '標準' );
+				$article->SetText( "'''標準'''\n== 出典 ==\n[[$type:カテゴリ]]" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [ 'デフォルトソートがありません' ], "JAWP::Article::LintText(デフォルトソート無し,$type)" );
 
-			$article->SetTitle( '標準' );
-			$article->SetText( "'''標準'''\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [ '出典に関する節がありません' ], 'JAWP::Article::LintText(出典無し)' );
+				$article->SetTitle( '標準' );
+				$article->SetText( "'''標準'''\n{{DEFAULTSORT:あああ}}\n[[$type:カテゴリ]]\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [ '出典に関する節がありません' ], "JAWP::Article::LintText(出典無し,$type)" );
+			}
 		}
 
 		# ブロック順序テスト
 		{
-			$article->SetTitle( '標準' );
-			$article->SetText( "'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [], 'JAWP::Article::LintText(ブロック順序,本文-カテゴリ)' );
+			foreach my $type ( 'Category', 'category', 'カテゴリ' ) {
+				$article->SetTitle( '標準' );
+				$article->SetText( "'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[$type:カテゴリ]]\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText(ブロック順序,本文-カテゴリ,$type)" );
 
-			$article->SetTitle( '標準' );
-			$article->SetText( "'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[Category:カテゴリ]]\n[[en:interlink]]\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [], 'JAWP::Article::LintText(ブロック順序,本文-カテゴリ-言語間リンク)' );
+				$article->SetTitle( '標準' );
+				$article->SetText( "'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[$type:カテゴリ]]\n[[en:interlink]]\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [], "JAWP::Article::LintText(ブロック順序,本文-カテゴリ-言語間リンク,$type)" );
 
-			$article->SetTitle( '標準' );
-			$article->SetText( "'''標準'''\n== 出典 ==\n[[en:interlink]]\n[[Category:カテゴリ]]\n{{DEFAULTSORT:あああ}}\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [ '本文、カテゴリ、言語間リンクの順に記述することが推奨されます(4)' ], 'JAWP::Article::LintText(ブロック順序,本文-言語間リンク-カテゴリ)' );
+				$article->SetTitle( '標準' );
+				$article->SetText( "'''標準'''\n== 出典 ==\n[[en:interlink]]\n[[$type:カテゴリ]]\n{{DEFAULTSORT:あああ}}\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [ '本文、カテゴリ、言語間リンクの順に記述することが推奨されます(4)' ], "JAWP::Article::LintText(ブロック順序,本文-言語間リンク-カテゴリ,$type)" );
 
-			$article->SetTitle( '標準' );
-			$article->SetText( "[[Category:カテゴリ]]\n'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[en:interlink]]\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [ '本文、カテゴリ、言語間リンクの順に記述することが推奨されます(2)' ], 'JAWP::Article::LintText(ブロック順序,カテゴリ-本文-言語間リンク)' );
+				$article->SetTitle( '標準' );
+				$article->SetText( "[[$type:カテゴリ]]\n'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[en:interlink]]\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [ '本文、カテゴリ、言語間リンクの順に記述することが推奨されます(2)' ], "JAWP::Article::LintText(ブロック順序,カテゴリ-本文-言語間リンク,$type)" );
 
-			$article->SetTitle( '標準' );
-			$article->SetText( "[[Category:カテゴリ]]\n{{DEFAULTSORT:あああ}}\n[[en:interlink]]\n'''標準'''\n== 出典 ==\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [ '本文、カテゴリ、言語間リンクの順に記述することが推奨されます(4)' ], 'JAWP::Article::LintText(ブロック順序,カテゴリ-言語間リンク-本文)' );
+				$article->SetTitle( '標準' );
+				$article->SetText( "[[$type:カテゴリ]]\n{{DEFAULTSORT:あああ}}\n[[en:interlink]]\n'''標準'''\n== 出典 ==\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [ '本文、カテゴリ、言語間リンクの順に記述することが推奨されます(4)' ], "JAWP::Article::LintText(ブロック順序,カテゴリ-言語間リンク-本文,$type)" );
 
-			$article->SetTitle( '標準' );
-			$article->SetText( "[[en:interlink]]\n[[Category:カテゴリ]]\n{{DEFAULTSORT:あああ}}\n'''標準'''\n== 出典 ==\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [ '本文、カテゴリ、言語間リンクの順に記述することが推奨されます(2)' ], 'JAWP::Article::LintText(ブロック順序,言語間リンク-カテゴリ-本文)' );
+				$article->SetTitle( '標準' );
+				$article->SetText( "[[en:interlink]]\n[[$type:カテゴリ]]\n{{DEFAULTSORT:あああ}}\n'''標準'''\n== 出典 ==\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [ '本文、カテゴリ、言語間リンクの順に記述することが推奨されます(2)' ], "JAWP::Article::LintText(ブロック順序,言語間リンク-カテゴリ-本文,$type)" );
 
-			$article->SetTitle( '標準' );
-			$article->SetText( "[[en:interlink]]\n'''標準'''\n== 出典 ==\n[[Category:カテゴリ]]\n{{DEFAULTSORT:あああ}}\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [ '本文、カテゴリ、言語間リンクの順に記述することが推奨されます(2)' ], 'JAWP::Article::LintText(ブロック順序,言語間リンク-本文-カテゴリ)' );
+				$article->SetTitle( '標準' );
+				$article->SetText( "[[en:interlink]]\n'''標準'''\n== 出典 ==\n[[$type:カテゴリ]]\n{{DEFAULTSORT:あああ}}\n" );
+				$result_ref = $article->LintText( $titlelist );
+				is_deeply( $result_ref, [ '本文、カテゴリ、言語間リンクの順に記述することが推奨されます(2)' ], "JAWP::Article::LintText(ブロック順序,言語間リンク-本文-カテゴリ,$type)" );
+			}
 		}
 
 		# 生没年カテゴリテスト
 		{
-			foreach my $subtext ( "[[Category:2001年生]]\n[[Category:存命人物]]\n{{生年月日と年齢|2001|1|1}}", "[[Category:生年不明]]\n[[Category:存命人物]]", "[[Category:2001年生]]\n[[Category:2011年没]]\n{{死亡年月日と没年齢|2001|1|1|2011|12|31}}", "[[Category:2001年生]]\n[[Category:2011年没]]\n{{没年齢|2001|1|1|2011|12|31}}", "[[Category:生年不明]]\n[[Category:2011年没]]", "[[Category:2001年生]]\n[[Category:没年不明]]", "[[Category:生年不明]]\n[[Category:没年不明]]" ) {
+			foreach my $type ( 'Category', 'category', 'カテゴリ' ) {
+				foreach my $subtext ( "[[$type:2001年生]]\n[[$type:存命人物]]\n{{生年月日と年齢|2001|1|1}}", "[[$type:生年不明]]\n[[$type:存命人物]]", "[[$type:2001年生]]\n[[$type:2011年没]]\n{{死亡年月日と没年齢|2001|1|1|2011|12|31}}", "[[$type:2001年生]]\n[[$type:2011年没]]\n{{没年齢|2001|1|1|2011|12|31}}", "[[$type:生年不明]]\n[[$type:2011年没]]", "[[$type:2001年生]]\n[[$type:没年不明]]", "[[$type:生年不明]]\n[[$type:没年不明]]" ) {
+					$article->SetTitle( '標準' );
+					$article->SetText( "$subtext\n{{aimai}}" );
+					$result_ref = $article->LintText( $titlelist );
+					is_deeply( $result_ref, [], "JAWP::Article::LintText(生没年カテゴリ,$subtext,$type)" );
+				}
+
+				foreach my $subtext ( "[[$type:2001年生]]\n[[$type:2011年没]]\n[[$type:存命人物]]\n{{死亡年月日と没年齢|2001|1|1|2011|12|31}}", "[[$type:2001年生]]\n[[$type:没年不明]]\n[[$type:存命人物]]", "[[$type:生年不明]]\n[[$type:2011年没]]\n[[$type:存命人物]]", "[[$type:生年不明]]\n[[$type:没年不明]]\n[[$type:存命人物]]", "[[$type:2001年生]]\n[[$type:存命人物]]\n{{死亡年月日と没年齢|2001|1|1|2011|12|31}}" ) {
+					$article->SetTitle( '標準' );
+					$article->SetText( "$subtext\n{{aimai}}" );
+					$result_ref = $article->LintText( $titlelist );
+					is_deeply( $result_ref, [ '存命人物ではありません' ], "JAWP::Article::LintText(生没年カテゴリ,存命人物ではありません,$subtext,$type)" );
+				}
+
+				foreach my $subtext ( "[[$type:存命人物]]", "[[$type:2011年没]]", "[[$type:没年不明]]" ) {
+					$article->SetTitle( '標準' );
+					$article->SetText( "$subtext\n{{aimai}}" );
+					$result_ref = $article->LintText( $titlelist );
+					is_deeply( $result_ref, [ '生年のカテゴリがありません' ], "JAWP::Article::LintText(生没年カテゴリ,生年のカテゴリがありません,$subtext,$type)" );
+				}
+
+				foreach my $subtext ( "[[$type:2001年生]]", "[[$type:生年不明]]" ) {
+					$article->SetTitle( '標準' );
+					$article->SetText( "$subtext\n{{aimai}}" );
+					$result_ref = $article->LintText( $titlelist );
+					is_deeply( $result_ref, [ '存命人物または没年のカテゴリがありません' ], "JAWP::Article::LintText(生没年カテゴリ,存命人物または没年のカテゴリがありません,$subtext,$type)" );
+				}
+
+				foreach my $subtext ( "[[$type:2001年生]]\n[[$type:2011年没]]\n{{死亡年月日と没年齢|2002|1|1|2011|12|31}}", "[[$type:2001年生]]\n[[$type:2011年没]]\n{{没年齢|2002|1|1|2011|12|31}}", "[[$type:2001年生]]\n[[$type:存命人物]]\n{{生年月日と年齢|2002|1|1}}" ) {
+					$article->SetTitle( '標準' );
+					$article->SetText( "$subtext\n{{aimai}}" );
+					$result_ref = $article->LintText( $titlelist );
+					is_deeply( $result_ref, [ '(生年月日と年齢or死亡年月日と没年齢or没年齢)テンプレートと生年のカテゴリが一致しません' ], "JAWP::Article::LintText(生没年カテゴリ,テンプレートと生年のカテゴリ不一致,$subtext,$type)" );
+				}
+
+				foreach my $subtext ("[[$type:2001年生]]\n[[$type:2011年没]]\n{{死亡年月日と没年齢|2001|1|1|2012|12|31}}", "[[$type:2001年生]]\n[[$type:2011年没]]\n{{没年齢|2001|1|1|2012|12|31}}" ) {
+					$article->SetTitle( '標準' );
+					$article->SetText( "$subtext\n{{aimai}}" );
+					$result_ref = $article->LintText( $titlelist );
+					is_deeply( $result_ref, [ '(死亡年月日と没年齢or没年齢)テンプレートと没年のカテゴリが一致しません' ], "JAWP::Article::LintText(生没年カテゴリ,テンプレートと没年のカテゴリ不一致,$subtext,$type)" );
+				}
+
 				$article->SetTitle( '標準' );
-				$article->SetText( "$subtext\n{{aimai}}" );
+				$article->SetText( "[[$type:2001年生]]\n[[$type:存命人物]]\n{{aimai}}" );
 				$result_ref = $article->LintText( $titlelist );
-				is_deeply( $result_ref, [], "JAWP::Article::LintText(生没年カテゴリ,$subtext)" );
-			}
+				is_deeply( $result_ref, [ '(生年月日と年齢)のテンプレートを使うと便利です' ], "JAWP::Article::LintText(生没年カテゴリ,2001年生-存命人物,テンプレート未使用,$type)" );
 
-			foreach my $subtext ( "[[Category:2001年生]]\n[[Category:2011年没]]\n[[Category:存命人物]]\n{{死亡年月日と没年齢|2001|1|1|2011|12|31}}", "[[Category:2001年生]]\n[[Category:没年不明]]\n[[Category:存命人物]]", "[[Category:生年不明]]\n[[Category:2011年没]]\n[[Category:存命人物]]", "[[Category:生年不明]]\n[[Category:没年不明]]\n[[Category:存命人物]]", "[[Category:2001年生]]\n[[Category:存命人物]]\n{{死亡年月日と没年齢|2001|1|1|2011|12|31}}" ) {
 				$article->SetTitle( '標準' );
-				$article->SetText( "$subtext\n{{aimai}}" );
+				$article->SetText( "[[$type:1900年生]]\n[[$type:1902年没]]\n{{aimai}}" );
 				$result_ref = $article->LintText( $titlelist );
-				is_deeply( $result_ref, [ '存命人物ではありません' ], "JAWP::Article::LintText(生没年カテゴリ,存命人物ではありません,$subtext)" );
-			}
+				is_deeply( $result_ref, [], "JAWP::Article::LintText(生没年カテゴリ,1900年生-1902年没,テンプレート範囲外,$type)" );
 
-			foreach my $subtext ( "[[Category:存命人物]]", "[[Category:2011年没]]", "[[Category:没年不明]]" ) {
 				$article->SetTitle( '標準' );
-				$article->SetText( "$subtext\n{{aimai}}" );
+				$article->SetText( "[[$type:2001年生]]\n[[$type:2011年没]]\n{{aimai}}" );
 				$result_ref = $article->LintText( $titlelist );
-				is_deeply( $result_ref, [ '生年のカテゴリがありません' ], "JAWP::Article::LintText(生没年カテゴリ,生年のカテゴリがありません,$subtext)" );
+				is_deeply( $result_ref, [ '(死亡年月日と没年齢)のテンプレートを使うと便利です' ], "JAWP::Article::LintText(生没年カテゴリ,2001年生-2011年没,テンプレート未使用,$type)" );
 			}
-
-			foreach my $subtext ( "[[Category:2001年生]]", "[[Category:生年不明]]" ) {
-				$article->SetTitle( '標準' );
-				$article->SetText( "$subtext\n{{aimai}}" );
-				$result_ref = $article->LintText( $titlelist );
-				is_deeply( $result_ref, [ '存命人物または没年のカテゴリがありません' ], "JAWP::Article::LintText(生没年カテゴリ,存命人物または没年のカテゴリがありません,$subtext)" );
-			}
-
-			foreach my $subtext ( "[[Category:2001年生]]\n[[Category:2011年没]]\n{{死亡年月日と没年齢|2002|1|1|2011|12|31}}", "[[Category:2001年生]]\n[[Category:2011年没]]\n{{没年齢|2002|1|1|2011|12|31}}", "[[Category:2001年生]]\n[[Category:存命人物]]\n{{生年月日と年齢|2002|1|1}}" ) {
-				$article->SetTitle( '標準' );
-				$article->SetText( "$subtext\n{{aimai}}" );
-				$result_ref = $article->LintText( $titlelist );
-				is_deeply( $result_ref, [ '(生年月日と年齢or死亡年月日と没年齢or没年齢)テンプレートと生年のカテゴリが一致しません' ], "JAWP::Article::LintText(生没年カテゴリ,テンプレートと生年のカテゴリ不一致,$subtext)" );
-			}
-
-			foreach my $subtext ("[[Category:2001年生]]\n[[Category:2011年没]]\n{{死亡年月日と没年齢|2001|1|1|2012|12|31}}", "[[Category:2001年生]]\n[[Category:2011年没]]\n{{没年齢|2001|1|1|2012|12|31}}" ) {
-				$article->SetTitle( '標準' );
-				$article->SetText( "$subtext\n{{aimai}}" );
-				$result_ref = $article->LintText( $titlelist );
-				is_deeply( $result_ref, [ '(死亡年月日と没年齢or没年齢)テンプレートと没年のカテゴリが一致しません' ], "JAWP::Article::LintText(生没年カテゴリ,テンプレートと没年のカテゴリ不一致,$subtext)" );
-			}
-
-			$article->SetTitle( '標準' );
-			$article->SetText( "[[Category:2001年生]]\n[[Category:存命人物]]\n{{aimai}}" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [ '(生年月日と年齢)のテンプレートを使うと便利です' ], 'JAWP::Article::LintText(生没年カテゴリ,2001年生-存命人物,テンプレート未使用)' );
-
-			$article->SetTitle( '標準' );
-			$article->SetText( "[[Category:1900年生]]\n[[Category:1902年没]]\n{{aimai}}" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [], 'JAWP::Article::LintText(生没年カテゴリ,1900年生-1902年没,テンプレート範囲外)' );
-
-			$article->SetTitle( '標準' );
-			$article->SetText( "[[Category:2001年生]]\n[[Category:2011年没]]\n{{aimai}}" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [ '(死亡年月日と没年齢)のテンプレートを使うと便利です' ], 'JAWP::Article::LintText(生没年カテゴリ,2001年生-2011年没,テンプレート未使用)' );
 		}
 	}
 
@@ -1245,7 +1257,7 @@ use Test::More( 'no_plan' );
 
 			$text = "{生年月日と年齢|2001|1|1}}\n[[$cat:2002年生]]";
 			$article->SetTitle( '標準' );
-			$article->SetText( "{{生年月日と年齢|2001|1|1}}\n[[Category:2002年生]]" );
+			$article->SetText( "{{生年月日と年齢|2001|1|1}}\n[[$cat:2002年生]]" );
 			@list = $article->Person;
 			is_deeply( \@list, [ '2001年誕生', '1月1日誕生' ], "JAWP::Article::Person($text)" );
 
