@@ -982,7 +982,7 @@ sub GetLinkwordList {
 
 # カテゴリ呼出し語リストの取得
 # param $text 元テキスト
-# return カテゴリリスト, ソートキーリスト
+# return カテゴリリスト
 sub GetCategorywordList {
 	my $text = shift;
 
