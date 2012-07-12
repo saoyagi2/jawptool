@@ -1191,7 +1191,7 @@ use Test::More( 'no_plan' );
 			$article->SetTitle( 'Wikipedia:索引 あ' );
 			$article->SetText( "*[[記事]]【分野】\n" );
 			$result_ref = $article->LintIndex( $titlelist );
-			is_deeply( $result_ref, [ '読み仮名がありません(1)' ], 'JAWP::Article::LintIndex(赤リンク)' );
+			is_deeply( $result_ref, [ '読み仮名がありません(1)' ], 'JAWP::Article::LintIndex(読み仮名無し)' );
 
 			# 分野名無し
 			$article->SetTitle( 'Wikipedia:索引 あ' );
