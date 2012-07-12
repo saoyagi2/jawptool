@@ -71,6 +71,15 @@ sub IsRedirect {
 }
 
 
+# ソフトリダイレクト判別
+# return 真偽値
+sub IsSoftRedirect {
+	my $self = shift;
+
+	return( index( $self->{'text'}, '{{softredirect|' ) != -1 );
+}
+
+
 # 曖昧さ回避判別
 # return 真偽値
 sub IsAimai {

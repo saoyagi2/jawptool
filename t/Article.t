@@ -97,6 +97,17 @@ use Test::More( 'no_plan' );
 		}
 	}
 
+	# IsSoftRedirectテスト
+	{
+		my $article = new JAWP::Article;
+
+		$article->SetText( '' );
+		ok( !$article->IsSoftRedirect, 'JAWP::Article::IsSoftRedirect(空文字列)' );
+
+		$article->SetText( '{{softredirect|wikt:転送先}}' );
+		ok( $article->IsSoftRedirect, 'JAWP::Article::IsSoftRedirect({{softredirect|wikt:転送先}})' );
+	}
+
 	# IsAimaiテスト
 	{
 		my $article = new JAWP::Article;
