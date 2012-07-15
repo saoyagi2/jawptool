@@ -517,8 +517,6 @@ sub LintText {
 	my $cat存命 = defined( $category{'存命人物'} );
 	my $cat生年 = defined( $category{'生年不明'} ) || defined( $生年 );
 	my $cat没年 = defined( $category{'没年不明'} ) || defined( $没年 );
-#	my $temp生年月日 = ( index( $text, '{{生年月日と年齢|' ) >= 0 );
-#	my $temp死亡年月日 = ( index( $text, '{{死亡年月日と没年齢|' ) >= 0 || index( $text, '{{没年齢|' ) >= 0 );
 	my( $by, $bm, $bd ) = $self->GetBirthday;
 	my( $dy, $dm, $dd ) = $self->GetDeathday;
 
