@@ -1616,7 +1616,6 @@ sub StatisticReportSub3 {
 TEXT
 		, $ym, $subpagecount_ref->{$ym}, $talkcount_ref->{$ym}, $talkcount_ref->{$ym} / $subpagecount_ref->{$ym} );
 	}
-	$text .= '|}';
 
 	return( $text );
 }
