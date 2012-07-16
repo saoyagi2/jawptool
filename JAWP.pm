@@ -1526,40 +1526,35 @@ sub StatisticReportSub1 {
 	my( $titlelist ) = @_;
 
 	my $text = sprintf( <<"TEXT"
-{| class="wikitable" style="text-align:right"
-! colspan="2" | 本体 !! colspan="2" | ノート
-|-
-! 名前 !! ファイル数 !! 名前 !! ファイル数
-|-
-|通常記事 || %d || ノート || %d
-|-
-|曖昧さ回避 || %d ||
-|-
-|リダイレクト || %d ||
-|-
-|利用者 || %d || 利用者‐会話 || %d
-|-
-|Wikipedia || %d || Wikipedia‐ノート || %d
-|-
-|ファイル || %d || ファイル‐ノート || %d
-|-
-|MediaWiki || %d || MediaWiki‐ノート || %d
-|-
-|Template || %d || Template‐ノート || %d
-|-
-|Help || %d || Help‐ノート || %d
-|-
-|Category || %d || Category‐ノート || %d
-|-
-|Portal || %d || Portal‐ノート || %d
-|-
-|プロジェクト || %d || プロジェクト‐ノート || %d
-|}
-全%d件
+*全ファイル数 - %d
+*標準 - %d
+**曖昧さ回避 - %d
+**リダイレクト - %d
+**ノート - %d
+*利用者 - %d
+**利用者‐会話 - %d
+*Wikipedia - %d
+**Wikipedia‐ノート - %d
+*ファイル - %d
+**ファイル‐ノート - %d
+*MediaWiki - %d
+**MediaWiki‐ノート - %d
+*Template - %d
+**Template‐ノート - %d
+*Help - %d
+**Help‐ノート - %d
+*Category - %d
+**Category‐ノート - %d
+*Portal - %d
+**Portal‐ノート - %d
+*プロジェクト - %d
+**プロジェクト‐ノート - %d
 TEXT
-		, ( keys %{ $titlelist->{'標準'} } ) + 0, ( keys %{ $titlelist->{'ノート'} } ) + 0
+		, $titlelist->{'allcount'},
+		, ( keys %{ $titlelist->{'標準'} } ) + 0
 		, ( keys %{ $titlelist->{'標準_曖昧'} } ) + 0
 		, ( keys %{ $titlelist->{'標準_リダイレクト'} } ) + 0
+		, ( keys %{ $titlelist->{'ノート'} } ) + 0
 		, ( keys %{ $titlelist->{'利用者'} } ) + 0, ( keys %{ $titlelist->{'利用者‐会話'} } ) + 0
 		, ( keys %{ $titlelist->{'Wikipedia'} } ) + 0, ( keys %{ $titlelist->{'Wikipedia‐ノート'} } ) + 0
 		, ( keys %{ $titlelist->{'ファイル'} } ) + 0, ( keys %{ $titlelist->{'ファイル‐ノート'} } ) + 0
@@ -1568,8 +1563,7 @@ TEXT
 		, ( keys %{ $titlelist->{'Help'} } ) + 0, ( keys %{ $titlelist->{'Help‐ノート'} } ) + 0
 		, ( keys %{ $titlelist->{'Category'} } ) + 0, ( keys %{ $titlelist->{'Category‐ノート'} } ) + 0
 		, ( keys %{ $titlelist->{'Portal'} } ) + 0, ( keys %{ $titlelist->{'Portal‐ノート'} } ) + 0
-		, ( keys %{ $titlelist->{'プロジェクト'} } ) + 0, ( keys %{ $titlelist->{'プロジェクト‐ノート'} } ) + 0
-		, $titlelist->{'allcount'} );
+		, ( keys %{ $titlelist->{'プロジェクト'} } ) + 0, ( keys %{ $titlelist->{'プロジェクト‐ノート'} } ) + 0 );
 
 	return( $text );
 }
@@ -1611,13 +1605,16 @@ sub StatisticReportSub2 {
 # return $text レポートテキスト
 sub StatisticReportSub3 {
 	my( $subpagecount_ref, $talkcount_ref ) = @_;
-	my $text = <<'TEXT';
-{| class="wikitable" style="text-align:right"
-! 年月 !! サブページ数 !! 発言数 !! 発言数/サブページ数
-TEXT
+	my $text = '';
+
 	foreach my $ym ( sort keys %$subpagecount_ref ) {
-		$text .= "|-\n";
-		$text .= sprintf( "|%s || %d || %d || %2.1f\n", $ym, $subpagecount_ref->{$ym}, $talkcount_ref->{$ym}, $talkcount_ref->{$ym} / $subpagecount_ref->{$ym} );
+		$text .= sprintf( <<"TEXT"
+;年月 - %s
+:サブページ数 - %d
+:発言数 - %d
+:発言数/サブページ数 - %2.1f
+TEXT
+		, $ym, $subpagecount_ref->{$ym}, $talkcount_ref->{$ym}, $talkcount_ref->{$ym} / $subpagecount_ref->{$ym} );
 	}
 	$text .= '|}';
 
