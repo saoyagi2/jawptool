@@ -1406,7 +1406,7 @@ STR
 sub Statistic {
 	my( $xmlfile, $reportfile ) = @_;
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
-	my $titlelist = $jawpdata->GetTitleList;
+	my $titlelist = new JAWP::TitleList;
 	my $report = new JAWP::ReportFile( $reportfile );
 	my $text;
 
@@ -1418,6 +1418,35 @@ sub Statistic {
 
 STR
 	);
+
+	my $n = 1;
+	while( my $article = $jawpdata->GetArticle ) {
+		print "$n\r";$n++;
+
+		$titlelist->{'allcount'}++;
+
+		my $namespace = $article->Namespace;
+		my $title;
+		if( $namespace eq '標準' ) {
+			$title = $article->{'title'};
+			if( $article->IsRedirect ) {
+				$titlelist->{'標準_リダイレクト'}->{$title} = 1;
+			}
+			else {
+				$titlelist->{'標準'}->{$title} = 1;
+
+				if( $article->IsAimai ) {
+					$titlelist->{'標準_曖昧'}->{$title} = 1;
+				}
+			}
+		}
+		else {
+			$article->{'title'} =~ /:(.*)$/;
+			$title = $1;
+			$titlelist->{$namespace}->{$title} = 1;
+		}
+	}
+	print "\n";
 
 	$text = StatisticReportSub1( $titlelist, $report );
 	$report->OutputWiki( '名前空間別ファイル数', \$text );
@@ -1435,7 +1464,7 @@ STR
 		$subpagecount{$subpagetype} = {};
 		$talkcount{$subpagetype} = {};
 	}
-	my $n = 1;
+	$n = 1;
 	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
