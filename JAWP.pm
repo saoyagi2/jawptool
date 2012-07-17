@@ -1434,6 +1434,7 @@ sub Statistic {
 STR
 	);
 
+	my( $articlecount, $refcount, $refsize, $refarticlecount ) = ( 0, 0, 0 );
 	my $n = 1;
 	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r";$n++;
@@ -1453,6 +1454,13 @@ STR
 				if( $article->IsAimai ) {
 					$titlelist->{'標準_曖昧'}->{$title} = 1;
 				}
+				else {
+					$articlecount++;
+					$refarticlecount++ if( !$article->IsNoref );
+					my( $count, $size ) = $article->GetRefStat;
+					$refcount += $count;
+					$refsize += $size;
+				}
 			}
 		}
 		else {
@@ -1468,6 +1476,17 @@ STR
 	foreach my $namespace ( '利用者', '利用者‐会話', 'Wikipedia', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki', 'MediaWiki‐ノート', 'Template‐ノート', 'Help', 'Help‐ノート', 'Category‐ノート', 'Portal', 'Portal‐ノート', 'プロジェクト', 'プロジェクト‐ノート' ) {
 		$titlelist->{$namespace} = {};
 	}
+
+	$text = sprintf( <<"TEXT"
+*記事数 - %d
+*出典あり記事数 - %d
+*出典数 - %d
+**記事当たり出典数 - %d
+*出典バイト数 - %d
+**記事当たり出典バイト数 - %d
+TEXT
+	, $articlecount, $refarticlecount, $refcount, $refcount / $refarticlecount, $refsize, $refsize / $refarticlecount );
+	$report->OutputWiki( '出典統計', \$text );
 
 	my( %linkcount, %headcount );
 	foreach my $linktype ( '発リンク', '標準', 'aimai', 'redirect', 'category', 'file', 'template', 'redlink', 'externalhost' ) {
