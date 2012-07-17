@@ -159,6 +159,37 @@ use Test::More( 'no_plan' );
 		ok( !$article->IsNoref, "JAWP::Article::IsNoref(<ref>)" );
 	}
 
+	# GetRefStatテスト
+	{
+		my $article = new JAWP::Article;
+		my( $count, $size );
+
+		$article->SetText( '' );
+		( $count, $size ) = $article->GetRefStat;
+		is( $count, 0, 'JAWP::Article::GetRefStat(空文字列,count)' );
+		is( $size, 0, 'JAWP::Article::GetRefStat(空文字列,size)' );
+
+		$article->SetText( 'abcde' );
+		( $count, $size ) = $article->GetRefStat;
+		is( $count, 0, 'JAWP::Article::GetRefStat(abcde,count)' );
+		is( $size, 0, 'JAWP::Article::GetRefStat(abcde,size)' );
+
+		$article->SetText( 'abcde<ref>123</ref>' );
+		( $count, $size ) = $article->GetRefStat;
+		is( $count, 1, 'JAWP::Article::GetRefStat(abcde<ref>123</ref>,count)' );
+		is( $size, 14, 'JAWP::Article::GetRefStat(abcde<ref>123</ref>,size)' );
+
+		$article->SetText( 'abcde<ref name="123">123</ref>' );
+		( $count, $size ) = $article->GetRefStat;
+		is( $count, 1, 'JAWP::Article::GetRefStat(abcde<ref name="123">123</ref>,count)' );
+		is( $size, 25, 'JAWP::Article::GetRefStat(abcde<ref name="123">123</ref>,size)' );
+
+		$article->SetText( 'abcde<ref>123</ref><ref>123</ref>' );
+		( $count, $size ) = $article->GetRefStat;
+		is( $count, 2, 'JAWP::Article::GetRefStat(abcde<ref>123</ref><ref>123</ref>,count)' );
+		is( $size, 28, 'JAWP::Article::GetRefStat(abcde<ref>123</ref><ref>123</ref>,size)' );
+	}
+
 	# GetBirthdayテスト
 	{
 		my $article = new JAWP::Article;

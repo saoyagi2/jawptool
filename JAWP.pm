@@ -107,6 +107,21 @@ sub IsNoref {
 }
 
 
+# 出典情報取得
+sub GetRefStat {
+	my $self = shift;
+	my( $count, $size );
+
+	$count = $size = 0;
+	while( $self->{'text'} =~ /<ref.*?>.*?<\/ref>/g ) {
+		$count++;
+		$size += JAWP::Util::GetBytes( $& );
+	}
+
+	return( $count, $size );
+}
+
+
 # 誕生日取得
 # return 年、月、日(不存在なら0,0,0)
 sub GetBirthday {
