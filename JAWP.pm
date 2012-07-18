@@ -1237,6 +1237,9 @@ sub Run {
 	elsif( $argv[0] eq 'shortpage' ) {
 		ShortPage( $argv[1], $argv[2] );
 	}
+	elsif( $argv[0] eq 'lonelypage' ) {
+		LonelyPage( $argv[1], $argv[2] );
+	}
 	else {
 		Usage();
 	}
@@ -1265,6 +1268,7 @@ command:
   index-statistic
   aimai
   shortpage
+  lonelypage
 TEXT
 
 	exit;
@@ -2116,6 +2120,57 @@ STR
 
 	my @datalist = map { "[[$_]]($shortpage{$_})" } @{ JAWP::Util::SortHash( \%shortpage, 1, 1 ) };
 	$report->OutputWikiList( '短いページ', \@datalist );
+}
+
+
+# 孤立したページ
+# param $xmlfile 入力XMLファイル名
+# param $reportfile レポートファイル名
+sub LonelyPage {
+	my( $xmlfile, $reportfile ) = @_;
+	my $jawpdata = new JAWP::DataFile( $xmlfile );
+	my $report = new JAWP::ReportFile( $reportfile );
+
+	$report->OutputDirect( <<"STR"
+= 孤立したページ =
+このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から[http://sourceforge.jp/projects/jawptool/ jawptool $VERSION]にて孤立したページを抽出したものです。
+
+過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
+
+プログラムで機械的に検査しているため、掲載すべきでない記事についても検出されている可能性は大いにあります。この一覧を元に編集を行う場合は、個別にその編集が行われるべきか、十分に検討してから行うようにお願いします。
+
+STR
+	);
+
+	my %page;
+	my $n = 1;
+	while( my $article = $jawpdata->GetArticle ) {
+		print "$n\r"; $n++;
+
+		if( $article->Namespace eq '標準' && !$article->IsRedirect && !$article->IsSoftRedirect && !$article->IsAimai ) {
+			$page{$article->{'title'}} = 1;
+		}
+	}
+	print "\n";
+
+	$n = 1;
+	while( my $article = $jawpdata->GetArticle ) {
+		print "$n\r"; $n++;
+
+		next if( $article->Namespace ne '標準' || $article->IsRedirect || $article->IsSoftRedirect || $article->IsAimai );
+
+		my $linkwordlist_ref = JAWP::Util::GetLinkwordList( $article->{'text'} );
+		my %count = ();
+		foreach my $word ( grep { ++$count{$_} == 1 } @$linkwordlist_ref ) {
+			if( defined( $page{$word} ) ) {
+				delete $page{$word};
+			}
+		}
+	}
+	print "\n";
+
+	my @datalist = map { "[[$_]]" } keys %page;
+	$report->OutputWikiList( '孤立したページ', \@datalist );
 }
 
 
