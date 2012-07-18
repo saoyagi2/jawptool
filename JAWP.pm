@@ -1358,7 +1358,7 @@ sub LintRedirect {
 STR
 	);
 
-	my %result = ( 'aimai'=>[], 'note'=>[], 'redlink'=>[] );
+	my %result = ( 'redlink'=>[] );
 	my $n = 1;
 	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
