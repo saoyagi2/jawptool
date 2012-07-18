@@ -1966,7 +1966,7 @@ sub IndexStatistic {
 STR
 	);
 
-	my( %indexsize, %genrelist, $genre );
+	my( %indexsize, %genrelist, %sectionsize, $genre, $section );
 	my $n = 1;
 	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
@@ -1979,6 +1979,19 @@ STR
 			$genre =~ s/[\[\]]//g;
 			$genre =~ s/\|.*$//;
 			$genrelist{$genre}++;
+		}
+
+		$section = '';
+		for my $line ( split( /\n/, $article->{'text'} ) ) {
+			if( $line =~ /^=+([^=]+)=+ *$/ ) {
+				my $tmp = $1;
+				$tmp =~ s/ //g;
+				$section = sprintf( "%s#%s", $article->{'title'}, $tmp );
+				$sectionsize{$section} = 0;
+			}
+			elsif( $section ne '' ) {
+				$sectionsize{$section} += JAWP::Util::GetBytes( $line );
+			}
 		}
 	}
 	print "\n";
@@ -1994,6 +2007,14 @@ STR
 	}
 	$text .= "}}\n";
 	$report->OutputWiki( '分野ランキング', \$text );
+
+	@datalist = map { "$_($sectionsize{$_})" } @{ JAWP::Util::SortHash( \%sectionsize, 1, 0 ) };
+	$text = "{{columns-list|2|\n";
+	for my $i ( 0..99 ) {
+		$text .= sprintf( "#%s\n", $datalist[$i] );
+	}
+	$text .= "}}\n";
+	$report->OutputWiki( '節サイズランキング', \$text );
 }
 
 
