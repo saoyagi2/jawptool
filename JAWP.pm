@@ -1966,18 +1966,18 @@ sub IndexStatistic {
 STR
 	);
 
-	my %indexlist;
+	my %indexsize;
 	my $n = 1;
 	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
 		next if( !$article->IsIndex );
 
-		$indexlist{$article->{'title'}} = JAWP::Util::GetBytes( $article->{'text'} );
+		$indexsize{$article->{'title'}} = JAWP::Util::GetBytes( $article->{'text'} );
 	}
 	print "\n";
 
-	my @datalist = map { "[[$_]]($indexlist{$_})" } @{ JAWP::Util::SortHash( \%indexlist, 1, 0 ) };
+	my @datalist = map { "[[$_]]($indexsize{$_})" } @{ JAWP::Util::SortHash( \%indexsize, 1, 0 ) };
 	$report->OutputWikiList( '記事サイズランキング', \@datalist );
 	$report->OutputDirect( sprintf( "索引数 %d\n", @datalist + 0 ) );
 }
