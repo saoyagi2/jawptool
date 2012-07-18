@@ -1228,8 +1228,8 @@ sub Run {
 	elsif( $argv[0] eq 'noindex' ) {
 		NoIndex( $argv[1], $argv[2] );
 	}
-	elsif( $argv[0] eq 'index-list' ) {
-		IndexList( $argv[1], $argv[2] );
+	elsif( $argv[0] eq 'index-statistic' ) {
+		IndexStatistic( $argv[1], $argv[2] );
 	}
 	elsif( $argv[0] eq 'aimai' ) {
 		Aimai( $argv[1], $argv[2] );
@@ -1259,7 +1259,7 @@ command:
   passed-sakujo
   person
   noindex
-  index-list
+  index-statistic
   aimai
 TEXT
 
@@ -1949,16 +1949,16 @@ STR
 }
 
 
-# 索引一覧
+# 索引統計
 # param $xmlfile 入力XMLファイル名
 # param $reportfile レポートファイル名
-sub IndexList {
+sub IndexStatistic {
 	my( $xmlfile, $reportfile ) = @_;
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
 	my $report = new JAWP::ReportFile( $reportfile );
 
 	$report->OutputDirect( <<"STR"
-= 索引一覧 =
+= 索引統計 =
 このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から[http://sourceforge.jp/projects/jawptool/ jawptool $VERSION]にて索引の一覧を抽出したものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
@@ -1978,7 +1978,7 @@ STR
 	print "\n";
 
 	my @datalist = map { "[[$_]]($indexlist{$_})" } @{ JAWP::Util::SortHash( \%indexlist, 1, 0 ) };
-	$report->OutputWikiList( '一覧', \@datalist );
+	$report->OutputWikiList( '記事サイズランキング', \@datalist );
 	$report->OutputDirect( sprintf( "索引数 %d\n", @datalist + 0 ) );
 }
 
