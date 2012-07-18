@@ -1358,7 +1358,7 @@ sub LintRedirect {
 STR
 	);
 
-	my %result = ( 'redlink'=>[] );
+	my %result = ( 'redlink'=>[], 'noword'=>[] );
 	my $n = 1;
 	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
@@ -1377,6 +1377,43 @@ STR
 	$titlelist = undef;
 
 	$report->OutputWikiList( '赤リンクへのリダイレクト', $result{'redlink'} );
+
+
+	my %redirectlist;
+	$n = 1;
+	while( my $article = $jawpdata->GetArticle ) {
+		print "$n\r"; $n++;
+
+		next if( !$article->IsRedirect );
+
+		my $wordlist_ref = JAWP::Util::GetLinkwordList( $article->{'text'} );
+		if( @$wordlist_ref + 0 > 0 ) {
+			if( !defined( $redirectlist{$wordlist_ref->[0]} ) ) {
+				$redirectlist{$wordlist_ref->[0]} = [];
+			}
+			push @{$redirectlist{$wordlist_ref->[0]}}, $article->{'title'};
+		}
+	}
+	print "\n";
+
+	$n = 1;
+	while( my $article = $jawpdata->GetArticle ) {
+		print "$n\r"; $n++;
+
+		if( defined( $redirectlist{$article->{'title'}} ) ) {
+			$article->{'text'} =~ s/[ 　]//g;
+			$article->{'text'} =~ s/_/ /g;
+
+			for my $redirect ( @{$redirectlist{$article->{'title'}}} ) {
+				if( index( $article->{'text'}, $redirect ) == -1 ) {
+					push @{$result{'noword'}}, "[[$redirect]]⇒[[$article->{'title'}]]";
+				}
+			}
+		}
+	}
+	print "\n";
+
+	$report->OutputWikiList( 'リダイレクト先での言及無し', $result{'noword'} );
 }
 
 
