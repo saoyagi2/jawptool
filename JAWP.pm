@@ -2186,9 +2186,61 @@ sub Run {
 	my $self = shift;
 	my $command = shift;
 
-	if( $command eq 'linttext' ) {
+	if( $command eq 'linttitle' ) {
+		LintTitle();
+	}
+	elsif( $command eq 'linttext' ) {
 		LintText();
 	}
+}
+
+
+sub LintTitle {
+	my $cgi = new CGI;
+
+	my $title = Encode::decode( 'utf-8', $cgi->param( 'title' ) );
+	my $resulttext;
+	if( $title ) {
+		my $article = new JAWP::Article;
+		$article->SetTitle( $title );
+		my $result_ref = $article->LintTitle;
+
+		$resulttext = '<p>■チェック結果</p><ul>';
+		foreach( @$result_ref ) {
+			$resulttext .= "<li>$_</li>";
+		}
+		$resulttext .= '</ul><hr>';
+
+		$title = $cgi->escapeHTML( $title );
+	}
+	else {
+		$resulttext = $title = '';
+	}
+
+	print <<"HTML";
+Content-Type: text/html; charset=utf-8;
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>ウィキペディア日本語版タイトルチェックCGI</title>
+</head>
+<body>
+<h1>ウィキペディア日本語版タイトルチェックCGI</h1>
+<p>
+このCGIは、ウィキペディア日本語版記事名が適切であるかどうかを調べるものです。プログラムで機械的に検査しているため、修正すべきでない記事についても検出されている可能性は大いにあります。このチェック結果を元に修正を行う場合は、個別にその修正が行われるべきか、十分に検討してから行うようにお願いします。また、修正は必ず各方針・ガイドラインに従って行ってください。本プログラムの開発時より後に方針・ガイドラインが更新されている可能性もあることを留意下さい。
+</p>
+<hr>
+$resulttext
+<form action="lint-title.cgi" method="post">
+<p>■記事名</p>
+<input type="text" name="title" value="$title">
+<br>
+<input type="submit" value="lint">
+</form>
+</body>
+</html>
+HTML
 }
 
 
