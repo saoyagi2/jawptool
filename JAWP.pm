@@ -1267,6 +1267,9 @@ sub Run {
 	elsif( $argv[0] eq 'lonelypage' ) {
 		LonelyPage( $argv[1], $argv[2] );
 	}
+	elsif( $argv[0] eq 'category-statistic' ) {
+		CategoryStatistic( $argv[1], $argv[2] );
+	}
 	else {
 		Usage();
 	}
@@ -1296,6 +1299,7 @@ command:
   aimai
   shortpage
   lonelypage
+  category-statistic
 TEXT
 
 	exit;
@@ -2208,6 +2212,74 @@ STR
 
 	my @datalist = map { "[[$_]]" } keys %page;
 	$report->OutputWikiList( '孤立したページ', \@datalist );
+}
+
+
+# カテゴリ別統計
+# param $xmlfile 入力XMLファイル名
+# param $reportfile レポートファイル名
+sub CategoryStatistic {
+	my( $xmlfile, $reportfile ) = @_;
+	my $jawpdata = new JAWP::DataFile( $xmlfile );
+	my $report = new JAWP::ReportFile( $reportfile );
+
+	$report->OutputDirect( <<"STR"
+= カテゴリ別統計 =
+このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から[http://sourceforge.jp/projects/jawptool/ jawptool $VERSION]にてカテゴリ別統計を抽出したものです。
+
+過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
+
+プログラムで機械的に検査しているため、掲載すべきでない記事についても検出されている可能性は大いにあります。この一覧を元に編集を行う場合は、個別にその編集が行われるべきか、十分に検討してから行うようにお願いします。
+
+STR
+	);
+
+	my %category_statistic;
+	my $n = 1;
+	while( my $article = $jawpdata->GetArticle ) {
+		print "$n\r"; $n++;
+
+		next if( $article->Namespace ne '標準' || $article->IsRedirect || $article->IsSoftRedirect || $article->IsAimai );
+
+		my $categorylist_ref = JAWP::Util::GetCategorywordList( $article->{'text'} );
+		for my $category ( @$categorylist_ref ) {
+			if( !defined( $category_statistic{$category} ) ) {
+				$category_statistic{$category} = { 'articlecount'=>0, 'size'=>0, 'refarticlecount'=>0, 'refcount'=>0, 'refsize'=>0 };
+			}
+
+			$category_statistic{$category}->{'articlecount'}++;
+			$category_statistic{$category}->{'size'} += JAWP::Util::GetBytes( $article->{'text'} );
+			if( !$article->IsNoref ) {
+				$category_statistic{$category}->{'refarticlecount'}++;
+			}
+			my( $refcount, $refsize ) = $article->GetRefStat;
+			$category_statistic{$category}->{'refcount'} += $refcount;
+			$category_statistic{$category}->{'refsize'} += $refsize;
+		}
+
+	}
+	print "\n";
+
+	for my $category ( keys %category_statistic ) {
+		my $refarticlecount = $category_statistic{$category}->{'refarticlecount'};
+		my $text = sprintf( <<"TEXT"
+*記事数 - %d
+**記事当たりバイト数 - %d
+*出典あり記事数 - %d
+*出典数 - %d
+**記事当たり出典数 - %d
+*出典バイト数 - %d
+**記事当たり出典バイト数 - %d
+TEXT
+			, $category_statistic{$category}->{'articlecount'}
+			, $category_statistic{$category}->{'size'} / $category_statistic{$category}->{'articlecount'}
+			, $category_statistic{$category}->{'refarticlecount'}
+			, $category_statistic{$category}->{'refcount'}
+			, $refarticlecount != 0 ? $category_statistic{$category}->{'refcount'} / $refarticlecount : 0
+			, $category_statistic{$category}->{'refsize'}
+			, $refarticlecount != 0 ? $category_statistic{$category}->{'refsize'} / $refarticlecount : 0 );
+		$report->OutputWiki( "[[Category:$category]]", \$text );
+	}
 }
 
 
