@@ -1219,8 +1219,8 @@ sub Run {
 	elsif( $argv[0] eq 'living-noref' ) {
 		LivingNoref( $argv[1], $argv[2] );
 	}
-	elsif( $argv[0] eq 'passed-sakujo' ) {
-		PassedSakujo( $argv[1], $argv[2] );
+	elsif( $argv[0] eq 'longterm-request' ) {
+		LongTermRequest( $argv[1], $argv[2] );
 	}
 	elsif( $argv[0] eq 'person' ) {
 		Person( $argv[1], $argv[2] );
@@ -1262,7 +1262,7 @@ command:
   statistic
   titlelist
   living-noref
-  passed-sakujo
+  longterm-request
   person
   noindex
   index-statistic
@@ -1800,17 +1800,17 @@ STR
 }
 
 
-# 長期間経過した削除依頼
+# 長期間経過した依頼・提案
 # param $xmlfile 入力XMLファイル名
 # param $reportfile レポートファイル名
-sub PassedSakujo {
+sub LongTermRequest {
 	my( $xmlfile, $reportfile ) = @_;
 	my $jawpdata = new JAWP::DataFile( $xmlfile );
 	my $report = new JAWP::ReportFile( $reportfile );
 
 	$report->OutputDirect( <<"STR"
-= 長期間経過した削除依頼 =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から[http://sourceforge.jp/projects/jawptool/ jawptool $VERSION]にて長期間経過した削除依頼を抽出したものです。
+= 長期間経過した依頼・提案 =
+このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から[http://sourceforge.jp/projects/jawptool/ jawptool $VERSION]にて長期間経過した依頼・提案を抽出したものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -1831,7 +1831,7 @@ STR
 	}
 	print "\n";
 
-	$report->OutputWikiList( '一覧', \@datalist );
+	$report->OutputWikiList( '削除依頼', \@datalist );
 }
 
 
