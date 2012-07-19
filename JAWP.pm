@@ -1716,7 +1716,6 @@ sub StatisticReportSub2 {
 	my $data2_ref = JAWP::Util::SortHash( $data_ref, 1, 0 );
 	my $text = '';
 	if( @$data2_ref > 0 ) {
-		$text .= "{{columns-list|2|\n";
 		for my $i( 0..99 ) {
 			last if( !defined( $data2_ref->[$i] ) );
 			if( $innerlink ) {
@@ -1726,7 +1725,6 @@ sub StatisticReportSub2 {
 				$text .= sprintf( "#$prefix%s(%d)\n", $data2_ref->[$i], $data_ref->{$data2_ref->[$i]} );
 			}
 		}
-		$text .= "}}\n";
 	}
 	$text .= sprintf( "全%d件", @$data2_ref + 0 );
 
