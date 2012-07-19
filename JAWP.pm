@@ -1845,7 +1845,7 @@ STR
 	);
 
 	my $time = time();
-	my @sakujolist;
+	my( @sakujolist, @movelist, @mergelist, @divisionlist );
 	my $n = 1;
 	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
@@ -1855,10 +1855,22 @@ STR
 		if( $article->IsSakujo ) {
 			push @sakujolist, "[[$article->{'title'}]]";
 		}
+		if( $article->IsMove ) {
+			push @movelist, "[[$article->{'title'}]]";
+		}
+		if( $article->IsMerge ) {
+			push @mergelist, "[[$article->{'title'}]]";
+		}
+		if( $article->IsDivision ) {
+			push @divisionlist, "[[$article->{'title'}]]";
+		}
 	}
 	print "\n";
 
 	$report->OutputWikiList( '削除依頼', \@sakujolist );
+	$report->OutputWikiList( '改名提案', \@movelist );
+	$report->OutputWikiList( '統合提案', \@mergelist );
+	$report->OutputWikiList( '分割提案', \@divisionlist );
 }
 
 
