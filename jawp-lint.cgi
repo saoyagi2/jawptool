@@ -7,4 +7,4 @@ use utf8;
 
 use JAWP;
 
-JAWP::CGIApp->Run;
+JAWP::CGIApp->Run( 'linttext' );

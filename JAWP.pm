@@ -2183,6 +2183,16 @@ package JAWP::CGIApp;
 
 # CGIアプリ実行
 sub Run {
+	my $self = shift;
+	my $command = shift;
+
+	if( $command eq 'linttext' ) {
+		LintText();
+	}
+}
+
+
+sub LintText {
 	my $cgi = new CGI;
 
 	my $wikitext = Encode::decode( 'utf-8', $cgi->param( 'wikitext' ) );
