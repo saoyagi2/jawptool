@@ -169,6 +169,33 @@ sub IsSakujo {
 }
 
 
+# 改名提案タグ判別
+# return 真偽値
+sub IsMove {
+	my $self = shift;
+
+	return( index( $self->{'text'}, '{{改名提案' ) >= 0 );
+}
+
+
+# 統合提案タグ判別
+# return 真偽値
+sub IsMerge {
+	my $self = shift;
+
+	return( index( $self->{'text'}, '{{統合提案' ) >= 0 || index( $self->{'text'}, '{{Mergefrom' ) >= 0 || index( $self->{'text'}, '{{Mergeto' ) >= 0 );
+}
+
+
+# 分割提案タグ判別
+# return 真偽値
+sub IsDivision {
+	my $self = shift;
+
+	return( index( $self->{'text'}, '{{分割提案' ) >= 0 );
+}
+
+
 # 名前空間取得
 # return 名前空間
 sub Namespace {

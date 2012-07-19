@@ -307,6 +307,60 @@ use Test::More( 'no_plan' );
 		ok( $article->IsSakujo, 'JAWP::Article::IsSakujo({{sakujo/)' );
 	}
 
+	# IsMoveテスト
+	{
+		my $article = new JAWP::Article;
+
+		$article->SetText( '' );
+		ok( !$article->IsMove, 'JAWP::Article::IsMove(空文字列)' );
+
+		$article->SetText( '改名提案' );
+		ok( !$article->IsMove, 'JAWP::Article::IsMove(改名提案)' );
+
+		$article->SetText( '{{改名提案' );
+		ok( $article->IsMove, 'JAWP::Article::IsMove({{改名提案)' );
+	}
+
+	# IsMergeテスト
+	{
+		my $article = new JAWP::Article;
+
+		$article->SetText( '' );
+		ok( !$article->IsMerge, 'JAWP::Article::IsMerge(空文字列)' );
+
+		$article->SetText( '統合提案' );
+		ok( !$article->IsMerge, 'JAWP::Article::IsMerge(統合提案)' );
+
+		$article->SetText( 'Mergefrom' );
+		ok( !$article->IsMerge, 'JAWP::Article::IsMerge(Mergefrom)' );
+
+		$article->SetText( 'Mergeto' );
+		ok( !$article->IsMerge, 'JAWP::Article::IsMerge(Mergeto)' );
+
+		$article->SetText( '{{統合提案' );
+		ok( $article->IsMerge, 'JAWP::Article::IsMerge({{統合提案)' );
+
+		$article->SetText( '{{Mergefrom' );
+		ok( $article->IsMerge, 'JAWP::Article::IsMerge({{Mergefrom)' );
+
+		$article->SetText( '{{Mergeto' );
+		ok( $article->IsMerge, 'JAWP::Article::IsMerge({{Mergeto)' );
+	}
+
+	# IsDivisionテスト
+	{
+		my $article = new JAWP::Article;
+
+		$article->SetText( '' );
+		ok( !$article->IsDivision, 'JAWP::Article::IsDivision(空文字列)' );
+
+		$article->SetText( '分割提案' );
+		ok( !$article->IsDivision, 'JAWP::Article::IsDivision(分割提案)' );
+
+		$article->SetText( '{{分割提案' );
+		ok( $article->IsDivision, 'JAWP::Article::IsDivision({{分割提案)' );
+	}
+
 	# Namespaceテスト
 	{
 		my $article = new JAWP::Article;
