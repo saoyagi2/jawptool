@@ -1850,7 +1850,7 @@ STR
 	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
-		next if( $article->Namespace ne '標準' && $article->GetPassTime( $time ) lt '0000-03-00T00:00:00Z' );
+		next if( $article->Namespace ne '標準' || $article->GetPassTime( $time ) lt '0000-03-00T00:00:00Z' );
 
 		if( $article->IsSakujo ) {
 			push @sakujolist, "[[$article->{'title'}]]";
