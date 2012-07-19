@@ -46,6 +46,14 @@ HTMLHEAD
 			}
 			$out .= "<li>$2</li>";
 		}
+		elsif( $line =~ /^(#+)(.*)$/ ) {
+			if( $closer ne '</ol>' x length( $1 ) ) {
+				$out .= "$closer\n";
+				$out .= '<ol>' x length( $1 ) . "\n";
+				$closer = '</ol>' x length( $1 );
+			}
+			$out .= "<li>$2</li>";
+		}
 		elsif( $line =~ /^;(.*)$/ ) {
 			if( $closer ne '</dl>' ) {
 				$out .= "$closer\n";
