@@ -2237,16 +2237,16 @@ Content-Type: text/html; charset=utf-8;
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<title>jawp-lint.cgi/ウィキペディア日本語版文法チェックCGI</title>
+<title>ウィキペディア日本語版文法チェックCGI</title>
 </head>
 <body>
-<h1>jawp-lint.cgi/ウィキペディア日本語版文法チェックCGI</h1>
+<h1>ウィキペディア日本語版文法チェックCGI</h1>
 <p>
 このCGIは、ウィキペディア日本語版記事本文のウィキ文法及びスタイルが適切であるかどうかを調べるものです。プログラムで機械的に検査しているため、修正すべきでない記事についても検出されている可能性は大いにあります。このチェック結果を元に修正を行う場合は、個別にその修正が行われるべきか、十分に検討してから行うようにお願いします。また、修正は必ず各方針・ガイドラインに従って行ってください。本プログラムの開発時より後に方針・ガイドラインが更新されている可能性もあることを留意下さい。
 </p>
 <hr>
 $resulttext
-<form action="jawp-lint.cgi" method="post">
+<form action="lint-text.cgi" method="post">
 <p>■ウィキテキスト</p>
 <textarea name="wikitext" style="width: 600px; height: 400px;">$wikitext</textarea>
 <br>
