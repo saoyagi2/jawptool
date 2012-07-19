@@ -1818,20 +1818,20 @@ STR
 	);
 
 	my $time = time();
-	my @datalist;
+	my @sakujolist;
 	my $n = 1;
 	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
 
-		next if( $article->Namespace ne '標準' );
+		next if( $article->Namespace ne '標準' && $article->GetPassTime( $time ) lt '0000-03-00T00:00:00Z' );
 
-		if( $article->IsSakujo && $article->GetPassTime( $time ) gt '0000-03-00T00:00:00Z' ) {
-			push @datalist, "[[$article->{'title'}]]";
+		if( $article->IsSakujo ) {
+			push @sakujolist, "[[$article->{'title'}]]";
 		}
 	}
 	print "\n";
 
-	$report->OutputWikiList( '削除依頼', \@datalist );
+	$report->OutputWikiList( '削除依頼', \@sakujolist );
 }
 
 
