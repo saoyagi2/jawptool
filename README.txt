@@ -157,7 +157,7 @@ jawp-lint.cgiとJAWP.pmをウェブサーバからアクセスできるディレ
 本プログラムはGPLv3でライセンスされます。ライセンスの詳細は同梱のGPL-3.0.txtを参照下さい。日本語参考訳は http://sourceforge.jp/projects/opensource/wiki/licenses%252FGNU_General_Public_License_version_3.0 などにあります。
 
 == 付属ツール ==
-;test.pl
+;t/*.t
 :プログラムのテストを行います。全てパスするのが理想ですが、環境によってはパスしないかもしれません。その場合はバグレポートを送っていただけると幸いです。
 
 ;wiki2html.pl
