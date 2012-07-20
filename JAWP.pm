@@ -2050,19 +2050,15 @@ STR
 	$report->OutputDirect( sprintf( "索引数 %d\n", @datalist + 0 ) );
 
 	@datalist = map { "$_($genrelist{$_})" } @{ JAWP::Util::SortHash( \%genrelist, 1, 0 ) };
-	my $text = "{{columns-list|2|\n";
 	for my $i ( 0..99 ) {
 		$text .= sprintf( "#%s\n", $datalist[$i] );
 	}
-	$text .= "}}\n";
 	$report->OutputWiki( '分野ランキング', \$text );
 
 	@datalist = map { "$_($sectionsize{$_})" } @{ JAWP::Util::SortHash( \%sectionsize, 1, 0 ) };
-	$text = "{{columns-list|2|\n";
 	for my $i ( 0..99 ) {
 		$text .= sprintf( "#%s\n", $datalist[$i] );
 	}
-	$text .= "}}\n";
 	$report->OutputWiki( '節サイズランキング', \$text );
 }
 
