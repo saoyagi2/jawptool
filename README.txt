@@ -82,7 +82,7 @@ jawptoolを使用するにはperl5.8以降が必要です。いくつかのperl�
 
 usageは次の通りです。
 <pre>
-jawptool 0.22
+jawptool 0.30
 
 Usage: jawptool.pl command xmlfile reportfile
 
@@ -161,6 +161,16 @@ lint-text.cgiとJAWP.pmをウェブサーバからアクセスできるディレ
 **wiki2html.plの機能強化
 **テストの強化とコード整理
 **その他バグ修正
+*2012年7月25日 - 0.30公開。修正内容は以下の通り。
+**passed-sakujoを機能強化しlongterm-requestに変更
+**index-listを機能強化しindex-statisticに変更
+**shortpage、lonelypage、category-statisticを追加
+**personの出力情報を変更
+**jawp-lint.cgiをlint-text.cgiにファイル名変更
+**lint-title.cgiを追加
+**wiki2html.plの機能強化
+**manual.htmlの同梱
+**その他バグ修正
 
 より詳しい開発の経緯は http://www.saoyagi2.net/wikimedian/ に書かれています(それ以外のことも書いてますが)。コードの具体的な修正内容は http://sourceforge.jp/projects/jawptool/svn/view/ で閲覧できます。
 
@@ -174,8 +184,8 @@ lint-text.cgiとJAWP.pmをウェブサーバからアクセスできるディレ
 ;wiki2html.pl
 :jawptoolの出力は基本的にwikiテキストになっています。これをhtmlに変換するツールです。ただし、現状はごく基本的なwiki記法にしか対応していません。
 
-== TODO ==
-*XMLパースが超いい加減なのをちゃんとする。ただし、速度低下は出来ればしないように。
+== ToDo ==
+特にありません
 
 == 既知のバグ ==
 *Windows上のActivePerlでテストをパスしない。
