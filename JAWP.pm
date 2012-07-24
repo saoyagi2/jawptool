@@ -2049,12 +2049,14 @@ STR
 	$report->OutputWikiList( '記事サイズランキング', \@datalist );
 	$report->OutputDirect( sprintf( "索引数 %d\n", @datalist + 0 ) );
 
+	my $text = '';
 	@datalist = map { "$_($genrelist{$_})" } @{ JAWP::Util::SortHash( \%genrelist, 1, 0 ) };
 	for my $i ( 0..99 ) {
 		$text .= sprintf( "#%s\n", $datalist[$i] );
 	}
 	$report->OutputWiki( '分野ランキング', \$text );
 
+	$text = '';
 	@datalist = map { "$_($sectionsize{$_})" } @{ JAWP::Util::SortHash( \%sectionsize, 1, 0 ) };
 	for my $i ( 0..99 ) {
 		$text .= sprintf( "#%s\n", $datalist[$i] );
