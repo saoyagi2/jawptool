@@ -76,7 +76,7 @@ sub IsRedirect {
 sub IsSoftRedirect {
 	my $self = shift;
 
-	return( index( $self->{'text'}, '{{softredirect|' ) != -1 );
+	return( $self->{'text'} =~ /\{\{(softredirect|Softredirect|wiktionary redirect|Wiktionary redirect|wtr|Wtr)/ );
 }
 
 
@@ -85,7 +85,7 @@ sub IsSoftRedirect {
 sub IsAimai {
 	my $self = shift;
 
-	return( $self->{'text'} =~ /\{\{(disambig|Disambig|aimai|Aimai|曖昧さ回避|人名の曖昧さ回避|地名の曖昧さ回避|山の曖昧さ回避)/ );
+	return( $self->{'text'} =~ /\{\{(disambig|Disambig|aimai|Aimai|ChemAimai|曖昧さ回避|人名の曖昧さ回避|地名の曖昧さ回避|山の曖昧さ回避|小学校の曖昧さ回避)/ );
 }
 
 

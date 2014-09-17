@@ -104,8 +104,10 @@ use Test::More( 'no_plan' );
 		$article->SetText( '' );
 		ok( !$article->IsSoftRedirect, 'JAWP::Article::IsSoftRedirect(空文字列)' );
 
-		$article->SetText( '{{softredirect|wikt:転送先}}' );
-		ok( $article->IsSoftRedirect, 'JAWP::Article::IsSoftRedirect({{softredirect|wikt:転送先}})' );
+		foreach my $text ( '{{softredirect|wikt:転送先}}', '{{Softredirect|wikt:転送先}}', '{{wiktionary redirect}}', '{{Wiktionary redirect}}', '{{wtr}}', '{{Wtr}}' ) {
+			$article->SetText( $text );
+			ok( $article->IsSoftRedirect, "JAWP::Article::IsSoftRedirect($text)" );
+		}
 	}
 
 	# IsAimaiテスト
@@ -115,7 +117,7 @@ use Test::More( 'no_plan' );
 		$article->SetText( '' );
 		ok( !$article->IsAimai, 'JAWP::Article::IsAimai(空文字列)' );
 
-		foreach my $text ( '{{aimai}}', '{{Aimai}}', '{{disambig}}', '{{Disambig}}', '{{曖昧さ回避}}', '{{人名の曖昧さ回避}}', '{{地名の曖昧さ回避}}' ) {
+		foreach my $text ( '{{aimai}}', '{{Aimai}}', '{{disambig}}', '{{Disambig}}', "{{ChemAimai}}", '{{曖昧さ回避}}', '{{人名の曖昧さ回避}}', '{{地名の曖昧さ回避}}', '{{小学校の曖昧さ回避}}' ) {
 			$article->SetText( $text );
 			ok( $article->IsAimai, "JAWP::Article::IsAimai($text)" );
 		}
