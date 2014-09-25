@@ -1899,22 +1899,27 @@ STR
 		print "$n\r"; $n++;
 
 		foreach my $key ( $article->Person ) {
-			next if( $key =~ /[0-9]+月[0-9]+日[誕生|死去]/ || $key =~ /(19[0-9]{2}|[2-9][0-9]{3})年/  || $key =~ /[都道府県]出身の人物/ );
-			if( !defined( $list{$key} ) ) {
-				$list{$key} = [];
+			if( $key =~ /^[0-9]+年(誕生|死去)$/ || $key eq '生没同日' ) {
+				if( !defined( $list{$key} ) ) {
+					$list{$key} = [];
+				}
+				push @{$list{$key}}, $article->{'title'};
 			}
-			push @{$list{$key}}, $article->{'title'};
 		}
 
-		if( $article->{'title'} =~ /^([0-9]{1,3}|1[0-8][0-9]{2})年$/ || $article->{'title'} eq '生没同日' ) {
+		if( $article->{'title'} =~ /^[0-9]+年$/ || $article->{'title'} eq '生没同日' ) {
 			$linklist{$article->{'title'}} = JAWP::Util::GetLinkwordList( $article->{'text'} );
+		}
+		if( $article->{'title'} =~ /^訃報 ([0-9]+年)/ ) {
+			$linklist{$1} = JAWP::Util::GetLinkwordList( $article->{'text'} );
 		}
 	}
 	print "\n";
 
 	my @datalist;
 
-	foreach my $key ( sort grep { /^[0-9]+年$/ } keys %linklist ) {
+	foreach my $year ( sort { $a <=> $b } map { my $v = $_; $v =~ s/年$//; $v } grep { /^[0-9]+年$/ } keys %linklist ) {
+		my $key = $year . '年';
 		@datalist = ();
 		foreach my $title ( @{$list{$key . '誕生'}} ) {
 			if( !( grep { $_ eq $title } @{ $linklist{$key} } ) ) {
