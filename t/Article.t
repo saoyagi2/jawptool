@@ -130,7 +130,7 @@ use Test::More( 'no_plan' );
 		$article->SetText( '' );
 		ok( !$article->IsLiving, 'JAWP::Article::IsLiving(空文字列)' );
 
-		foreach my $text ( '[[Category:存命人物]]', '[[category:存命人物]]', '[[カテゴリ:存命人物]]', '{{Blp}}', '{{blp}}' ) {
+		foreach my $text ( '[[Category:存命人物]]', '[[category:存命人物]]', '[[カテゴリ:存命人物]]', '{{Blp}}', '{{blp}}', '{{BLP unsourced}}', '{{bLP unsourced}}' ) {
 			$article->SetText( $text );
 			ok( $article->IsLiving, "JAWP::Article::IsLiving($text)" );
 		}

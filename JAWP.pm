@@ -94,7 +94,7 @@ sub IsAimai {
 sub IsLiving {
 	my $self = shift;
 
-	return( $self->{'text'} =~ /\[\[(Category|カテゴリ):存命人物/i || $self->{'text'} =~ /\{\{(blp|Blp)/ );
+	return( $self->{'text'} =~ /\[\[(Category|カテゴリ):存命人物/i || $self->{'text'} =~ /\{\{(blp|Blp)/i );
 }
 
 
