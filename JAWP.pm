@@ -103,7 +103,7 @@ sub IsLiving {
 sub IsNoref {
 	my $self = shift;
 
-	return( !( grep( /(参考|文献|資料|書籍|図書|注|註|出典|典拠|出所|原典|ソース|情報源|引用元|論拠|参照)/, @{ JAWP::Util::GetHeadList( $self->{'text'} ) } ) || $self->{'text'} =~ /<ref/ ) );
+	return( !( grep( /(参考|文献|資料|書籍|図書|注|註|出典|典拠|出所|原典|ソース|情報源|引用元|論拠|参照)/, @{ JAWP::Util::GetHeadList( $self->{'text'} ) } ) || $self->{'text'} =~ /<ref/i ) );
 }
 
 

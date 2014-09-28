@@ -157,8 +157,10 @@ use Test::More( 'no_plan' );
 			ok( $article->IsNoref, "JAWP::Article::IsNoref( == $text ==)" );
 		}
 
-		$article->SetText( "あああ\n<ref>\nいいい\n" );
-		ok( !$article->IsNoref, "JAWP::Article::IsNoref(<ref>)" );
+		foreach my $text ( '<ref>', '<REF>', '<references />', '<REFERENCES />' ) {
+			$article->SetText( "あああ\n== $text ==\nいいい\n" );
+			ok( !$article->IsNoref, "JAWP::Article::IsNoref($text)" );
+		}
 	}
 
 	# GetRefStatテスト
