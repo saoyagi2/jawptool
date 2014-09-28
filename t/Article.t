@@ -117,7 +117,7 @@ use Test::More( 'no_plan' );
 		$article->SetText( '' );
 		ok( !$article->IsAimai, 'JAWP::Article::IsAimai(空文字列)' );
 
-		foreach my $text ( '{{aimai}}', '{{Aimai}}', '{{disambig}}', '{{Disambig}}', "{{ChemAimai}}", '{{曖昧さ回避}}', '{{人名の曖昧さ回避}}', '{{地名の曖昧さ回避}}', '{{小学校の曖昧さ回避}}' ) {
+		foreach my $text ( '{{aimai}}', '{{Aimai}}', '{{disambig}}', '{{Disambig}}', '{{ChemAimai}}', '{{chemAimai}}', '{{曖昧さ回避}}', '{{人名の曖昧さ回避}}', '{{地名の曖昧さ回避}}', '{{小学校の曖昧さ回避}}' ) {
 			$article->SetText( $text );
 			ok( $article->IsAimai, "JAWP::Article::IsAimai($text)" );
 		}
