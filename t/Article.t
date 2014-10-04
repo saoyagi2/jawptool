@@ -372,7 +372,7 @@ use Test::More( 'no_plan' );
 		$article->SetTitle( '' );
 		is( $article->Namespace, '標準', 'JAWP::Article::Namespace(空文字列)' );
 
-		foreach my $namespace ( '利用者', 'Wikipedia', 'ファイル', 'MediaWiki', 'Template', 'Help', 'Category', 'Portal', 'プロジェクト', 'ノート', '利用者‐会話', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki‐ノート', 'Template‐ノート', 'Help‐ノート', 'Category‐ノート', 'Portal‐ノート', 'プロジェクト‐ノート' ) {
+		foreach my $namespace ( '利用者', 'Wikipedia', 'ファイル', 'MediaWiki', 'Template', 'Help', 'Category', 'Portal', 'プロジェクト', 'モジュール', 'ノート', '利用者‐会話', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki‐ノート', 'Template‐ノート', 'Help‐ノート', 'Category‐ノート', 'Portal‐ノート', 'プロジェクト‐ノート', 'モジュール‐ノート' ) {
 			my $title = "$namespace:dummy";
 			$article->SetTitle( $title );
 			is( $article->Namespace, $namespace, "JAWP::Article::Namespace($title)" );
@@ -476,7 +476,7 @@ use Test::More( 'no_plan' );
 		is( ref $result_ref, 'ARRAY', 'JAWP::Article::LintText(空文字列:リファレンス種別)' );
 
 		# 標準記事空間以外は無視確認
-		foreach my $namespace ( '利用者', 'Wikipedia', 'ファイル', 'MediaWiki', 'Template', 'Help', 'Category', 'Portal', 'プロジェクト', 'ノート', '利用者‐会話', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki‐ノート', 'Template‐ノート', 'Help‐ノート', 'Category‐ノート', 'Portal‐ノート', 'プロジェクト‐ノート' ) {
+		foreach my $namespace ( '利用者', 'Wikipedia', 'ファイル', 'MediaWiki', 'Template', 'Help', 'Category', 'Portal', 'プロジェクト', 'モジュール', 'ノート', '利用者‐会話', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki‐ノート', 'Template‐ノート', 'Help‐ノート', 'Category‐ノート', 'Portal‐ノート', 'プロジェクト‐ノート', 'モジュール‐ノート' ) {
 			$article->SetTitle( "$namespace:TEST" );
 			$article->SetText( '' );
 			$result_ref = $article->LintText( $titlelist );

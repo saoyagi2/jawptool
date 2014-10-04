@@ -201,7 +201,7 @@ sub IsDivision {
 sub Namespace {
 	my $self = shift;
 
-	if( $self->{'title'} =~ /^(利用者|Wikipedia|ファイル|MediaWiki|Template|Help|Category|Portal|プロジェクト|ノート|利用者‐会話|Wikipedia‐ノート|ファイル‐ノート|MediaWiki‐ノート|Template‐ノート|Help‐ノート|Category‐ノート|Portal‐ノート|プロジェクト‐ノート):/ ) {
+	if( $self->{'title'} =~ /^(利用者|Wikipedia|ファイル|MediaWiki|Template|Help|Category|Portal|プロジェクト|モジュール|ノート|利用者‐会話|Wikipedia‐ノート|ファイル‐ノート|MediaWiki‐ノート|Template‐ノート|Help‐ノート|Category‐ノート|Portal‐ノート|プロジェクト‐ノート|モジュール‐ノート):/ ) {
 		return( $1 );
 	}
 	else {
@@ -1436,7 +1436,7 @@ sub LintIndex {
 STR
 	);
 
-	foreach my $namespace ( '利用者', '利用者‐会話', 'Wikipedia', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki', 'MediaWiki‐ノート', 'Template‐ノート', 'Help', 'Help‐ノート', 'Category‐ノート', 'Portal', 'Portal‐ノート', 'プロジェクト', 'プロジェクト‐ノート' ) {
+	foreach my $namespace ( '利用者', '利用者‐会話', 'Wikipedia', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki', 'MediaWiki‐ノート', 'Template‐ノート', 'Help', 'Help‐ノート', 'Category‐ノート', 'Portal', 'Portal‐ノート', 'プロジェクト', 'プロジェクト‐ノート', 'モジュール‐ノート' ) {
 		$titlelist->{$namespace} = {};
 	}
 
@@ -1511,7 +1511,7 @@ STR
 
 	$text = StatisticReportSub1( $titlelist, $report );
 	$report->OutputWiki( '名前空間別ファイル数', \$text );
-	foreach my $namespace ( '利用者', '利用者‐会話', 'Wikipedia', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki', 'MediaWiki‐ノート', 'Template‐ノート', 'Help', 'Help‐ノート', 'Category‐ノート', 'Portal', 'Portal‐ノート', 'プロジェクト', 'プロジェクト‐ノート' ) {
+	foreach my $namespace ( '利用者', '利用者‐会話', 'Wikipedia', 'Wikipedia‐ノート', 'ファイル‐ノート', 'MediaWiki', 'MediaWiki‐ノート', 'Template‐ノート', 'Help', 'Help‐ノート', 'Category‐ノート', 'Portal', 'Portal‐ノート', 'プロジェクト', 'モジュール‐ノート', 'プロジェクト‐ノート', 'モジュール‐ノート' ) {
 		$titlelist->{$namespace} = {};
 	}
 
@@ -1650,6 +1650,8 @@ sub StatisticReportSub1 {
 **Portal‐ノート - %d
 *プロジェクト - %d
 **プロジェクト‐ノート - %d
+*モジュール - %d
+**モジュール‐ノート - %d
 TEXT
 		, $titlelist->{'allcount'},
 		, ( keys %{ $titlelist->{'標準'} } ) + 0
@@ -1664,7 +1666,8 @@ TEXT
 		, ( keys %{ $titlelist->{'Help'} } ) + 0, ( keys %{ $titlelist->{'Help‐ノート'} } ) + 0
 		, ( keys %{ $titlelist->{'Category'} } ) + 0, ( keys %{ $titlelist->{'Category‐ノート'} } ) + 0
 		, ( keys %{ $titlelist->{'Portal'} } ) + 0, ( keys %{ $titlelist->{'Portal‐ノート'} } ) + 0
-		, ( keys %{ $titlelist->{'プロジェクト'} } ) + 0, ( keys %{ $titlelist->{'プロジェクト‐ノート'} } ) + 0 );
+		, ( keys %{ $titlelist->{'プロジェクト'} } ) + 0, ( keys %{ $titlelist->{'プロジェクト‐ノート'} } ) + 0
+		, ( keys %{ $titlelist->{'モジュール'} } ) + 0, ( keys %{ $titlelist->{'モジュール‐ノート'} } ) + 0 );
 
 	return( $text );
 }
@@ -1730,11 +1733,11 @@ sub TitleList {
 	my %varname = (
 		'標準'=>'article', '標準_曖昧'=>'aimai', '標準_リダイレクト'=>'redirect',
 		'利用者'=>'user', 'Wikipedia'=>'wikipedia', 'ファイル'=>'file', 'MediaWiki'=>'mediawiki',
-		'Template'=>'template', 'Help'=>'help', 'Category'=>'category', 'Portal'=>'portal', 'プロジェクト'=>'project',
+		'Template'=>'template', 'Help'=>'help', 'Category'=>'category', 'Portal'=>'portal', 'プロジェクト'=>'project', 'モジュール'=>'module',
 
 		'ノート'=>'note', '利用者‐会話'=>'user_talk', 'Wikipedia‐ノート'=>'wikipedia_note', 'ファイル‐ノート'=>'file_note',
 		'MediaWiki‐ノート'=>'mediawiki_note', 'Template‐ノート'=>'template_note', 'Help‐ノート'=>'help_note',
-		'Category‐ノート'=>'category_note', 'Portal‐ノート'=>'portal_note', 'プロジェクト‐ノート'=>'project_note' );
+		'Category‐ノート'=>'category_note', 'Portal‐ノート'=>'portal_note', 'プロジェクト‐ノート'=>'project_note', 'モジュール‐ノート'=>'module_note' );
 
 	foreach my $namespace ( keys %varname ) {
 		my $report = new JAWP::ReportFile( sprintf( "%s_%s.pl", $reportfile, $varname{$namespace} ) );
