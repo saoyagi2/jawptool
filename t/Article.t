@@ -792,26 +792,6 @@ use Test::More( 'no_plan' );
 			}
 		}
 
-		# テンプレートテスト
-		{
-			foreach my $type ( 'Template', 'template', 'テンプレート' ) {
-				$article->SetTitle( '標準' );
-				$article->SetText( "{{aimai}}\n[[$type:テンプレート]]\n" );
-				$result_ref = $article->LintText( $titlelist );
-				is_deeply( $result_ref, [], "JAWP::Article::LintText($type,リンク呼び出し,テンプレート)" );
-
-				$article->SetTitle( '標準' );
-				$article->SetText( "{{aimai}}\n[[$type:abc]]\n" );
-				$result_ref = $article->LintText( $titlelist );
-				is_deeply( $result_ref, [], "JAWP::Article::LintText($type,リンク呼び出し,abc)" );
-
-				$article->SetTitle( '標準' );
-				$article->SetText( "{{aimai}}\n[[$type:テンプレート1]]\n" );
-				$result_ref = $article->LintText( $titlelist );
-				is_deeply( $result_ref, [ '(テンプレート1)は存在しないテンプレートです(2)' ], "JAWP::Article::LintText($type,リンク呼び出し,不存在)" );
-			}
-		}
-
 		# 使用できる文字・文言テスト
 		{
 			$article->SetTitle( '標準' );
@@ -846,29 +826,6 @@ use Test::More( 'no_plan' );
 			}
 		}
 
-		# 言語間リンクテスト
-		{
-			$article->SetTitle( '標準' );
-			$article->SetText( "{{aimai}}\n[[en:dummy]]" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [], 'JAWP::Article::LintText(言語間リンク)' );
-
-			$article->SetTitle( '標準' );
-			$article->SetText( "{{aimai}}\n[[en:dummy]]\n[[fr:dummy]]\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [], 'JAWP::Article::LintText(言語間リンク,複数)' );
-
-			$article->SetTitle( '標準' );
-			$article->SetText( "{{aimai}}\n[[en:dummy]]\n[[en:dummy]]\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [ '言語間リンクが重複しています(3)' ], 'JAWP::Article::LintText(言語間リンク,重複)' );
-
-			$article->SetTitle( '標準' );
-			$article->SetText( "{{aimai}}\n[[fr:dummy]]\n[[en:dummy]]\n" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [ '言語間リンクはアルファベット順に並べることが推奨されます(3)' ], 'JAWP::Article::LintText(言語間リンク,順序)' );
-		}
-
 		# 曖昧さ回避リンクテスト
 		{
 			$article->SetTitle( '標準' );
@@ -885,24 +842,6 @@ use Test::More( 'no_plan' );
 			$article->SetText( "[[abc 曖昧さ回避語]]\n{{aimai}}" );
 			$result_ref = $article->LintText( $titlelist );
 			is_deeply( $result_ref, [ '(Abc 曖昧さ回避語)のリンク先は曖昧さ回避です(1)' ], 'JAWP::Article::LintText(曖昧さ回避リンク,abc 曖昧さ回避語)' );
-		}
-
-		# リダイレクトリンクテスト
-		{
-			$article->SetTitle( '標準' );
-			$article->SetText( "[[標準]]\n{{aimai}}" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [], 'JAWP::Article::LintText(リダイレクトリンク,標準)' );
-
-			$article->SetTitle( '標準' );
-			$article->SetText( "[[転送語]]\n{{aimai}}" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [ '(転送語)のリンク先はリダイレクトです(1)' ], 'JAWP::Article::LintText(リダイレクトリンク,転送語)' );
-
-			$article->SetTitle( '標準' );
-			$article->SetText( "[[abc 転送語]]\n{{aimai}}" );
-			$result_ref = $article->LintText( $titlelist );
-			is_deeply( $result_ref, [ '(Abc 転送語)のリンク先はリダイレクトです(1)' ], 'JAWP::Article::LintText(リダイレクトリンク,abc 転送語)' );
 		}
 
 		# 年月日リンクテスト
@@ -1071,46 +1010,6 @@ use Test::More( 'no_plan' );
 				$article->SetText( "'''標準'''\n{{DEFAULTSORT:あああ}}\n[[$type:カテゴリ]]\n" );
 				$result_ref = $article->LintText( $titlelist );
 				is_deeply( $result_ref, [ '出典に関する節がありません' ], "JAWP::Article::LintText(出典無し,$type)" );
-			}
-		}
-
-		# ブロック順序テスト
-		{
-			foreach my $type ( 'Category', 'category', 'カテゴリ' ) {
-				$article->SetTitle( '標準' );
-				$article->SetText( "'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[$type:カテゴリ]]\n" );
-				$result_ref = $article->LintText( $titlelist );
-				is_deeply( $result_ref, [], "JAWP::Article::LintText(ブロック順序,本文-カテゴリ,$type)" );
-
-				$article->SetTitle( '標準' );
-				$article->SetText( "'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[$type:カテゴリ]]\n[[en:interlink]]\n" );
-				$result_ref = $article->LintText( $titlelist );
-				is_deeply( $result_ref, [], "JAWP::Article::LintText(ブロック順序,本文-カテゴリ-言語間リンク,$type)" );
-
-				$article->SetTitle( '標準' );
-				$article->SetText( "'''標準'''\n== 出典 ==\n[[en:interlink]]\n[[$type:カテゴリ]]\n{{DEFAULTSORT:あああ}}\n" );
-				$result_ref = $article->LintText( $titlelist );
-				is_deeply( $result_ref, [ '本文、カテゴリ、言語間リンクの順に記述することが推奨されます(4)' ], "JAWP::Article::LintText(ブロック順序,本文-言語間リンク-カテゴリ,$type)" );
-
-				$article->SetTitle( '標準' );
-				$article->SetText( "[[$type:カテゴリ]]\n'''標準'''\n== 出典 ==\n{{DEFAULTSORT:あああ}}\n[[en:interlink]]\n" );
-				$result_ref = $article->LintText( $titlelist );
-				is_deeply( $result_ref, [ '本文、カテゴリ、言語間リンクの順に記述することが推奨されます(2)' ], "JAWP::Article::LintText(ブロック順序,カテゴリ-本文-言語間リンク,$type)" );
-
-				$article->SetTitle( '標準' );
-				$article->SetText( "[[$type:カテゴリ]]\n{{DEFAULTSORT:あああ}}\n[[en:interlink]]\n'''標準'''\n== 出典 ==\n" );
-				$result_ref = $article->LintText( $titlelist );
-				is_deeply( $result_ref, [ '本文、カテゴリ、言語間リンクの順に記述することが推奨されます(4)' ], "JAWP::Article::LintText(ブロック順序,カテゴリ-言語間リンク-本文,$type)" );
-
-				$article->SetTitle( '標準' );
-				$article->SetText( "[[en:interlink]]\n[[$type:カテゴリ]]\n{{DEFAULTSORT:あああ}}\n'''標準'''\n== 出典 ==\n" );
-				$result_ref = $article->LintText( $titlelist );
-				is_deeply( $result_ref, [ '本文、カテゴリ、言語間リンクの順に記述することが推奨されます(2)' ], "JAWP::Article::LintText(ブロック順序,言語間リンク-カテゴリ-本文,$type)" );
-
-				$article->SetTitle( '標準' );
-				$article->SetText( "[[en:interlink]]\n'''標準'''\n== 出典 ==\n[[$type:カテゴリ]]\n{{DEFAULTSORT:あああ}}\n" );
-				$result_ref = $article->LintText( $titlelist );
-				is_deeply( $result_ref, [ '本文、カテゴリ、言語間リンクの順に記述することが推奨されます(2)' ], "JAWP::Article::LintText(ブロック順序,言語間リンク-本文-カテゴリ,$type)" );
 			}
 		}
 

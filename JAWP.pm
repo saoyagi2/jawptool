@@ -382,11 +382,8 @@ sub LintText {
 
 	my $prevheadlevel = 1;
 	my $defaultsort = '';
-	my $prevmode = 'text';
-	my( $mode, %category, %interlink, $previnterlink );
+	my( %category, %interlink, $previnterlink );
 	for( my $n = 1; $n < @lines + 1; $n++ ) {
-		my $mode = ( $lines[$n - 1] eq '' || $lines[$n - 1] =~ /^\s*\{\{.*\}\}\s*$/ ) ? '' : 'text';
-
 		if( $lines[$n - 1] =~ /^(=+)[^=]+(=+) *$/ ) {
 			if( length( $1 ) != length( $2 ) ) {
 				push @result, "見出し記法の左右の=の数が一致しません($n)";
@@ -445,13 +442,6 @@ sub LintText {
 			if( $3 =~ /[ぁぃぅぇぉっゃゅょゎがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽー]/ ) {
 				push @result, "ソートキーには濁音、半濁音、吃音、長音は清音化することが推奨されます($n)";
 			}
-			$mode = 'category';
-		}
-		while( $lines[$n - 1] =~ /\[\[(Template|テンプレート):(.*?)(|\|.*?)\]\]/ig ) {
-			my $word = ucfirst( $2 );
-			if( !defined( $titlelist->{'Template'}->{$word} ) ) {
-				push @result, "($word)は存在しないテンプレートです($n)";
-			}
 		}
 		if( $lines[$n - 1] =~ /[，．！？＆＠]/ ) {
 			push @result, "全角記号の使用は推奨されません($n)";
@@ -468,17 +458,6 @@ sub LintText {
 		if( $lines[$n - 1] =~ /[①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳]/ ) {
 			push @result, "丸付き数字の使用は推奨されません($n)";
 		}
-		if( $lines[$n - 1] =~ /\[\[(aa|ab|ace|af|ak|als|am|an|ang|ar|arc|arz|as|ast|av|ay|az|ba|bar|bat\-smg|bcl|be|be\-x\-old|bg|bh|bi|bjn|bm|bn|bo|bpy|br|bs|bug|bxr|ca|cbk\-zam|cdo|ce|ceb|ch|cho|chr|chy|ckb|co|cr|crh|cs|csb|cu|cv|cy|da|de|diq|dsb|dv|dz|ee|el|eml|en|eo|es|et|eu|ext|fa|ff|fi|fiu\-vro|fj|fo|fr|frp|frr|fur|fy|ga|gag|gan|gd|gl|glk|gn|got|gu|gv|ha|hak|haw|he|hi|hif|ho|hr|hsb|ht|hu|hy|hz|ia|id|ie|ig|ii|ik|ilo|io|is|it|iu|ja|jbo|jp|jv|ka|kaa|kab|kbd|kg|ki|kj|kk|kl|km|kn|ko|koi|kr|krc|ks|ksh|ku|kv|kw|ky|la|lad|lb|lbe|lg|li|lij|lmo|ln|lo|lt|ltg|lv|map\-bms|mdf|mg|mhr|mi|mk|ml|mn|mo|mr|mrj|ms|mt|mwl|my|myv|mzn|na|nah|nan|nap|nb|nds|nds\-nl|ne|new|ng|nl|nn|no|nov|nrm|nso|nv|ny|oc|om|or|os|pa|pag|pam|pap|pcd|pdc|pfl|pi|pih|pl|pms|pnb|pnt|ps|pt|qu|rm|rmy|rn|ro|roa\-rup|roa\-tara|ru|rue|rw|sa|sah|sc|scn|sco|sd|se|sg|sh|si|simple|sk|sl|sm|sn|so|sq|sr|srn|ss|st|stq|su|sv|sw|szl|ta|te|tet|tg|th|ti|tk|tl|tn|to|tpi|tr|ts|tt|tum|tw|ty|udm|ug|uk|ur|uz|ve|vec|vi|vls|vo|wa|war|wo|wuu|xal|xh|xmf|yi|yo|za|zea|zh|zh\-cfr|zh\-classical|zh\-cn|zh\-min\-nan|zh\-tw|zh\-yue|zu):.*\]\]/i ) {
-			if( defined( $previnterlink ) && uc( $previnterlink ) gt uc( $1 ) ) {
-				push @result, "言語間リンクはアルファベット順に並べることが推奨されます($n)";
-			}
-			if( defined( $interlink{uc($1)} ) ) {
-				push @result, "言語間リンクが重複しています($n)";
-			}
-			$previnterlink = uc( $1 );
-			$interlink{uc($1)} = 1;
-			$mode = 'interlink';
-		}
 		if( index( $lines[$n - 1], 'http:///' ) >= 0 ) {
 			push @result, "不正なURLです($n)";
 		}
@@ -486,9 +465,6 @@ sub LintText {
 		foreach my $word ( @{ JAWP::Util::GetLinkwordList( $lines[$n - 1], 1 ) } ) {
 			if( defined( $titlelist->{'標準_曖昧'}->{$word} ) ) {
 				push @result, "($word)のリンク先は曖昧さ回避です($n)";
-			}
-			if( defined( $titlelist->{'標準_リダイレクト'}->{$word} ) ) {
-				push @result, "($word)のリンク先はリダイレクトです($n)";
 			}
 			if( $word =~ /^[0-9]+年[0-9]+月[0-9]+日$/ ) {
 				push @result, "年月日へのリンクは年と月日を分けることが推奨されます($n)";
@@ -505,14 +481,6 @@ sub LintText {
 		if( $lines2[$n - 1] =~ /[\[\]\{\}]/ ) {
 			push @result, "空のリンクまたは閉じられていないカッコがあります($n)";
 		}
-
-		if( $mode eq 'text' && ( $prevmode eq 'category' || $prevmode eq 'interlink' ) ) {
-			push @result, "本文、カテゴリ、言語間リンクの順に記述することが推奨されます($n)";
-		}
-		if( $mode eq 'category' && $prevmode eq 'interlink' ) {
-			push @result, "本文、カテゴリ、言語間リンクの順に記述することが推奨されます($n)";
-		}
-		$prevmode = $mode;
 	}
 
 	if( ( $text =~ /<ref/i ) && !( $text =~ /<references/i || $text =~ /\{\{reflist/i ) ) {
@@ -1358,7 +1326,6 @@ sub LintText {
 STR
 	);
 
-	my $lintcount = 0;
 	my $n = 1;
 	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
@@ -1366,11 +1333,6 @@ STR
 		my $result_ref = $article->LintText( $titlelist );
 		if( @$result_ref != 0 ) {
 			$report->OutputWikiList( "[[$article->{'title'}]]", $result_ref );
-			$lintcount++;
-			if( $lintcount > 10000 ) {
-				$report->OutputDirect( "以下省略\n" );
-				last;
-			}
 		}
 	}
 	print "\n";
