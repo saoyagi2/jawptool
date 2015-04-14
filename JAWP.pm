@@ -492,14 +492,14 @@ sub LintText {
 		my $title = $self->{'title'};
 		$title =~ s/ \(.*?\)//;
 		while( $text =~ /'''(.*)'''/g ) {
-			if( $1 =~ $title || $1 =~ lcfirst $title ) {
+			if( index( $1, $title ) != -1 || index( $1, lcfirst $title ) != -1 ) {
 				$teigi = 1;
 				last;
 			}
 			my $tmp = $1;
 			$tmp =~ s/[ 　]//g;
 			$tmp =~ s/_/ /g;
-			if( $tmp =~ $title || $tmp =~ lcfirst $title ) {
+			if( index( $tmp, $title ) != -1 || index( $tmp, lcfirst $title ) != -1 ) {
 				$teigi = 1;
 				last;
 			}
