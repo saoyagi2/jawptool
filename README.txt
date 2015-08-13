@@ -172,10 +172,10 @@ lint-text.cgiとJAWP.pmをウェブサーバからアクセスできるディレ
 **manual.htmlの同梱
 **その他バグ修正
 
-より詳しい開発の経緯は http://www.saoyagi2.net/wikimedian/ に書かれています(それ以外のことも書いてますが)。コードの具体的な修正内容は http://sourceforge.jp/projects/jawptool/svn/view/ で閲覧できます。
+より詳しい開発の経緯は http://www.saoyagi2.net/wikimedian/ に書かれています(それ以外のことも書いてますが)。
 
 == ライセンス ==
-本プログラムはGPLv3でライセンスされます。ライセンスの詳細は同梱のGPL-3.0.txtを参照下さい。日本語参考訳は http://sourceforge.jp/projects/opensource/wiki/licenses%252FGNU_General_Public_License_version_3.0 などにあります。
+本プログラムはMITライセンスでライセンスされます。
 
 == 付属ツール ==
 ;t/*.t
@@ -184,16 +184,6 @@ lint-text.cgiとJAWP.pmをウェブサーバからアクセスできるディレ
 ;wiki2html.pl
 :jawptoolの出力は基本的にwikiテキストになっています。これをhtmlに変換するツールです。ただし、現状はごく基本的なwiki記法にしか対応していません。
 
-== ToDo ==
-特にありません
-
-== 既知のバグ ==
-*Windows上のActivePerlでテストをパスしない。
-
-== バグ報告 ==
-プログラムにバグがありましたら、[http://sourceforge.jp/projects/jawptool/ プロジェクトトップページ]の「バグ報告」もしくは「フォーラム」までお知らせいただけたら助かります。
-
 == 外部リンク ==
 * [http://ja.wikipedia.org/wiki/Wikipedia:%E3%83%87%E3%83%BC%E3%82%BF%E3%83%99%E3%83%BC%E3%82%B9%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89 Wikipedia:データベースダウンロード]
 * [http://dumps.wikimedia.org/jawiki/ ウィキペディア日本語版データベースダンプ]
-* [http://sourceforge.jp/projects/jawptool/ ウィキペディア日本語版データ解析ツール] - プロジェクトトップページ
