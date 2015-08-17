@@ -25,7 +25,7 @@ use Test::More( 'no_plan' );
 	{
 		foreach my $method ( 'Run', 'Usage', 'LintTitle', 'LintText', 'LintIndex',
 			'LintRedirect', 'Statistic', 'StatisticReportSub1', 'StatisticReportSub2',
-			'StatisticReportSub3', 'TitleList', 'LivingNoref', 'LongTermRequest', 'Person',
+			'StatisticReportSub3', 'TitleList', 'LongTermRequest', 'Person',
 			'NoIndex', 'IndexStatistic', 'Aimai', 'ShortPage', 'LonelyPage', 'CategoryStatistic' ) {
 			ok( JAWP::App->can($method), "JAWP::App(メソッド呼び出し,$method)" );
 		}

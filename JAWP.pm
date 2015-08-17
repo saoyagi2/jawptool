@@ -1211,9 +1211,6 @@ sub Run {
 	elsif( $argv[0] eq 'titlelist' ) {
 		TitleList( $argv[1], $argv[2] );
 	}
-	elsif( $argv[0] eq 'living-noref' ) {
-		LivingNoref( $argv[1], $argv[2] );
-	}
 	elsif( $argv[0] eq 'longterm-request' ) {
 		LongTermRequest( $argv[1], $argv[2] );
 	}
@@ -1259,7 +1256,6 @@ command:
   lint-index
   statistic
   titlelist
-  living-noref
   longterm-request
   person
   noindex
@@ -1754,46 +1750,6 @@ sub TitleList {
 }
 
 
-# 出典の無い存命人物一覧
-# param $xmlfile 入力XMLファイル名
-# param $reportfile レポートファイル名
-sub LivingNoref {
-	my( $xmlfile, $reportfile ) = @_;
-	my $jawpdata = new JAWP::DataFile( $xmlfile );
-	my $report = new JAWP::ReportFile( $reportfile );
-
-	$report->OutputDirect( <<"STR"
-= 出典の無い存命人物一覧 =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から[http://sourceforge.jp/projects/jawptool/ jawptool $VERSION]にて出典の無い存命人物を抽出したものです。
-
-過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
-
-STR
-	);
-
-	my $livingcount = 0;
-	my $livingnorefcount = 0;
-	my @livingnoreflist;
-	my $n = 1;
-	while( my $article = $jawpdata->GetArticle ) {
-		print "$n\r"; $n++;
-
-		if( $article->IsLiving ) {
-			$livingcount++;
-			if( $article->IsNoref ) {
-				$livingnorefcount++;
-				push @livingnoreflist, "[[$article->{'title'}]]";
-			}
-		}
-	}
-	print "\n";
-
-	$report->OutputWikiList( '一覧', \@livingnoreflist );
-	$report->OutputDirect( "存命人物記事数 $livingcount<br>\n" );
-	$report->OutputDirect( "存命人物出典無し記事数 $livingnorefcount\n" );
-}
-
-
 # 長期間経過した依頼・提案
 # param $xmlfile 入力XMLファイル名
 # param $reportfile レポートファイル名
@@ -1859,6 +1815,8 @@ STR
 	);
 
 	my( %list, %linklist );
+	my $livingcount = 0;
+	my $livingnorefcount = 0;
 	my $n = 1;
 	while( my $article = $jawpdata->GetArticle ) {
 		print "$n\r"; $n++;
@@ -1877,6 +1835,14 @@ STR
 		}
 		if( $article->{'title'} =~ /^訃報 ([0-9]+年)/ ) {
 			$linklist{$1} = JAWP::Util::GetLinkwordList( $article->{'text'} );
+		}
+
+		if( $article->IsLiving ) {
+			$livingcount++;
+			if( $article->IsNoref ) {
+				$livingnorefcount++;
+				push @{$list{'livingnoref'}}, "[[$article->{'title'}]]";
+			}
 		}
 	}
 	print "\n";
@@ -1915,6 +1881,10 @@ STR
 	if( @datalist + 0 != 0 ) {
 		$report->OutputWikiList( '[[生没同日]]', \@datalist );
 	}
+
+	$report->OutputWikiList( '出典無し存命人物一覧', \@{$list{'livingnoref'}} );
+	$report->OutputDirect( "存命人物記事数 $livingcount<br>\n" );
+	$report->OutputDirect( "存命人物出典無し記事数 $livingnorefcount\n" );
 }
 
 
