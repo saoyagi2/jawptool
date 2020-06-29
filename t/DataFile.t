@@ -3,6 +3,8 @@
 use strict;
 use warnings;
 
+use lib ".";
+
 use utf8;
 use Encode;
 use open IO  => ':utf8';
