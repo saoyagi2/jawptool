@@ -38,7 +38,7 @@ require 't/common.pl';
 		};
 
 		ok( !defined( $data ), 'JAWP::DataFile(空new)' );
-		like( $@, qr/No such file or directory at JAWP\.pm/, 'JAWP::DataFile(空new)' );
+		like( $@, qr/Died at JAWP\.pm/, 'JAWP::DataFile(空new)' );
 	}
 
 	# open失敗確認テスト
@@ -286,20 +286,6 @@ STR
 
 			unlink( $fname ) or die $!;
 		}
-
-		# エラー(途中close)
-		{
-			my $fname = WriteTestXMLFile( '' );
-			my $data = new JAWP::DataFile( $fname );
-			close $data->{'fh'};
-			eval {
-				my $article = $data->GetArticle;
-			};
-			like( $@, qr/Bad file descriptor at JAWP\.pm/, 'JAWP::GetArticle(途中close)' );
-
-			unlink( $fname ) or die $!;
-		}
-
 	}
 
 	# GetTitleListテスト

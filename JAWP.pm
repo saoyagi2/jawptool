@@ -696,7 +696,7 @@ sub new {
 	my( $class, $filename ) = @_;
 
 	my $fh;
-	open $fh, '<', $filename or die $!;
+	( defined( $filename ) && open $fh, '<', $filename ) or die $!;
 
 	my $self = bless( { 'filename'=>$filename, 'fh'=>$fh }, $class );
 
@@ -825,7 +825,7 @@ sub new {
 	my( $class, $filename ) = @_;
 
 	my $fh;
-	open $fh, '>', $filename or die $!;
+	( defined( $filename ) && open $fh, '>', $filename ) or die $!;
 
 	my $self = bless( { 'filename'=>$filename, 'fh'=>$fh }, $class );
 
@@ -1539,7 +1539,7 @@ TEXT
 		$article->{'text'} =~ s/<math.*?<\/math>//sg;
 		$article->{'text'} =~ s/<pre.*?<\/pre>//sg;
 		$article->{'text'} =~ s/<code.*?<\/code>//sg;
-		$article->{'text'} =~ s/{{{.*?}}}//sg;
+		$article->{'text'} =~ s/\{\{\{.*?\}\}\}//sg;
 
 		my %count = ();
 		my $linktype;

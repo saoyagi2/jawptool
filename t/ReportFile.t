@@ -38,7 +38,7 @@ require 't/common.pl';
 		};
 
 		ok( !defined( $report ), 'JAWP::ReportFile(空new)' );
-		like( $@, qr/No such file or directory at JAWP\.pm/, 'JAWP::ReportFile(空new)' );
+		like( $@, qr/Died at JAWP\.pm/, 'JAWP::ReportFile(空new)' );
 	}
 
 	# open失敗確認テスト
@@ -134,21 +134,6 @@ STR
 		unlink( $fname ) or die $!;
 	}
 
-	# OutputWikiテスト(エラー)
-	{
-		my $fname = GetTempFilename();
-		{
-			my $report = new JAWP::ReportFile( $fname );
-
-			close $report->{'fh'};
-			eval {
-				$report->OutputWiki( 'title1', \( '' ) );
-			};
-			like( $@, qr/Bad file descriptor at JAWP\.pm/, 'JAWP::ReportFile::OutputWiki(エラー)' );
-		}
-		unlink( $fname ) or die $!;
-	}
-
 	# OutputWikiListテスト(空配列データ)
 	{
 		my $fname = GetTempFilename();
@@ -214,21 +199,6 @@ STR
 		unlink( $fname ) or die $!;
 	}
 
-	# OutputWikiListテスト(エラー)
-	{
-		my $fname = GetTempFilename();
-		{
-			my $report = new JAWP::ReportFile( $fname );
-
-			close $report->{'fh'};
-			eval {
-				$report->OutputWikiList( 'title1', [] );
-			};
-			like( $@, qr/Bad file descriptor at JAWP\.pm/, 'JAWP::ReportFile::OutputWiki(エラー)' );
-		}
-		unlink( $fname ) or die $!;
-	}
-
 	# OutputDirectテスト(空データ)
 	{
 		my $fname = GetTempFilename();
@@ -272,21 +242,6 @@ STR
 坊主が屏風に上手に坊主の絵を書いた
 STR
 			is( ReadReportFile( $fname ), $str, 'JAWP::ReportFile::OutputDirect(文字列複数回)' );
-		}
-		unlink( $fname ) or die $!;
-	}
-
-	# OutputDirectテスト(エラー)
-	{
-		my $fname = GetTempFilename();
-		{
-			my $report = new JAWP::ReportFile( $fname );
-
-			close $report->{'fh'};
-			eval {
-				$report->OutputDirect( 'title1', '' );
-			};
-			like( $@, qr/Bad file descriptor at JAWP\.pm/, 'JAWP::ReportFile::OutputWiki(エラー)' );
 		}
 		unlink( $fname ) or die $!;
 	}
