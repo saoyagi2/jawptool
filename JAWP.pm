@@ -1280,7 +1280,7 @@ sub LintTitle {
 
 	$report->OutputDirect( <<"STR"
 = 記事名lint =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile を[http://sourceforge.jp/projects/jawptool/ jawptool $VERSION]にて記事名の誤りの可能性について検査したものです。
+このレポートは https://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile を[https://github.com/saoyagi2/jawptool jawptool $VERSION]にて記事名の誤りの可能性について検査したものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -1313,7 +1313,7 @@ sub LintText {
 
 	$report->OutputDirect( <<"STR"
 = 記事本文lint =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile を[http://sourceforge.jp/projects/jawptool/ jawptool $VERSION]にて本文の誤りの可能性について検査したものです。
+このレポートは https://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile を[https://github.com/saoyagi2/jawptool jawptool $VERSION]にて本文の誤りの可能性について検査したものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -1346,7 +1346,7 @@ sub LintRedirect {
 
 	$report->OutputDirect( <<"STR"
 = リダイレクトlint =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile を[http://sourceforge.jp/projects/jawptool/ jawptool $VERSION]にてリダイレクトの誤りの可能性について検査したものです。
+このレポートは https://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile を[https://github.com/saoyagi2/jawptool jawptool $VERSION]にてリダイレクトの誤りの可能性について検査したものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -1425,7 +1425,7 @@ sub LintIndex {
 
 	$report->OutputDirect( <<"STR"
 = 索引文法lint =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile を[http://sourceforge.jp/projects/jawptool/ jawptool $VERSION]にて索引の誤りの可能性を検査したもので、[[Wikipedia:索引]]の支援を行うためのものです。
+このレポートは https://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile を[https://github.com/saoyagi2/jawptool jawptool $VERSION]にて索引の誤りの可能性を検査したもので、[[Wikipedia:索引]]の支援を行うためのものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -1461,7 +1461,7 @@ sub Statistic {
 
 	$report->OutputDirect( <<"STR"
 = 統計 =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile を[http://sourceforge.jp/projects/jawptool/ jawptool $VERSION]にて集計したものです。
+このレポートは https://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile を[https://github.com/saoyagi2/jawptool jawptool $VERSION]にて集計したものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -1760,7 +1760,7 @@ sub LongTermRequest {
 
 	$report->OutputDirect( <<"STR"
 = 長期間経過した依頼・提案 =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から[http://sourceforge.jp/projects/jawptool/ jawptool $VERSION]にて長期間経過した依頼・提案を抽出したものです。
+このレポートは https://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から[https://github.com/saoyagi2/jawptool jawptool $VERSION]にて長期間経過した依頼・提案を抽出したものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -1807,7 +1807,7 @@ sub Person {
 
 	$report->OutputDirect( <<"STR"
 = 人物一覧 =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から[http://sourceforge.jp/projects/jawptool/ jawptool $VERSION]にて人物一覧記事に未掲載の人物記事を抽出したもので、[[生没同日]]・年記事・月日記事都道府県記事の支援を行うためのものです。「死亡年月日と没年齢テンプレート」の記載を元に抽出しているため、抽出漏れもありえます。あくまでも支援ツールの一つとしてお使い下さい。
+このレポートは https://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から[https://github.com/saoyagi2/jawptool jawptool $VERSION]にて人物一覧記事に未掲載の人物記事を抽出したもので、[[生没同日]]・年記事・月日記事都道府県記事の支援を行うためのものです。「死亡年月日と没年齢テンプレート」の記載を元に抽出しているため、抽出漏れもありえます。あくまでも支援ツールの一つとしてお使い下さい。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -1898,7 +1898,7 @@ sub NoIndex {
 
 	$report->OutputDirect( <<"STR"
 = 索引未登録記事一覧 =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から[http://sourceforge.jp/projects/jawptool/ jawptool $VERSION]にて索引に登録されていない記事を抽出したもので、[[Wikipedia:索引]]の支援を行うためのものです。
+このレポートは https://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から[https://github.com/saoyagi2/jawptool jawptool $VERSION]にて索引に登録されていない記事を抽出したもので、[[Wikipedia:索引]]の支援を行うためのものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -1948,7 +1948,7 @@ sub IndexStatistic {
 
 	$report->OutputDirect( <<"STR"
 = 索引統計 =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から[http://sourceforge.jp/projects/jawptool/ jawptool $VERSION]にて索引の一覧を抽出したものです。
+このレポートは https://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から[https://github.com/saoyagi2/jawptool jawptool $VERSION]にて索引の一覧を抽出したものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -2015,7 +2015,7 @@ sub Aimai {
 
 	$report->OutputDirect( <<"STR"
 = 曖昧さ回避 =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から[http://sourceforge.jp/projects/jawptool/ jawptool $VERSION]にて曖昧さ回避記事に登録されていない記事を抽出したものです。
+このレポートは https://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から[https://github.com/saoyagi2/jawptool jawptool $VERSION]にて曖昧さ回避記事に登録されていない記事を抽出したものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -2075,7 +2075,7 @@ sub ShortPage {
 
 	$report->OutputDirect( <<"STR"
 = 短いページ =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から[http://sourceforge.jp/projects/jawptool/ jawptool $VERSION]にて短い記事を抽出したものです。
+このレポートは https://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から[https://github.com/saoyagi2/jawptool jawptool $VERSION]にて短い記事を抽出したものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -2112,7 +2112,7 @@ sub LonelyPage {
 
 	$report->OutputDirect( <<"STR"
 = 孤立したページ =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から[http://sourceforge.jp/projects/jawptool/ jawptool $VERSION]にて孤立したページを抽出したものです。
+このレポートは https://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から[https://github.com/saoyagi2/jawptool jawptool $VERSION]にて孤立したページを抽出したものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -2163,7 +2163,7 @@ sub CategoryStatistic {
 
 	$report->OutputDirect( <<"STR"
 = カテゴリ別統計 =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から[http://sourceforge.jp/projects/jawptool/ jawptool $VERSION]にてカテゴリ別統計を抽出したものです。
+このレポートは https://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ $xmlfile から[https://github.com/saoyagi2/jawptool jawptool $VERSION]にてカテゴリ別統計を抽出したものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 

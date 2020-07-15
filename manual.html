@@ -48,7 +48,7 @@ pre {
 CGI版に関してはウェブサーバが別途必要になります。しかし、これはレンタルサーバなどで既に設定済みの環境も多く在りますので、動作の準備にはさしたる手間にはならないと思います。
 </p>
 <p>
-jawptoolを使用するには、もちろんウィキペディア日本語版のデータが必要になります。しかし、ウィキペディアのサイトから1記事ごとに保存していては手間が掛かって仕方がありません。そうした場合に備えて、データベースダンプが<a href="http://dumps.wikimedia.org/jawiki/">http://dumps.wikimedia.org/jawiki/</a>にて公開されています。このURLにアクセスするとディレクトリがずらっと並んでいますが、「latest/」というのが最新版のデータベースダンプになりますので通常はこちらを使用することになります。
+jawptoolを使用するには、もちろんウィキペディア日本語版のデータが必要になります。しかし、ウィキペディアのサイトから1記事ごとに保存していては手間が掛かって仕方がありません。そうした場合に備えて、データベースダンプが<a href="https://dumps.wikimedia.org/jawiki/">https://dumps.wikimedia.org/jawiki/</a>にて公開されています。このURLにアクセスするとディレクトリがずらっと並んでいますが、「latest/」というのが最新版のデータベースダンプになりますので通常はこちらを使用することになります。
 </p>
 
 <h2>動作環境</h2>
@@ -80,7 +80,7 @@ jawptoolを動作させるのにはperlだけでよいのですが、処理す�
 jawptoolのインストールは簡単です。配布されているパッケージを展開して、作業用のディレクトリに置くだけで完了します。以下、具体的に手順を説明します。
 </p>
 <p>
-まず、jawptoolの配布サイトである<a href="http://sourceforge.jp/projects/jawptool/">http://sourceforge.jp/projects/jawptool/</a>からパッケージをダウンロードしてきます。
+まず、jawptoolの配布サイトである<a href="https://github.com/saoyagi2/jawptool/">https://github.com/saoyagi2/jawptool</a>からパッケージをダウンロードしてきます。
 </p>
 <p>
 次にダウンロードしてきたパッケージを展開します。
@@ -125,7 +125,7 @@ command:
 jawptoolのパラメータは「コマンド」「入力ファイル名」「出力ファイル名」の三つになります。コマンドはjawptoolがどのような処理をするか指定するもので、0.22では12個あります。入力ファイル名は、ウィキペディア日本語版のデータベースダンプファイルを指定します。出力ファイル名は、処理結果を出力するファイル名です。
 </p>
 <p>
-次に、ウィキペディア日本語版のデータベースダンプをダウンロードします。「概要」で書きました通り、データベースダンプは<a href="http://dumps.wikimedia.org/jawiki/">http://dumps.wikimedia.org/jawiki/</a>にて公開されています。データベースダンプにも多くの種類がありますが、jawptoolで使用するのは基本的に「jawiki-latest-pages-articles.xml」と「jawiki-latest-pages-meta-current.xml」の二つです。
+次に、ウィキペディア日本語版のデータベースダンプをダウンロードします。「概要」で書きました通り、データベースダンプは<a href="https://dumps.wikimedia.org/jawiki/">https://dumps.wikimedia.org/jawiki/</a>にて公開されています。データベースダンプにも多くの種類がありますが、jawptoolで使用するのは基本的に「jawiki-latest-pages-articles.xml」と「jawiki-latest-pages-meta-current.xml」の二つです。
 </p>
 <p>
 「jawiki-latest-pages-articles.xml」は、標準記事空間など主要なページのみの最新版を収録したファイルです。一方、「jawiki-latest-pages-meta-current.xml」は、全てのページの最新版が収録されています。
@@ -154,7 +154,7 @@ jawptoolのパラメータは「コマンド」「入力ファイル名」「出
 しばらくするとチェックが完了して、レポートファイルが作成されます。レポートは以下のようになっています。
 </p>
 <pre>= 記事名lint =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ jawiki-latest-pages-articles.xml を記事名の誤りの可能性について検査したものです。
+このレポートは https://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ jawiki-latest-pages-articles.xml を記事名の誤りの可能性について検査したものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -187,42 +187,42 @@ jawptoolの出力するレポートは、基本的に全てwiki記法で行わ�
 <dt>「曖昧さ回避の記事であればカッコは半角でないといけません」</dt>
 <dd>
 記事名に全角括弧を使用している場合に出力されます。「記事名（曖昧さ回避）」などのような場合です。曖昧さ回避記事であれば、括弧は半角括弧でなければならないため改名が必要になります。ただし、「日本共産党（左派）」などのように固有名詞として括弧を用いている場合は、そのままで構いません。<br>
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E8%A8%98%E4%BA%8B%E5%90%8D%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9#.E8.A8.98.E4.BA.8B.E5.90.8D.E3.81.AE.E9.87.8D.E8.A4.87.E3.82.92.E5.9B.9E.E9.81.BF.E3.81.99.E3.82.8B.E6.89.8B.E6.AE.B5">Wikipedia:記事名の付け方#記事名の重複を回避する手段</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E8%A8%98%E4%BA%8B%E5%90%8D%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9#.E8.A8.98.E4.BA.8B.E5.90.8D.E3.81.AE.E9.87.8D.E8.A4.87.E3.82.92.E5.9B.9E.E9.81.BF.E3.81.99.E3.82.8B.E6.89.8B.E6.AE.B5">Wikipedia:記事名の付け方#記事名の重複を回避する手段</a>」より
 </dd>
 <dt>「曖昧さ回避の記事であればカッコの前のスペースはひとつでないといけません」</dt>
 <dd>
 半角括弧の前に半角スペースが無いか、二つ以上ある場合に出力されます。「記事名(曖昧さ回避)」や「記事名__(曖昧さ回避)」のような場合です。曖昧さ回避の記事名では、半角括弧の前の半角スペースが一つである必要があります。曖昧さ回避記事であるならば改名が必要です。固有名詞として括弧を使用しているなら全角括弧に改名が必要です。<br>
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E8%A8%98%E4%BA%8B%E5%90%8D%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9#.E8.A8.98.E4.BA.8B.E5.90.8D.E3.81.AE.E9.87.8D.E8.A4.87.E3.82.92.E5.9B.9E.E9.81.BF.E3.81.99.E3.82.8B.E6.89.8B.E6.AE.B5">Wikipedia:記事名の付け方#記事名の重複を回避する手段</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E8%A8%98%E4%BA%8B%E5%90%8D%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9#.E8.A8.98.E4.BA.8B.E5.90.8D.E3.81.AE.E9.87.8D.E8.A4.87.E3.82.92.E5.9B.9E.E9.81.BF.E3.81.99.E3.82.8B.E6.89.8B.E6.AE.B5">Wikipedia:記事名の付け方#記事名の重複を回避する手段</a>」より
 </dd>
 <dt>「全角スペース、全角記号の使用は推奨されません」</dt>
 <dd>
 全角スペース、全角記号(，．！？＆＠＃など)を使用している場合に出力されます。これらは半角記号を使用したものに改名が必要です。<br>
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E8%A8%98%E4%BA%8B%E5%90%8D%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9#.E5.85.A8.E8.A7.92.E3.81.A8.E5.8D.8A.E8.A7.92.E3.81.AE.E4.BD.BF.E3.81.84.E5.88.86.E3.81.91">Wikipedia:記事名の付け方#全角と半角の使い分け</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E8%A8%98%E4%BA%8B%E5%90%8D%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9#.E5.85.A8.E8.A7.92.E3.81.A8.E5.8D.8A.E8.A7.92.E3.81.AE.E4.BD.BF.E3.81.84.E5.88.86.E3.81.91">Wikipedia:記事名の付け方#全角と半角の使い分け</a>」より
 </dd>
 <dt>「全角英数字の使用は推奨されません」</dt>
 <dd>
 全角英数字を使用している場合に出力されます。これらは半角英数字を使用したものに改名が必要です。<br>
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E8%A8%98%E4%BA%8B%E5%90%8D%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9#.E5.85.A8.E8.A7.92.E3.81.A8.E5.8D.8A.E8.A7.92.E3.81.AE.E4.BD.BF.E3.81.84.E5.88.86.E3.81.91">Wikipedia:記事名の付け方#全角と半角の使い分け</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E8%A8%98%E4%BA%8B%E5%90%8D%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9#.E5.85.A8.E8.A7.92.E3.81.A8.E5.8D.8A.E8.A7.92.E3.81.AE.E4.BD.BF.E3.81.84.E5.88.86.E3.81.91">Wikipedia:記事名の付け方#全角と半角の使い分け</a>」より
 </dd>
 <dt>「半角カタカナの使用は推奨されません」</dt>
 <dd>
 半角カタカナを使用している場合に出力されます。これらは全角カタカナを使用したものに改名が必要です。<br>
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E8%A8%98%E4%BA%8B%E5%90%8D%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9#.E5.85.A8.E8.A7.92.E3.81.A8.E5.8D.8A.E8.A7.92.E3.81.AE.E4.BD.BF.E3.81.84.E5.88.86.E3.81.91">Wikipedia:記事名の付け方#全角と半角の使い分け</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E8%A8%98%E4%BA%8B%E5%90%8D%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9#.E5.85.A8.E8.A7.92.E3.81.A8.E5.8D.8A.E8.A7.92.E3.81.AE.E4.BD.BF.E3.81.84.E5.88.86.E3.81.91">Wikipedia:記事名の付け方#全角と半角の使い分け</a>」より
 </dd>
 <dt>「ローマ数字はアルファベットを組み合わせましょう」</dt>
 <dd>
 記号のローマ数字(Ⅰ、Ⅱなど)を使用している場合に出力されます。これらはアルファベットを組み合わせて表記したものに改名が必要です。<br>
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E8%A8%98%E4%BA%8B%E5%90%8D%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9#.E5.85.A8.E8.A7.92.E3.81.A8.E5.8D.8A.E8.A7.92.E3.81.AE.E4.BD.BF.E3.81.84.E5.88.86.E3.81.91">Wikipedia:記事名の付け方#全角と半角の使い分け</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E8%A8%98%E4%BA%8B%E5%90%8D%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9#.E5.85.A8.E8.A7.92.E3.81.A8.E5.8D.8A.E8.A7.92.E3.81.AE.E4.BD.BF.E3.81.84.E5.88.86.E3.81.91">Wikipedia:記事名の付け方#全角と半角の使い分け</a>」より
 </dd>
 <dt>「丸付き数字の使用は推奨されません」</dt>
 <dd>
 記号の丸付き数字(①、②など)を使用している場合に出力されます。これらは(1)などに改名が必要です。<br>
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E8%A8%98%E4%BA%8B%E5%90%8D%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9#.E5.85.A8.E8.A7.92.E3.81.A8.E5.8D.8A.E8.A7.92.E3.81.AE.E4.BD.BF.E3.81.84.E5.88.86.E3.81.91">Wikipedia:記事名の付け方#全角と半角の使い分け</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E8%A8%98%E4%BA%8B%E5%90%8D%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9#.E5.85.A8.E8.A7.92.E3.81.A8.E5.8D.8A.E8.A7.92.E3.81.AE.E4.BD.BF.E3.81.84.E5.88.86.E3.81.91">Wikipedia:記事名の付け方#全角と半角の使い分け</a>」より
 </dd>
 <dt>「括弧の使用は推奨されません」</dt>
 <dd>
 括弧記号(「」『』〔〕〈〉《》【】)を使用している場合に出力されます。記事名には括弧を使用しないことが推奨されています。しかし、固有名詞として括弧を含む場合には使用しても構いません。<br>
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E8%A8%98%E4%BA%8B%E5%90%8D%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9#.E8.8A.B8.E8.A1.93.E4.BD.9C.E5.93.81">Wikipedia:記事名の付け方#芸術作品</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E8%A8%98%E4%BA%8B%E5%90%8D%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9#.E8.8A.B8.E8.A1.93.E4.BD.9C.E5.93.81">Wikipedia:記事名の付け方#芸術作品</a>」より
 </dd>
 <dt>「平仮名と「ヘ/ベ/ペ(片仮名)」が隣接しています」</dt>
 <dd>
@@ -239,26 +239,26 @@ jawptoolの出力するレポートは、基本的に全てwiki記法で行わ�
 <dt>「会社の記事であれば法的地位を示す語句を含むことは推奨されません」</dt>
 <dd>
 会社・団体名の記事では、記事名に法的地位(「株式会社」など)は含まないことになっています。「日本電信電話株式会社」は「日本電信電話」という記事名でなければなりません。該当する場合には改名が必要です。会社名の記事で無い場合には(「株式会社 (日本)」など)、そのままで構いません。<br>
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E8%A8%98%E4%BA%8B%E5%90%8D%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9#.E5.9B.A3.E4.BD.93.E5.90.8D">Wikipedia:記事名の付け方#団体名</a>」より<br>
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E8%A8%98%E4%BA%8B%E5%90%8D%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9#.E5.9B.A3.E4.BD.93.E5.90.8D">Wikipedia:記事名の付け方#団体名</a>」より<br>
 慣例的にリダイレクトの場合は法的地位を付けても構わないことになっています。<br>
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E5%89%8A%E9%99%A4%E4%BE%9D%E9%A0%BC/%E5%89%8D%E7%94%B0%E9%87%91%E5%B1%9E%E5%B7%A5%E6%A5%AD%E6%A0%AA%E5%BC%8F%E4%BC%9A%E7%A4%BE">Wikipedia:削除依頼/前田金属工業株式会社</a>」より<br>
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E5%89%8A%E9%99%A4%E4%BE%9D%E9%A0%BC/%E5%89%8D%E7%94%B0%E9%87%91%E5%B1%9E%E5%B7%A5%E6%A5%AD%E6%A0%AA%E5%BC%8F%E4%BC%9A%E7%A4%BE">Wikipedia:削除依頼/前田金属工業株式会社</a>」より<br>
 また、架空の団体の場合に記事名に法的地位を付けるかどうかは、まだ合意が出来ていません。<br>
-「<a href="http://ja.wikipedia.org/wiki/%E3%83%8E%E3%83%BC%E3%83%88:%E9%8A%80%E6%B2%B3%E9%89%84%E9%81%93%E6%A0%AA%E5%BC%8F%E4%BC%9A%E7%A4%BE#.E6.94.B9.E5.90.8D.E6.8F.90.E6.A1.88.EF.BC.882011.E5.B9.B4.EF.BC.89">ノート:銀河鉄道株式会社#改名提案（2011年）</a>」より<br>
+「<a href="https://ja.wikipedia.org/wiki/%E3%83%8E%E3%83%BC%E3%83%88:%E9%8A%80%E6%B2%B3%E9%89%84%E9%81%93%E6%A0%AA%E5%BC%8F%E4%BC%9A%E7%A4%BE#.E6.94.B9.E5.90.8D.E6.8F.90.E6.A1.88.EF.BC.882011.E5.B9.B4.EF.BC.89">ノート:銀河鉄道株式会社#改名提案（2011年）</a>」より<br>
 </dd>
 <dt>「波記号は〜(U+301C)を使用しましょう」</dt>
 <dd>
 「～(U+FF5E)」を使用した場合に出力されます。波記号は「〜(U+301C)」を使用することが推奨されていますので、改名が必要です。<br>
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E8%A1%A8%E8%A8%98%E3%82%AC%E3%82%A4%E3%83%89#.E6.B3.A2.E3.83.80.E3.83.83.E3.82.B7.E3.83.A5">Wikipedia:表記ガイド#波ダッシュ</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E8%A1%A8%E8%A8%98%E3%82%AC%E3%82%A4%E3%83%89#.E6.B3.A2.E3.83.80.E3.83.83.E3.82.B7.E3.83.A5">Wikipedia:表記ガイド#波ダッシュ</a>」より
 </dd>
 <dt>「ｘ(U+xxxx) はJIS X 0208外の文字です」</dt>
 <dd>
 JIS X 0208で制定されている以外の漢字(﨑(U+FA11)など)を使用した場合に出力されます。記事名に使用できる漢字はJIS X 0208に制限されていますので、改名が必要です。<br>
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E8%A8%98%E4%BA%8B%E5%90%8D%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9#.E5.85.A8.E8.A7.92.E3.81.A8.E5.8D.8A.E8.A7.92.E3.81.AE.E4.BD.BF.E3.81.84.E5.88.86.E3.81.91">Wikipedia:記事名の付け方#全角と半角の使い分け</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E8%A8%98%E4%BA%8B%E5%90%8D%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9#.E5.85.A8.E8.A7.92.E3.81.A8.E5.8D.8A.E8.A7.92.E3.81.AE.E4.BD.BF.E3.81.84.E5.88.86.E3.81.91">Wikipedia:記事名の付け方#全角と半角の使い分け</a>」より
 </dd>
 <dt>「ｘ は基本多言語面外の文字です」</dt>
 <dd>
 基本多言語面(UNICOCDE BMP)外の文字を使用した場合に出力されます。記事名には基本多言語面の文字のみをしようするように制限されていますので、改名が必要です。ただ、実際にはシステム上で基本多言語面外の文字を使用した記事名は作成されないようになっていますので、このチェックが働くことはあり得ないはずです。<br>
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E8%A8%98%E4%BA%8B%E5%90%8D%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9#.E3.82.B7.E3.82.B9.E3.83.86.E3.83.A0.E4.B8.8A.E3.81.AE.E4.BD.BF.E7.94.A8.E5.8F.AF.E8.83.BD.E6.96.87.E5.AD.97.E3.81.AE.E5.88.B6.E9.99.90">Wikipedia:記事名の付け方#システム上の使用可能文字の制限</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E8%A8%98%E4%BA%8B%E5%90%8D%E3%81%AE%E4%BB%98%E3%81%91%E6%96%B9#.E3.82.B7.E3.82.B9.E3.83.86.E3.83.A0.E4.B8.8A.E3.81.AE.E4.BD.BF.E7.94.A8.E5.8F.AF.E8.83.BD.E6.96.87.E5.AD.97.E3.81.AE.E5.88.B6.E9.99.90">Wikipedia:記事名の付け方#システム上の使用可能文字の制限</a>」より
 </dd>
 </dl>
 
@@ -268,7 +268,7 @@ JIS X 0208で制定されている以外の漢字(﨑(U+FA11)など)を使用し
 本文チェックは、記事の本文がガイドラインに沿っているかどうかを確かめて、問題がありそうな箇所を報告する機能です。
 </p>
 <p>
-機能的に似たプロジェクトとして<a href="http://ja.wikipedia.org/wiki/%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88:%E3%82%A6%E3%82%A3%E3%82%AD%E6%96%87%E6%B3%95%E3%81%AE%E3%83%81%E3%82%A7%E3%83%83%E3%82%AF">プロジェクト:ウィキ文法のチェック</a>(現行は<a href="">http://toolserver.org/~sk/cgi-bin/checkwiki/checkwiki.cgi</a>)があります。プロジェクトではチェック項目ごとにレポートするのに対してjawptoolでは記事ごとにレポートすること、プロジェクトは全言語汎用なウィキ文法のみをチェックするのに対しjawptoolではウィキペディア日本語版ローカルのガイドラインも取り入れていることなどが違います。
+機能的に似たプロジェクトとして<a href="https://ja.wikipedia.org/wiki/%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88:%E3%82%A6%E3%82%A3%E3%82%AD%E6%96%87%E6%B3%95%E3%81%AE%E3%83%81%E3%82%A7%E3%83%83%E3%82%AF">プロジェクト:ウィキ文法のチェック</a>(現行は<a href="">https://toolserver.org/~sk/cgi-bin/checkwiki/checkwiki.cgi</a>)があります。プロジェクトではチェック項目ごとにレポートするのに対してjawptoolでは記事ごとにレポートすること、プロジェクトは全言語汎用なウィキ文法のみをチェックするのに対しjawptoolではウィキペディア日本語版ローカルのガイドラインも取り入れていることなどが違います。
 </p>
 <p>
 記事名チェックと同様、標準名前空間のページだけを調べればよいので、データベースファイルは「jawiki-latest-pages-articles.xml」を使用します。コマンドラインから以下のように入力して実行します。
@@ -278,7 +278,7 @@ JIS X 0208で制定されている以外の漢字(﨑(U+FA11)など)を使用し
 しばらくするとチェックが完了して、レポートファイルが作成されます。なお、本文チェックは処理に非常に時間が掛かる上に、出力レポートが膨大になることから、1万ページを処理した時点で途中終了するようになっています。レポートは以下のようになっています。
 </p>
 <pre>= 記事本文lint =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ jawiki-latest-pages-articles.xml を本文の誤りの可能性について検査したものです。
+このレポートは https://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ jawiki-latest-pages-articles.xml を本文の誤りの可能性について検査したものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -298,7 +298,7 @@ JIS X 0208で制定されている以外の漢字(﨑(U+FA11)など)を使用し
 記事名チェックと同様、wikiテキスト形式で出力されます。冒頭に注意文があり、続いて「記事名」「その記事の問題点」が出力されます。問題点の末尾に括弧付きの数字がある場合、その数字は記事テキストの行位置を表しています。
 </p>
 <p>
-本文チェックの全ての項目に言えることですが、チェックされた点を解消するだけの編集は、たとえそれが適切なものであっても好まれない可能性があります(<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E5%90%8C%E3%81%98%E8%A8%98%E4%BA%8B%E3%81%B8%E3%81%AE%E9%80%A3%E7%B6%9A%E6%8A%95%E7%A8%BF%E3%82%92%E6%B8%9B%E3%82%89%E3%81%99">Wikipedia:同じ記事への連続投稿を減らす</a>)。出来るならば、有意な加筆時などに一緒に行うようにしましょう。
+本文チェックの全ての項目に言えることですが、チェックされた点を解消するだけの編集は、たとえそれが適切なものであっても好まれない可能性があります(<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E5%90%8C%E3%81%98%E8%A8%98%E4%BA%8B%E3%81%B8%E3%81%AE%E9%80%A3%E7%B6%9A%E6%8A%95%E7%A8%BF%E3%82%92%E6%B8%9B%E3%82%89%E3%81%99">Wikipedia:同じ記事への連続投稿を減らす</a>)。出来るならば、有意な加筆時などに一緒に行うようにしましょう。
 <p>
 次に警告文とその意味を個別に説明します。
 </p>
@@ -310,7 +310,7 @@ JIS X 0208で制定されている以外の漢字(﨑(U+FA11)など)を使用し
 <dt>「レベル1の見出しがあります」</dt>
 <dd>
 レベル1の見出しは記事本文では使用せず、レベル2から始めることになっています。<br>
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E3%82%B9%E3%82%BF%E3%82%A4%E3%83%AB%E3%83%9E%E3%83%8B%E3%83%A5%E3%82%A2%E3%83%AB#.E8.A6.8B.E5.87.BA.E3.81.97">Wikipedia:スタイルマニュアル#見出し</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E3%82%B9%E3%82%BF%E3%82%A4%E3%83%AB%E3%83%9E%E3%83%8B%E3%83%A5%E3%82%A2%E3%83%AB#.E8.A6.8B.E5.87.BA.E3.81.97">Wikipedia:スタイルマニュアル#見出し</a>」より
 </dd>
 <dt>「見出しレベルは6までです」</dt>
 <dd>
@@ -319,22 +319,22 @@ JIS X 0208で制定されている以外の漢字(﨑(U+FA11)など)を使用し
 <dt>「レベルｘの見出しの前にレベルｙの見出しが必要です」</dt>
 <dd>
 見出しは1段ごとに深くなっていくことが推奨されます。見出しレベル3を用いるなら、その前に見出しレベル2があるべきです。<br>
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E3%82%B9%E3%82%BF%E3%82%A4%E3%83%AB%E3%83%9E%E3%83%8B%E3%83%A5%E3%82%A2%E3%83%AB#.E8.A6.8B.E5.87.BA.E3.81.97">Wikipedia:スタイルマニュアル#見出し</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E3%82%B9%E3%82%BF%E3%82%A4%E3%83%AB%E3%83%9E%E3%83%8B%E3%83%A5%E3%82%A2%E3%83%AB#.E8.A6.8B.E5.87.BA.E3.81.97">Wikipedia:スタイルマニュアル#見出し</a>」より
 </dd>
 <dt>「ISBN記法では、ISBNと数字の間に半角スペースが必要です」</dt>
 <dd>
 ISBN記法では「ISBN」とISBNコードの間に半角スペースが一つ必要です。<br>
-「<a href="http://ja.wikipedia.org/wiki/Help:ISBN%E3%81%AE%E3%83%AA%E3%83%B3%E3%82%AF">Help:ISBNのリンク</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Help:ISBN%E3%81%AE%E3%83%AA%E3%83%B3%E3%82%AF">Help:ISBNのリンク</a>」より
 </dd>
 <dt>「ISBNは10桁もしくは13桁でないといけません」</dt>
 <dd>
 ISBNコードは10桁もしくは13桁となっています。<br>
-「<a href="http://ja.wikipedia.org/wiki/Help:ISBN%E3%81%AE%E3%83%AA%E3%83%B3%E3%82%AF">Help:ISBNのリンク</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Help:ISBN%E3%81%AE%E3%83%AA%E3%83%B3%E3%82%AF">Help:ISBNのリンク</a>」より
 </dd>
 <dt>「西暦は全桁表示が推奨されます」</dt>
 <dd>
 「’90年」のように西暦の桁数を省略した書き方は推奨されません。「1990年」と全桁を記載することが推奨されます。<br>
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E8%A1%A8%E8%A8%98%E3%82%AC%E3%82%A4%E3%83%89#.E5.B9.B4.E6.9C.88.E6.97.A5.E3.83.BB.E6.99.82.E9.96.93">Wikipedia:表記ガイド#年月日・時間</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E8%A1%A8%E8%A8%98%E3%82%AC%E3%82%A4%E3%83%89#.E5.B9.B4.E6.9C.88.E6.97.A5.E3.83.BB.E6.99.82.E9.96.93">Wikipedia:表記ガイド#年月日・時間</a>」より
 </dd>
 <dt>「閉じられていないコメントタグがあります」</dt>
 <dd>
@@ -343,12 +343,12 @@ HTMLのコメント開始タグ(&lt;!--)に対応する終了タグ(--&gt;)が�
 <dt>「デフォルトソートではソートキーが必須です」</dt>
 <dd>
 デフォルトソートにはソートキーを指定しなければなりません。<br>
-「<a href="http://ja.wikipedia.org/wiki/%E3%83%87%E3%83%95%E3%82%A9%E3%83%AB%E3%83%88%E3%82%BD%E3%83%BC%E3%83%88#DEFAULTSORT">Wikipedia:カテゴリの方針#DEFAULTSORT</a>」より
+「<a href="https://ja.wikipedia.org/wiki/%E3%83%87%E3%83%95%E3%82%A9%E3%83%AB%E3%83%88%E3%82%BD%E3%83%BC%E3%83%88#DEFAULTSORT">Wikipedia:カテゴリの方針#DEFAULTSORT</a>」より
 </dd>
 <dt>「ソートキーには濁音、半濁音、吃音、長音は清音化することが推奨されます」</dt>
 <dd>
 デフォルトソートもしくはカテゴリのソートキーは清音で指定することが推奨されます。<br>
-「<a href="http://ja.wikipedia.org/wiki/%E3%83%87%E3%83%95%E3%82%A9%E3%83%AB%E3%83%88%E3%82%BD%E3%83%BC%E3%83%88#.E3.82.BD.E3.83.BC.E3.83.88.E3.82.AD.E3.83.BC">Wikipedia:カテゴリの方針#ソートキー</a>」より
+「<a href="https://ja.wikipedia.org/wiki/%E3%83%87%E3%83%95%E3%82%A9%E3%83%AB%E3%83%88%E3%82%BD%E3%83%BC%E3%83%88#.E3.82.BD.E3.83.BC.E3.83.88.E3.82.AD.E3.83.BC">Wikipedia:カテゴリの方針#ソートキー</a>」より
 </dd>
 <dt>「デフォルトソートが複数存在します」</dt>
 <dd>
@@ -369,32 +369,32 @@ HTMLのコメント開始タグ(&lt;!--)に対応する終了タグ(--&gt;)が�
 <dt>「全角記号の使用は推奨されません」</dt>
 <dd>
 全角記号の使用は推奨されません。半角記号に置き換えることが推奨されます。<br>
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E8%A1%A8%E8%A8%98%E3%82%AC%E3%82%A4%E3%83%89#.E4.BD.BF.E7.94.A8.E5.8F.AF.E8.83.BD.E3.81.AA.E6.96.87.E5.AD.97">Wikipedia:表記ガイド#使用可能な文字</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E8%A1%A8%E8%A8%98%E3%82%AC%E3%82%A4%E3%83%89#.E4.BD.BF.E7.94.A8.E5.8F.AF.E8.83.BD.E3.81.AA.E6.96.87.E5.AD.97">Wikipedia:表記ガイド#使用可能な文字</a>」より
 </dd>
 <dt>「全角英数字の使用は推奨されません」</dt>
 <dd>
 全角英数字の使用は推奨されません。半角英数字に置き換えることが推奨されます。<br>
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E8%A1%A8%E8%A8%98%E3%82%AC%E3%82%A4%E3%83%89#.E4.BD.BF.E7.94.A8.E5.8F.AF.E8.83.BD.E3.81.AA.E6.96.87.E5.AD.97">Wikipedia:表記ガイド#使用可能な文字</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E8%A1%A8%E8%A8%98%E3%82%AC%E3%82%A4%E3%83%89#.E4.BD.BF.E7.94.A8.E5.8F.AF.E8.83.BD.E3.81.AA.E6.96.87.E5.AD.97">Wikipedia:表記ガイド#使用可能な文字</a>」より
 </dd>
 <dt>「半角カタカナの使用は推奨されません」</dt>
 <dd>
 半角カタカナの使用は推奨されません。全角カタカナに置き換えることが推奨されます。<br>
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E8%A1%A8%E8%A8%98%E3%82%AC%E3%82%A4%E3%83%89#.E4.BD.BF.E7.94.A8.E5.8F.AF.E8.83.BD.E3.81.AA.E6.96.87.E5.AD.97">Wikipedia:表記ガイド#使用可能な文字</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E8%A1%A8%E8%A8%98%E3%82%AC%E3%82%A4%E3%83%89#.E4.BD.BF.E7.94.A8.E5.8F.AF.E8.83.BD.E3.81.AA.E6.96.87.E5.AD.97">Wikipedia:表記ガイド#使用可能な文字</a>」より
 </dd>
 <dt>「ローマ数字はアルファベットを組み合わせましょう」</dt>
 <dd>
 記号のローマ数字(Ⅰ、Ⅱなど)の使用は推奨されません。アルファベットを組み合わせた表記に置き換えることが推奨されます。<br>
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E8%A1%A8%E8%A8%98%E3%82%AC%E3%82%A4%E3%83%89#.E3.83.AD.E3.83.BC.E3.83.9E.E6.95.B0.E5.AD.97">Wikipedia:表記ガイド#ローマ数字</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E8%A1%A8%E8%A8%98%E3%82%AC%E3%82%A4%E3%83%89#.E3.83.AD.E3.83.BC.E3.83.9E.E6.95.B0.E5.AD.97">Wikipedia:表記ガイド#ローマ数字</a>」より
 </dd>
 <dt>「丸付き数字の使用は推奨されません」</dt>
 <dd>
 記号の丸付き数字(①、②など)の使用は推奨されません。(1)などに置き換えることが推奨されます。<br>
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E8%A1%A8%E8%A8%98%E3%82%AC%E3%82%A4%E3%83%89#.E4.B8.B8.E6.95.B0.E5.AD.97">Wikipedia:表記ガイド#丸数字</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E8%A1%A8%E8%A8%98%E3%82%AC%E3%82%A4%E3%83%89#.E4.B8.B8.E6.95.B0.E5.AD.97">Wikipedia:表記ガイド#丸数字</a>」より
 </dd>
 <dt>「言語間リンクはアルファベット順に並べることが推奨されます」</dt>
 <dd>
 言語間リンクは言語コードのアルファベット順に並べることが推奨されます。<br>
-「<a href="http://ja.wikipedia.org/wiki/%E8%A8%80%E8%AA%9E%E9%96%93%E3%83%AA%E3%83%B3%E3%82%AF#.E8.A8.80.E8.AA.9E.E9.96.93.E3.83.AA.E3.83.B3.E3.82.AF.E3.81.AE.E6.85.A3.E7.BF.92">Help:言語間リンク#言語間リンクの慣習</a>」より
+「<a href="https://ja.wikipedia.org/wiki/%E8%A8%80%E8%AA%9E%E9%96%93%E3%83%AA%E3%83%B3%E3%82%AF#.E8.A8.80.E8.AA.9E.E9.96.93.E3.83.AA.E3.83.B3.E3.82.AF.E3.81.AE.E6.85.A3.E7.BF.92">Help:言語間リンク#言語間リンクの慣習</a>」より
 </dd>
 <dt>「言語間リンクが重複しています」</dt>
 <dd>
@@ -407,17 +407,17 @@ URLとして機能しない不正な記述があります。
 <dt>「ｘのリンク先は曖昧さ回避です」</dt>
 <dd>
 内部リンクのリンク先が曖昧さ回避記事になっています。曖昧さ回避に内部リンクすることは基本的に推奨されていません。意図する意味のリンク先に修正することが推奨されます。<br>
-「<a href="http://ja.wikipedia.org/wiki/%E6%9B%96%E6%98%A7%E3%81%95%E5%9B%9E%E9%81%BF#.E6.9B.96.E6.98.A7.E3.81.95.E5.9B.9E.E9.81.BF.E3.83.9A.E3.83.BC.E3.82.B8.E3.81.B8.E3.81.AE.E3.83.AA.E3.83.B3.E3.82.AF.E3.81.AF.E6.A5.B5.E5.8A.9B.E9.81.BF.E3.81.91.E3.82.8B">Wikipedia:曖昧さ回避#曖昧さ回避ページへのリンクは極力避ける</a>」より
+「<a href="https://ja.wikipedia.org/wiki/%E6%9B%96%E6%98%A7%E3%81%95%E5%9B%9E%E9%81%BF#.E6.9B.96.E6.98.A7.E3.81.95.E5.9B.9E.E9.81.BF.E3.83.9A.E3.83.BC.E3.82.B8.E3.81.B8.E3.81.AE.E3.83.AA.E3.83.B3.E3.82.AF.E3.81.AF.E6.A5.B5.E5.8A.9B.E9.81.BF.E3.81.91.E3.82.8B">Wikipedia:曖昧さ回避#曖昧さ回避ページへのリンクは極力避ける</a>」より
 </dd>
 <dt>「ｘのリンク先はリダイレクトです」</dt>
 <dd>
 内部リンクのリンク先がリダイレクトになっています。リダイレクトは解消してよい場合とよくない場合があります。<br>
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E3%83%AA%E3%83%80%E3%82%A4%E3%83%AC%E3%82%AF%E3%83%88#.E3.83.AA.E3.83.80.E3.82.A4.E3.83.AC.E3.82.AF.E3.83.88.E3.81.AE.E8.A7.A3.E6.B6.88">Wikipedia:リダイレクト#リダイレクトの解消</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E3%83%AA%E3%83%80%E3%82%A4%E3%83%AC%E3%82%AF%E3%83%88#.E3.83.AA.E3.83.80.E3.82.A4.E3.83.AC.E3.82.AF.E3.83.88.E3.81.AE.E8.A7.A3.E6.B6.88">Wikipedia:リダイレクト#リダイレクトの解消</a>」より
 </dd>
 <dt>「年月日へのリンクは年と月日を分けることが推奨されます」</dt>
 <dd>
 [[2011年12月5日]]のように、年月日をまとめて内部リンクすることは推奨されていません。[[2011年]][[12月5日]]のように、年と月日を分けて内部リンクすることが推奨されます。<br>
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E8%A1%A8%E8%A8%98%E3%82%AC%E3%82%A4%E3%83%89#.E5.B9.B4.E6.9C.88.E6.97.A5.E3.83.BB.E6.99.82.E9.96.93">Wikipedia:表記ガイド#年月日・時間</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E8%A1%A8%E8%A8%98%E3%82%AC%E3%82%A4%E3%83%89#.E5.B9.B4.E6.9C.88.E6.97.A5.E3.83.BB.E6.99.82.E9.96.93">Wikipedia:表記ガイド#年月日・時間</a>」より
 </dd>
 <dt>「リンク先の節がありません」</dt>
 <dd>
@@ -430,7 +430,7 @@ URLとして機能しない不正な記述があります。
 <dt>「本文、カテゴリ、言語間リンクの順に記述することが推奨されます」</dt>
 <dd>
 記事本文は、本文、カテゴリ指定、言語間リンクの順に記述することが推奨されます。<br>
-「<a href="http://ja.wikipedia.org/wiki/%E8%A8%80%E8%AA%9E%E9%96%93%E3%83%AA%E3%83%B3%E3%82%AF#.E8.A8.80.E8.AA.9E.E9.96.93.E3.83.AA.E3.83.B3.E3.82.AF.E3.81.AE.E6.85.A3.E7.BF.92">Help:言語間リンク#言語間リンクの慣習</a>」より
+「<a href="https://ja.wikipedia.org/wiki/%E8%A8%80%E8%AA%9E%E9%96%93%E3%83%AA%E3%83%B3%E3%82%AF#.E8.A8.80.E8.AA.9E.E9.96.93.E3.83.AA.E3.83.B3.E3.82.AF.E3.81.AE.E6.85.A3.E7.BF.92">Help:言語間リンク#言語間リンクの慣習</a>」より
 </dd>
 <dt>「&lt;ref&gt;要素があるのに&lt;references&gt;要素がありません」</dt>
 <dd>
@@ -439,17 +439,17 @@ URLとして機能しない不正な記述があります。
 <dt>「定義文が見当たりません」</dt>
 <dd>
 本文の冒頭に記事名を定義する文章を記載することが推奨されますが、その記載が見当たりません。<br>
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E3%82%B9%E3%82%BF%E3%82%A4%E3%83%AB%E3%83%9E%E3%83%8B%E3%83%A5%E3%82%A2%E3%83%AB_%28%E5%B0%8E%E5%85%A5%E9%83%A8%29">Wikipedia:スタイルマニュアル (導入部)</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E3%82%B9%E3%82%BF%E3%82%A4%E3%83%AB%E3%83%9E%E3%83%8B%E3%83%A5%E3%82%A2%E3%83%AB_%28%E5%B0%8E%E5%85%A5%E9%83%A8%29">Wikipedia:スタイルマニュアル (導入部)</a>」より
 </dd>
 <dt>「カテゴリが一つもありません」</dt>
 <dd>
 カテゴリは一つは指定することが推奨されます。<br>
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E3%82%AB%E3%83%86%E3%82%B4%E3%83%AA%E3%81%AE%E6%96%B9%E9%87%9D#.E3.82.AB.E3.83.86.E3.82.B4.E3.83.AA.E4.BB.98.E4.B8.8E.E3.81.AE.E6.8C.87.E9.87.9D">Wikipedia:カテゴリの方針#カテゴリ付与の指針</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E3%82%AB%E3%83%86%E3%82%B4%E3%83%AA%E3%81%AE%E6%96%B9%E9%87%9D#.E3.82.AB.E3.83.86.E3.82.B4.E3.83.AA.E4.BB.98.E4.B8.8E.E3.81.AE.E6.8C.87.E9.87.9D">Wikipedia:カテゴリの方針#カテゴリ付与の指針</a>」より
 </dd>
 <dt>「デフォルトソートがありません」</dt>
 <dd>
 デフォルトソートは無くても問題ありませんが、あると便利です。ただし、デフォルトソートを追加するだけの編集は慎むべきとされています。<br>
-「<a href="http://ja.wikipedia.org/wiki/%E3%83%87%E3%83%95%E3%82%A9%E3%83%AB%E3%83%88%E3%82%BD%E3%83%BC%E3%83%88#DEFAULTSORT">Wikipedia:カテゴリの方針#DEFAULTSORT</a>」より
+「<a href="https://ja.wikipedia.org/wiki/%E3%83%87%E3%83%95%E3%82%A9%E3%83%AB%E3%83%88%E3%82%BD%E3%83%BC%E3%83%88#DEFAULTSORT">Wikipedia:カテゴリの方針#DEFAULTSORT</a>」より
 </dd>
 <dt>「出典に関する節がありません」</dt>
 <dd>
@@ -492,7 +492,7 @@ URLとして機能しない不正な記述があります。
 リダイレクトチェックは、問題がある可能性があるリダイレクト記事の一覧を報告する機能です。
 </p>
 <p>
-赤リンクへのリダイレクトは<a href="http://ja.wikipedia.org/wiki/%E7%89%B9%E5%88%A5:%E8%BF%B7%E5%AD%90%E3%81%AE%E3%83%AA%E3%83%80%E3%82%A4%E3%83%AC%E3%82%AF%E3%83%88">特別:迷子のリダイレクト</a>に類似しますが、jawptoolではリンク先の節が無いものも検出している点が違います。
+赤リンクへのリダイレクトは<a href="https://ja.wikipedia.org/wiki/%E7%89%B9%E5%88%A5:%E8%BF%B7%E5%AD%90%E3%81%AE%E3%83%AA%E3%83%80%E3%82%A4%E3%83%AC%E3%82%AF%E3%83%88">特別:迷子のリダイレクト</a>に類似しますが、jawptoolではリンク先の節が無いものも検出している点が違います。
 </p>
 <p>
 リダイレクトチェックではノートページの有無も調べるため、データベースファイルは「jawiki-latest-pages-meta-current.xml」を使用します。コマンドラインから以下のように入力して実行します。
@@ -502,7 +502,7 @@ URLとして機能しない不正な記述があります。
 しばらくするとチェックが完了して、レポートファイルが作成されます。レポートは以下のようになっています。
 </p>
 <pre>= リダイレクトlint =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ jawiki-latest-pages-meta-current.xml をリダイレクトの誤りの可能性について検査したものです。
+このレポートは https://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ jawiki-latest-pages-meta-current.xml をリダイレクトの誤りの可能性について検査したものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -525,7 +525,7 @@ URLとして機能しない不正な記述があります。
 <dl>
 <dt>「赤リンクへのリダイレクト」</dt>
 <dd>
-赤リンクへのリダイレクトは即時削除の対象ではありません(<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E5%8D%B3%E6%99%82%E5%89%8A%E9%99%A4%E3%81%AE%E6%96%B9%E9%87%9D#.E3.83.AA.E3.83.80.E3.82.A4.E3.83.AC.E3.82.AF.E3.83.88">Wikipedia:即時削除の方針#リダイレクト1-1</a>)が、有用で無い可能性はあります。リンク先の節が無くなってレポートされている場合には、変更後の節名に修正することが出来るかもしれません。
+赤リンクへのリダイレクトは即時削除の対象ではありません(<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E5%8D%B3%E6%99%82%E5%89%8A%E9%99%A4%E3%81%AE%E6%96%B9%E9%87%9D#.E3.83.AA.E3.83.80.E3.82.A4.E3.83.AC.E3.82.AF.E3.83.88">Wikipedia:即時削除の方針#リダイレクト1-1</a>)が、有用で無い可能性はあります。リンク先の節が無くなってレポートされている場合には、変更後の節名に修正することが出来るかもしれません。
 </dd>
 <dt>「リダイレクト先での言及無し」</dt>
 <dd>
@@ -546,7 +546,7 @@ URLとして機能しない不正な記述があります。
 しばらくするとチェックが完了して、レポートファイルが作成されます。レポートは以下のようになっています。
 </p>
 <pre>= 索引文法lint =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ jawiki-latest-pages-articles.xml から索引の誤りの可能性を検査したもので、[[Wikipedia:索引]]の支援を行うためのものです。
+このレポートは https://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ jawiki-latest-pages-articles.xml から索引の誤りの可能性を検査したもので、[[Wikipedia:索引]]の支援を行うためのものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -581,17 +581,17 @@ URLとして機能しない不正な記述があります。
 <dt>「ｘは赤リンクです」</dt>
 <dd>
 通常の記事では赤リンクを作成することは、なんら問題はありません。しかし、存在する記事に対するナビゲーションである索引記事では望ましいものではありません。
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia%E2%80%90%E3%83%8E%E3%83%BC%E3%83%88:%E7%B4%A2%E5%BC%95#.E8.B5.A4.E3.83.AA.E3.83.B3.E3.82.AF.E3.81.AB.E3.81.A4.E3.81.84.E3.81.A6">Wikipedia‐ノート:索引#赤リンクについて</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia%E2%80%90%E3%83%8E%E3%83%BC%E3%83%88:%E7%B4%A2%E5%BC%95#.E8.B5.A4.E3.83.AA.E3.83.B3.E3.82.AF.E3.81.AB.E3.81.A4.E3.81.84.E3.81.A6">Wikipedia‐ノート:索引#赤リンクについて</a>」より
 </dd>
 <dt>「読み仮名がありません」</dt>
 <dd>
 記事名には読み仮名を併記することが推奨されます。
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E7%B4%A2%E5%BC%95#.E5.87.A1.E4.BE.8B">Wikipedia:索引#凡例</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E7%B4%A2%E5%BC%95#.E5.87.A1.E4.BE.8B">Wikipedia:索引#凡例</a>」より
 </dd>
 <dt>「分野名がありません」</dt>
 <dd>
 記事名には分野名を併記することが推奨されます。
-「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E7%B4%A2%E5%BC%95#.E5.87.A1.E4.BE.8B">Wikipedia:索引#凡例</a>」より
+「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E7%B4%A2%E5%BC%95#.E5.87.A1.E4.BE.8B">Wikipedia:索引#凡例</a>」より
 </dd>
 </dl>
 
@@ -601,19 +601,19 @@ URLとして機能しない不正な記述があります。
 統計は、ウィキペディアの記事の統計情報をとる機能です。
 </p>
 <p>
-MediaWiki本家統計ページとして<a href="http://ja.wikipedia.org/wiki/%E7%89%B9%E5%88%A5:%E7%B5%B1%E8%A8%88">特別:統計</a>があります。しかし、ここに載ってない統計情報もjawptoolでは扱っています。逆に、本家統計でしか扱っていない情報もあります。
+MediaWiki本家統計ページとして<a href="https://ja.wikipedia.org/wiki/%E7%89%B9%E5%88%A5:%E7%B5%B1%E8%A8%88">特別:統計</a>があります。しかし、ここに載ってない統計情報もjawptoolでは扱っています。逆に、本家統計でしか扱っていない情報もあります。
 </p>
 <p>
-被リンクの統計としては<a href="http://ja.wikipedia.org/wiki/%E7%89%B9%E5%88%A5:%E8%A2%AB%E3%83%AA%E3%83%B3%E3%82%AF%E3%81%AE%E5%A4%9A%E3%81%84%E3%83%9A%E3%83%BC%E3%82%B8">特別:被リンクの多いページ</a>がありますが、現在は更新が止まっています。
+被リンクの統計としては<a href="https://ja.wikipedia.org/wiki/%E7%89%B9%E5%88%A5:%E8%A2%AB%E3%83%AA%E3%83%B3%E3%82%AF%E3%81%AE%E5%A4%9A%E3%81%84%E3%83%9A%E3%83%BC%E3%82%B8">特別:被リンクの多いページ</a>がありますが、現在は更新が止まっています。
 </p>
 <p>
-曖昧さ回避の統計としては<a href="http://ja.wikipedia.org/wiki/%E5%88%A9%E7%94%A8%E8%80%85:Tatsujin28/%E6%9B%96%E6%98%A7%E3%81%95%E5%9B%9E%E9%81%BF%E3%83%9A%E3%83%BC%E3%82%B8%E3%81%AE%E8%A2%AB%E3%83%AA%E3%83%B3%E3%82%AF%E6%95%B0">利用者:Tatsujin28/曖昧さ回避ページの被リンク数</a>があります。しかし、このページは更新が止まっています。手順はノートに書かれていますので、誰でも更新することは可能です。
+曖昧さ回避の統計としては<a href="https://ja.wikipedia.org/wiki/%E5%88%A9%E7%94%A8%E8%80%85:Tatsujin28/%E6%9B%96%E6%98%A7%E3%81%95%E5%9B%9E%E9%81%BF%E3%83%9A%E3%83%BC%E3%82%B8%E3%81%AE%E8%A2%AB%E3%83%AA%E3%83%B3%E3%82%AF%E6%95%B0">利用者:Tatsujin28/曖昧さ回避ページの被リンク数</a>があります。しかし、このページは更新が止まっています。手順はノートに書かれていますので、誰でも更新することは可能です。
 </p>
 <p>
-赤リンク統計としては、<a href="http://ja.wikipedia.org/wiki/%E7%89%B9%E5%88%A5:%E5%AD%98%E5%9C%A8%E3%81%97%E3%81%AA%E3%81%84%E3%83%9A%E3%83%BC%E3%82%B8%E3%81%B8%E3%81%AE%E3%83%AA%E3%83%B3%E3%82%AF">特別:存在しないページへのリンク</a>があります。しかし、こちらも更新が止まっています。
+赤リンク統計としては、<a href="https://ja.wikipedia.org/wiki/%E7%89%B9%E5%88%A5:%E5%AD%98%E5%9C%A8%E3%81%97%E3%81%AA%E3%81%84%E3%83%9A%E3%83%BC%E3%82%B8%E3%81%B8%E3%81%AE%E3%83%AA%E3%83%B3%E3%82%AF">特別:存在しないページへのリンク</a>があります。しかし、こちらも更新が止まっています。
 </p>
 <p>
-カテゴリ、ファイル、テンプレートの使用統計としては、<a href="http://ja.wikipedia.org/wiki/%E7%89%B9%E5%88%A5:%E8%A2%AB%E3%83%AA%E3%83%B3%E3%82%AF%E3%81%AE%E5%A4%9A%E3%81%84%E3%82%AB%E3%83%86%E3%82%B4%E3%83%AA">特別:被リンクの多いカテゴリ</a>、<a href="http://ja.wikipedia.org/wiki/%E7%89%B9%E5%88%A5:%E8%A2%AB%E3%83%AA%E3%83%B3%E3%82%AF%E3%81%AE%E5%A4%9A%E3%81%84%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB">特別:被リンクの多いファイル</a>、<a href="http://ja.wikipedia.org/wiki/%E7%89%B9%E5%88%A5:%E4%BD%BF%E7%94%A8%E7%AE%87%E6%89%80%E3%81%AE%E5%A4%9A%E3%81%84%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88">特別:使用箇所の多いテンプレート</a>があります。jawptoolとは集計の基準が違うので、違った結果になっていますが、どちらも正しい(はず)です。
+カテゴリ、ファイル、テンプレートの使用統計としては、<a href="https://ja.wikipedia.org/wiki/%E7%89%B9%E5%88%A5:%E8%A2%AB%E3%83%AA%E3%83%B3%E3%82%AF%E3%81%AE%E5%A4%9A%E3%81%84%E3%82%AB%E3%83%86%E3%82%B4%E3%83%AA">特別:被リンクの多いカテゴリ</a>、<a href="https://ja.wikipedia.org/wiki/%E7%89%B9%E5%88%A5:%E8%A2%AB%E3%83%AA%E3%83%B3%E3%82%AF%E3%81%AE%E5%A4%9A%E3%81%84%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB">特別:被リンクの多いファイル</a>、<a href="https://ja.wikipedia.org/wiki/%E7%89%B9%E5%88%A5:%E4%BD%BF%E7%94%A8%E7%AE%87%E6%89%80%E3%81%AE%E5%A4%9A%E3%81%84%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88">特別:使用箇所の多いテンプレート</a>があります。jawptoolとは集計の基準が違うので、違った結果になっていますが、どちらも正しい(はず)です。
 </p>
 <p>
 統計情報を取るのですから、全ページが含まれた「jawiki-latest-pages-meta-current.xml」を使用します。コマンドラインから以下のように入力して実行します。
@@ -623,7 +623,7 @@ MediaWiki本家統計ページとして<a href="http://ja.wikipedia.org/wiki/%E7
 統計処理は非常に時間が掛かります(筆者の手元の環境で3時間程度)。終了するまで、ゆっくりお待ちください。レポートは以下のようになっています。
 </p>
 <pre>= 統計 =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ jawiki-latest-pages-meta-current.xml を集計したものです。
+このレポートは https://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ jawiki-latest-pages-meta-current.xml を集計したものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -754,7 +754,7 @@ $aimai = {
 しばらくするとチェックが完了して、レポートファイルが作成されます。レポートは以下のようになっています。
 </p>
 <pre>= 出典の無い存命人物一覧 =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ jawiki-latest-pages-articles.xml から出典の無い存命人物を抽出したものです。
+このレポートは https://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ jawiki-latest-pages-articles.xml から出典の無い存命人物を抽出したものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -774,7 +774,7 @@ $aimai = {
 冒頭から漫画家さんの名前がずらっと並んでいますが、そこで笑ってはいけません。つまりは、ウィキペディアの過去の編集において、漫画家記事の出典が軽視されてきたという証なのですから。また、一覧の続きを見ていけば出典の無い存命人物記事は漫画家に限ったことではないことが分かります。
 </p>
 <p>
-ウィキペディアの全ての記事において出典が求められるのですが、特に存命人物については「<a href="http://ja.wikipedia.org/wiki/Wikipedia:%E5%AD%98%E5%91%BD%E4%BA%BA%E7%89%A9%E3%81%AE%E4%BC%9D%E8%A8%98">Wikipedia:存命人物の伝記</a>」という方針で、出典を付ける事が強く要請されています。
+ウィキペディアの全ての記事において出典が求められるのですが、特に存命人物については「<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E5%AD%98%E5%91%BD%E4%BA%BA%E7%89%A9%E3%81%AE%E4%BC%9D%E8%A8%98">Wikipedia:存命人物の伝記</a>」という方針で、出典を付ける事が強く要請されています。
 </p>
 
 <h2 id="longterm-request">長期間経過した依頼・提案一覧(longterm-request)</h2>
@@ -793,7 +793,7 @@ $aimai = {
 しばらくするとレポートファイルが作成されます。レポートは以下のようになっています。
 </p>
 <pre>= 長期間経過した削除依頼 =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ jawiki-latest-pages-meta-current.xml から長期間経過した削除依頼を抽出したものです。
+このレポートは https://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ jawiki-latest-pages-meta-current.xml から長期間経過した削除依頼を抽出したものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -816,7 +816,7 @@ $aimai = {
 しばらくするとレポートファイルが作成されます。レポートは以下のようになっています。
 </p>
 <pre>= 人物一覧 =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ jawiki-latest-pages-articles.xml から人物一覧記事に未掲載の人物記事を抽出したもので、[[生没同日]]・年記事・月日記事の記事作成の支援を行うためのものです。「死亡年月日と没年齢テンプレート」の記載を元に抽出しているため、抽出漏れもありえます。あくまでも支援ツールの一つとしてお使い下さい。
+このレポートは https://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ jawiki-latest-pages-articles.xml から人物一覧記事に未掲載の人物記事を抽出したもので、[[生没同日]]・年記事・月日記事の記事作成の支援を行うためのものです。「死亡年月日と没年齢テンプレート」の記載を元に抽出しているため、抽出漏れもありえます。あくまでも支援ツールの一つとしてお使い下さい。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -838,7 +838,7 @@ $aimai = {
 </dd>
 <dt>「生没同日」</dt>
 <dd>
-「<a href="http://ja.wikipedia.org/wiki/%E7%94%9F%E6%B2%A1%E5%90%8C%E6%97%A5">生没同日</a>」という記事において、未掲載の人物の一覧です。
+「<a href="https://ja.wikipedia.org/wiki/%E7%94%9F%E6%B2%A1%E5%90%8C%E6%97%A5">生没同日</a>」という記事において、未掲載の人物の一覧です。
 </dd>
 </dl>
 <p>
@@ -861,7 +861,7 @@ $aimai = {
 しばらくするとレポートファイルが作成されます。レポートは以下のようになっています。
 </p>
 <pre>= 索引未登録記事一覧 =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ jawiki-latest-pages-articles.xml から索引に登録されていない記事を抽出したもので、[[Wikipedia:索引]]の支援を行うためのものです。
+このレポートは https://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ jawiki-latest-pages-articles.xml から索引に登録されていない記事を抽出したもので、[[Wikipedia:索引]]の支援を行うためのものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -892,7 +892,7 @@ $aimai = {
 しばらくするとレポートファイルが作成されます。レポートは以下のようになっています。
 </p>
 <pre>= 索引一覧 =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ jawiki-latest-pages-articles.xml から索引の一覧を抽出したものです。
+このレポートは https://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ jawiki-latest-pages-articles.xml から索引の一覧を抽出したものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -920,7 +920,7 @@ $aimai = {
 しばらくするとレポートファイルが作成されます。レポートは以下のようになっています。
 </p>
 <pre>= 曖昧さ回避 =
-このレポートは http://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ jawiki-latest-pages-articles.xml から曖昧さ回避記事に登録されていない記事を抽出したものです。
+このレポートは https://dumps.wikimedia.org/jawiki/ にて公開されているウィキペディア日本語版データベースダンプ jawiki-latest-pages-articles.xml から曖昧さ回避記事に登録されていない記事を抽出したものです。
 
 過去の一時点でのダンプを対象に集計していますので、現在のウィキペディア日本語版の状態とは異なる可能性があります。
 
@@ -950,7 +950,7 @@ $aimai = {
 短いページ(1000バイト未満)を出力する機能です。
 </p>
 <p>
-MediaWikiの<a href="http://ja.wikipedia.org/wiki/%E7%89%B9%E5%88%A5:%E7%9F%AD%E3%81%84%E3%83%9A%E3%83%BC%E3%82%B8">特別:短いページ</a>に類似しますが、抽出ルールが異なります。MediaWiki版ではソフトリダイレクトや曖昧さ回避記事も対象としていますが、本機能ではこれらの記事は対象から外しています。
+MediaWikiの<a href="https://ja.wikipedia.org/wiki/%E7%89%B9%E5%88%A5:%E7%9F%AD%E3%81%84%E3%83%9A%E3%83%BC%E3%82%B8">特別:短いページ</a>に類似しますが、抽出ルールが異なります。MediaWiki版ではソフトリダイレクトや曖昧さ回避記事も対象としていますが、本機能ではこれらの記事は対象から外しています。
 </p>
 <p>
 対象とする記事は通常名前空間の記事のみですので、データベースファイルは「jawiki-latest-pages-articles.xml」を使用します。コマンドラインから以下のように入力して実行します。
@@ -966,7 +966,7 @@ MediaWikiの<a href="http://ja.wikipedia.org/wiki/%E7%89%B9%E5%88%A5:%E7%9F%AD%E
 どこからも内部リンクされていない孤立したページを出力する機能です。
 </p>
 <p>
-MediaWikiの<a href="http://ja.wikipedia.org/wiki/%E7%89%B9%E5%88%A5:%E5%AD%A4%E7%AB%8B%E3%81%97%E3%81%A6%E3%81%84%E3%82%8B%E3%83%9A%E3%83%BC%E3%82%B8">特別:孤立しているページ</a>に類似していますが、抽出ルールが異なります。MediaWiki版では名前空間を問わずいずれかのページから内部リンクされていれば孤立していないと判断しますが、本機能では標準記事空間の記事からのリンクのみを対象とします。また、標準記事空間であってもリダイレクト記事からの内部リンクと曖昧さ回避記事からの内部リンクは対象としないようになっています。つまり、通常の記事からの内部リンクが無い記事のみを抽出しているということです。
+MediaWikiの<a href="https://ja.wikipedia.org/wiki/%E7%89%B9%E5%88%A5:%E5%AD%A4%E7%AB%8B%E3%81%97%E3%81%A6%E3%81%84%E3%82%8B%E3%83%9A%E3%83%BC%E3%82%B8">特別:孤立しているページ</a>に類似していますが、抽出ルールが異なります。MediaWiki版では名前空間を問わずいずれかのページから内部リンクされていれば孤立していないと判断しますが、本機能では標準記事空間の記事からのリンクのみを対象とします。また、標準記事空間であってもリダイレクト記事からの内部リンクと曖昧さ回避記事からの内部リンクは対象としないようになっています。つまり、通常の記事からの内部リンクが無い記事のみを抽出しているということです。
 </p>
 <p>
 対象とする記事は通常名前空間の記事のみですので、データベースファイルは「jawiki-latest-pages-articles.xml」を使用します。コマンドラインから以下のように入力して実行します。
@@ -1064,7 +1064,7 @@ jawptoolはウィキペディアと同じくオープンになっています。
 これは義務ではありませんが、もしそうした改造を行った場合は、jawptoolプロジェクトにも還元していただけると幸いです。改造でなくても、不具合の報告や追加機能のアイデアでも構いません。現状、jawptoolはプロジェクト・コミュニティと言えるほどの状態にはありませんが、少しでも多くの方の協力によって、より優れたツールへと進化することが出来ればより良いと思っています。そして、それによって日本語版ウィキペディアの品質が更に上がることが出来れば、更に良いことでしょう。
 </p>
 <p>
-jawptoolプロジェクトのサイトは<a href="http://sourceforge.jp/projects/jawptool/">http://sourceforge.jp/projects/jawptool/</a>になります。「バグ報告」「フォーラム」がありますので、こちらまでお寄せいただければと思います。
+jawptoolプロジェクトのサイトは<a href="https://github.com/saoyagi2/jawptool">https://github.com/saoyagi2/jawptool</a>になります。IssuesやPull requestsがありますので、こちらまでお寄せいただければと思います。
 </p>
 <p>
 それでは、皆様のウィキペディアライフが充実したものでありますことを願いまして、本稿を終わりにしたいと思います。ありがとうございました。
